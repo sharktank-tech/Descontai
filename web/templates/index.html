@@ -1,127 +1,107 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="pt-br" class="dark">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-
-    <!-- Pré-carregamento e conexões -->
-    <link rel="preconnect" href="https://datafa.st">
-    <link rel="dns-prefetch" href="https://datafa.st">
-    <link rel="preload" href="static/media/7e6a2e30184bb114-s.p.woff2" as="font" crossorigin="anonymous" type="font/woff2"/>
-
-    <!-- Estilos -->
-    <link rel="stylesheet" href="static/css/9de1d247264cd4c3.css?dpl=dpl_9tZ9jpfNa9M5QjpFwqJg5zAd32Ng" data-precedence="next"/>
-
-    <!-- SEO -->
-    <title>Amazon Discount Finder - Find Best Deals and Discounts</title>
-    <meta name="description" content="Discover incredible Amazon deals with discounts up to 80%! Shop categories like electronics, fashion, home goods, and more. Find the best Amazon discount deals today."/>
-    <meta name="keywords" content="Amazon discounts, best Amazon deals, find Amazon discounts, Amazon electronics, Amazon fashion, Amazon home goods, Amazon discounts up to 80%, best Amazon bargain deals"/>
-    <meta name="robots" content="index, follow"/>
-
-    <!-- Open Graph / Social -->
-    <meta property="og:title" content="Amazon Discount Finder - Best Amazon Deals"/>
-    <meta property="og:description" content="Find the best Amazon discounts on electronics, home goods, fashion, and more with our exclusive discount finder tool. Save up to 80% today!"/>
-    <meta property="og:url" content="https://amazonfinder.deals"/>
-    <meta property="og:site_name" content="Amazon Discount Finder"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:image" content="https://amazonfinder.deals/og-image.jpg"/>
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Amazon Discount Finder - Best Amazon Deals"/>
-    <meta name="twitter:description" content="Find the best Amazon discounts on electronics, home goods, fashion, and more with our exclusive discount finder tool. Save up to 80% today!"/>
-    <meta name="twitter:image" content="https://amazonfinder.deals/twitter-card.jpg"/>
-
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16"/>
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)">
-
-    <!-- Analytics -->
-    <script defer data-website-id="6758e78a88c98f61ae5d18bc" data-domain="amazonfinder.deals" src="https://datafa.st/js/script.js" crossorigin="anonymous"></script>
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://amazonfinder.deals"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Descontos da Amazon 🏷️</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
 
-<body class="__className_05e5f9 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100" aria-live="polite" aria-atomic="true">
-    <!-- Skip Link para acessibilidade -->
-    <a href="#main-content" class="sr-only focus:not-sr-only">Skip to main content</a>
+  <!-- Título principal -->
+  <header class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 tracking-tight mb-2">
+      Descont<span class="text-gray-900 dark:text-white">Aí.com</span>
+    </h1>
+    <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300">
+      Encontre ofertas incríveis na Amazon com apenas alguns cliques 🇧🇷
+    </p>
+  </header>
 
-    <!-- Container principal -->
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Cabeçalho -->
-        <header class="py-6" role="banner">
-            <div class="flex justify-between items-center">
-                <a href="/" class="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    Amazon Discount Finder
-                </a>
+  <!-- Formulário de busca -->
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <form id="searchForm" class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-md space-y-6">
+      <h2 class="text-xl sm:text-2xl font-semibold">Encontre a Oferta Perfeita</h2>
 
-                <!-- Toggle Dark Mode -->
-                <button id="theme-toggle" aria-label="Toggle dark mode" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <svg class="w-6 h-6 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-                    </svg>
-                    <svg class="w-6 h-6 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
-                </button>
-            </div>
-        </header>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-black">
+        <div>
+          <label for="departamento" class="block mb-1 text-white font-medium">Departamento</label>
+          <select id="departamento" name="departamento" class="w-full rounded border px-3 py-2">
+            <option>Todos</option>
+            <option>Eletrônicos</option>
+            <option>Casa</option>
+            <option>Moda</option>
+            <option>Livros</option>
+            <option>Beleza</option>
+          </select>
+        </div>
 
-        <!-- Conteúdo principal -->
-        <main id="main-content" role="main">
-            <!-- Conteúdo dinâmico será injetado aqui -->
-            <div class="py-12 text-center">
-                <h1 class="text-4xl font-bold mb-6">Find the Best Amazon Deals</h1>
-                <p class="text-xl mb-8">Save up to 80% on electronics, fashion, home goods and more!</p>
+        <div>
+          <label for="palavras_chave" class="block mb-1 text-white font-medium">Palavras-chave</label>
+          <input type="text" id="palavras_chave" name="palavras_chave" placeholder="Ex: iPhone 12, Tênis Nike Air Max" class="w-full rounded border px-3 py-2">
+        </div>
 
-                <!-- Barra de pesquisa -->
-                <form action="/search" method="GET" class="max-w-md mx-auto">
-                    <div class="relative">
-                        <input
-                            type="text"
-                            name="q"
-                            placeholder="Search for products..."
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                            aria-label="Search for Amazon deals"
-                        >
-                        <button
-                            type="submit"
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                            aria-label="Submit search"
-                        >
-                            Search
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </main>
+        <div>
+          <label for="desconto" class="block mb-1 text-white font-medium">Desconto</label>
+          <select id="desconto" name="desconto" class="w-full rounded border px-3 py-2">
+            <option>10% ou mais</option>
+            <option>25% ou mais</option>
+            <option>50% ou mais</option>
+            <option>70% ou mais</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="preco" class="block mb-1 text-white font-medium">Faixa de Preço</label>
+          <select id="preco" name="preco" class="w-full rounded border px-3 py-2">
+            <option>Qualquer</option>
+            <option>Abaixo de R$50</option>
+            <option>Abaixo de R$100</option>
+            <option>Abaixo de R$200</option>
+            <option>Acima de R$200</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="text-center pt-2">
+        <button id="searchButton" type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded transition-colors relative">
+          <span id="buttonText">Buscar Ofertas</span>
+          <svg id="spinner" class="w-6 h-6 text-white absolute hidden animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 018-8 8 8 0 018 8" stroke="currentColor" stroke-width="4"></path>
+          </svg>
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- FAQ -->
+  <section class="mt-16 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold mb-6 text-center">Perguntas Frequentes (FAQ)</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300">
+      <details class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <summary class="cursor-pointer font-medium">Como funciona o Buscador de Descontos?</summary>
+        <p class="pl-4 mt-2">Utilizamos filtros especiais na Amazon para encontrar as maiores promoções com base nas suas escolhas.</p>
+      </details>
+
+      <details class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <summary class="cursor-pointer font-medium">Que tipo de descontos posso encontrar?</summary>
+        <p class="pl-4 mt-2">Descontos de 10% a até 100% em diversas categorias, incluindo eletrônicos, moda, casa, livros e mais.</p>
+      </details>
+
+      <details class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <summary class="cursor-pointer font-medium">Posso personalizar minha busca?</summary>
+        <p class="pl-4 mt-2">Sim! Você pode filtrar por departamento, palavras-chave, faixa de preço e nível de desconto.</p>
+      </details>
+
+      <details class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <summary class="cursor-pointer font-medium">Os descontos são sempre precisos?</summary>
+        <p class="pl-4 mt-2">Monitoramos os preços da Amazon constantemente, mas eles podem mudar com rapidez. Verifique sempre antes de comprar.</p>
+      </details>
     </div>
+  </section>
 
-    <!-- Scripts -->
-    <script>
-        // Dark mode toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-
-        themeToggle.addEventListener('click', () => {
-            const isDark = html.getAttribute('data-theme') === 'dark';
-            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-        });
-
-        // Verificar preferência salva ou do sistema
-        const savedTheme = localStorage.getItem('theme') ||
-                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        html.setAttribute('data-theme', savedTheme);
-    </script>
-
-    <!-- Scripts do Next.js -->
-    <script src="/static/chunks/webpack-45ba36b9552bb564.js?dpl=dpl_9tZ9jpfNa9M5QjpFwqJg5zAd32Ng" async></script>
-    <script src="/static/chunks/polyfills-78c92fac7aa8fdd8.js?dpl=dpl_9tZ9jpfNa9M5QjpFwqJg5zAd32Ng" noModule></script>
+  <!-- Redirecionamento com afiliado -->
+  <script src="static/scripts/script.js" > </script>
 </body>
 </html>
