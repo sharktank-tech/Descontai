@@ -15,7 +15,7 @@ document.getElementById('searchForm').addEventListener('submit', function(e) {
     // Capturar os dados do formulário
     const palavras = document.getElementById('palavras_chave').value.trim();
     const departamento = document.getElementById('departamento').value;
-    const tagAfiliado = 'seunome-20'; // Substitua pela sua tag de afiliado real
+    const tagAfiliado = 'ofertasflashh-20';
 
     const query = encodeURIComponent(palavras + ' ' + departamento);
     const url = `https://www.amazon.com.br/s?k=${query}&tag=${tagAfiliado}`;
