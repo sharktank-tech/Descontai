@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-br" class="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buscador de Descontos da Amazon 🏷️</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="{{ url_for('static', filename='img/cupom.png') }}" type="image/png">
-</head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
+{% extends "base.html" %}
 
+{% block title %}DescontAí.com - Encontre Ofertas Incríveis{% endblock %}
+
+{% block content %}
   <!-- Título principal -->
   <header class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
     <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 tracking-tight mb-2">
@@ -20,7 +14,7 @@
   </header>
 
   <!-- Formulário de busca -->
-  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
     <form id="searchForm" class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-md space-y-6">
       <h2 class="text-xl sm:text-2xl font-semibold">Encontre a Oferta Perfeita</h2>
 
@@ -74,7 +68,7 @@
         </button>
       </div>
     </form>
-  </main>
+  </div>
 
   <!-- FAQ -->
   <section class="mt-16 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,12 +95,4 @@
       </details>
     </div>
   </section>
-  <footer class="text-center text-sm text-gray-500 py-4">
-    <a href="https://www.flaticon.com/br/icones-gratis/cupom" title="cupom ícones">Cupom ícones criados por Pixel perfect - Flaticon</a>
-  </footer>
-
-
-  <!-- Redirecionamento com afiliado -->
-  <script src="static/scripts/script.js" > </script>
-</body>
-</html>
+{% endblock %}

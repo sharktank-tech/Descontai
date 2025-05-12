@@ -1,35 +1,63 @@
-document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+// Manipulador do formulário de busca
+document.addEventListener('DOMContentLoaded', function () {
+  const searchForm = document.getElementById('searchForm');
 
-    const buttonText = document.getElementById('buttonText');
-    const spinner = document.getElementById('spinner');
-    const searchButton = document.getElementById('searchButton');
+  if (searchForm) {
+    searchForm.addEventListener('submit', function (e) {
+      e.preventDefault();
 
-    // Desabilitar o botão para evitar múltiplos envios
-    searchButton.disabled = true;
+      const buttonText = document.getElementById('buttonText');
+      const spinner = document.getElementById('spinner');
+      const searchButton = document.getElementById('searchButton');
 
-    // Exibir o spinner e ocultar o texto do botão
-    buttonText.classList.add('hidden');
-    spinner.classList.remove('hidden');
+      if (!buttonText || !spinner || !searchButton) return;
 
-    // Capturar os dados do formulário
-    const palavras = document.getElementById('palavras_chave').value.trim();
-    const departamento = document.getElementById('departamento').value;
-    const tagAfiliado = 'ofertasflashh-20';
+      // Desabilita o botão e mostra o spinner
+      searchButton.disabled = true;
+      buttonText.classList.add('hidden');
+      spinner.classList.remove('hidden');
 
-    const query = encodeURIComponent(palavras + ' ' + departamento);
-    const url = `https://www.amazon.com.br/s?k=${query}&tag=${tagAfiliado}`;
+      // Captura os dados do formulário
+      const palavras = document.getElementById('palavras_chave').value.trim();
+      const departamento = document.getElementById('departamento').value;
+      const tagAfiliado = 'ofertasflashh-20';
 
-    // Esperar um pequeno delay para garantir que o spinner seja exibido
-    setTimeout(() => {
-      // Redirecionar
-      window.location.href = url;
+      const query = encodeURIComponent(palavras + ' ' + departamento);
+      const url = `https://www.amazon.com.br/s?k=${query}&tag=${tagAfiliado}`;
 
-      // Ocultar o spinner após o redirecionamento
-      spinner.classList.add('hidden');
-      buttonText.classList.remove('hidden');
+      // Pequeno atraso antes do redirecionamento
+      setTimeout(() => {
+        window.location.href = url;
 
-      // Reabilitar o botão após o redirecionamento (opcional)
-      searchButton.disabled = false;
-    }, 300); // Atraso de 300ms para exibir a animação antes de redirecionar
+        // Restaura o estado do botão (opcional, pois vai redirecionar)
+        spinner.classList.add('hidden');
+        buttonText.classList.remove('hidden');
+        searchButton.disabled = false;
+      }, 300);
+    });
+  }
+
+  // Aplica a tag de afiliado nos botões de produto
+  document.querySelectorAll('.link-afiliado').forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const rawLink = this.getAttribute('data-link');
+      if (!rawLink) return;
+
+      try {
+        const url = new URL(rawLink);
+
+        // Verifica se a URL já contém a tag de afiliado, se não, adiciona
+        if (!url.searchParams.has('tag')) {
+          url.searchParams.set('tag', 'ofertasflashh-20');
+        }
+
+        // Abre o link com a tag de afiliado
+        window.open(url.toString(), '_blank');
+      } catch (err) {
+        console.error('Link de afiliado inválido:', rawLink);
+      }
+    });
   });
+});

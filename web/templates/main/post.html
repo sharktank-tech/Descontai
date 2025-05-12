@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}
+Resultados de Ofertas 🛒
+{% endblock %}
+
+{% block content %}
+
+<!-- Cabeçalho -->
+<header class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+  <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 tracking-tight mb-2">
+    Ofertas Encontradas em <span class="text-gray-900 dark:text-white">DescontAí.com</span>
+  </h1>
+  <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300">
+    Veja os melhores descontos disponíveis agora!
+  </p>
+</header>
+
+<!-- Resultados -->
+<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+  {% if produtos %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for produto in produtos %}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+          <img src="{{ produto.imagem }}" alt="Imagem do produto" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h2 class="text-lg font-semibold mb-2">{{ produto.nome }}</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">De: <span class="line-through">R$ {{ produto.preco_original }}</span></p>
+            <p class="text-xl font-bold text-green-500 mb-2">Por: R$ {{produto.preco_desconto}}</p>
+            <p class="text-sm text-yellow-400">Desconto de {{ produto.desconto }}%</p>
+            <a data-link="{{ produto.link_afiliado }}" class="link-afiliado mt-4 inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+              Ver na Amazon
+            </a>
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center text-gray-600 dark:text-gray-400 mt-10">Nenhuma oferta encontrada com os filtros selecionados.</p>
+  {% endif %}
+</main>
+
+{% endblock %}
