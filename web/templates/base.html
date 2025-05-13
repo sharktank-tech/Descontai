@@ -9,6 +9,19 @@
 </head>
 <body class="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
 
+  <!-- Barra de navegação -->
+  <header class="bg-gray-800 text-white shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="/" class="text-xl font-bold text-yellow-400 hover:text-yellow-300">DescontAí</a>
+      <nav class="space-x-4 text-sm">
+        <a href="/" class="hover:text-yellow-400">Início</a>
+        <a href="/post" class="hover:text-yellow-400">Ofertas</a>
+        <a href="/sobre" class="hover:text-yellow-400">Sobre</a>
+        <a href="/contato" class="hover:text-yellow-400">Contato</a>
+      </nav>
+    </div>
+  </header>
+
   <!-- Conteúdo principal -->
   <main class="flex-grow">
     {% block content %}{% endblock %}
