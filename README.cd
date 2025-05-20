@@ -1,0 +1,25 @@
+1. Definir os sites e os produtos
+Liste os sites dos quais você deseja buscar preços.
+
+Defina os produtos ou palavras-chave a serem pesquisados.
+
+2. Capturar os dados (scraping ou API)
+Existem duas formas de obter os dados:
+
+🔸 a) Usar APIs oficiais (caso existam)
+Alguns sites, como a Amazon, têm APIs de afiliados que permitem buscar preços legalmente.
+
+Vantagem: mais estável e legal.
+
+Desvantagem: exige cadastro, aprovação, e nem todos os dados estão disponíveis.
+
+🔸 b) Web Scraping (extração de dados diretamente do HTML)
+Utiliza bibliotecas para acessar e extrair dados de páginas web.
+
+⚠️ Atenção: muitos sites proíbem scraping nos seus termos de uso.
+
+3. Armazenar os dados em um banco de dados
+Pode ser um banco relacional (como SQLite, PostgreSQL, MySQL) ou NoSQL (MongoDB).
+
+4. Agendar buscas automáticas
+Usar um agendador (como cron, APScheduler, ou scripts com while True + sleep) para fazer as buscas diariamente ou de tempos em tempos.

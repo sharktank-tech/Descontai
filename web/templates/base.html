@@ -14,8 +14,7 @@
     <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
       <a href="/" class="text-xl font-bold text-yellow-400 hover:text-yellow-300">DescontAí</a>
       <nav class="space-x-4 text-sm">
-        <a href="/" class="hover:text-yellow-400">Início</a>
-        <a href="/post" class="hover:text-yellow-400">Ofertas</a>
+        <a href="/ofertas" class="hover:text-yellow-400">Ofertas</a>
         <a href="/sobre" class="hover:text-yellow-400">Sobre</a>
         <a href="/contato" class="hover:text-yellow-400">Contato</a>
       </nav>
@@ -27,14 +26,29 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Rodapé fixo ao fim -->
+  <!-- Rodapé com links úteis -->
   <footer class="bg-gray-800 text-gray-300 py-8 mt-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-8">
+
+        <!-- Seção de links úteis -->
+        <div class="text-center sm:text-left">
+          <h3 class="text-sm font-semibold mb-2 text-yellow-400">Links úteis</h3>
+          <ul class="space-y-1 text-sm">
+            <li><a href="/privacidade" class="hover:underline hover:text-yellow-400">Política de Privacidade</a></li>
+            <li><a href="/termos" class="hover:underline hover:text-yellow-400">Termos de Uso</a></li>
+            <li><a href="/sobre" class="hover:underline hover:text-yellow-400">Sobre</a></li>
+            <li><a href="/contato" class="hover:underline hover:text-yellow-400">Contato</a></li>
+          </ul>
+        </div>
+
+        <!-- Direitos autorais -->
         <div class="text-center sm:text-left">
           <p class="text-sm">&copy; 2025 DescontAí.com – Todos os direitos reservados.</p>
-          <p class="text-xs mt-1">Compras via links afiliados ajudam a manter o projeto ativo.</p>
+          <p class="text-xs mt-1">Como um Associado da Amazon, ganho com compras qualificadas.</p>
         </div>
+
+        <!-- Créditos de ícones -->
         <div class="text-center sm:text-right">
           <p class="text-sm">
             Ícones por
@@ -43,6 +57,7 @@
             </a>
           </p>
         </div>
+
       </div>
     </div>
   </footer>

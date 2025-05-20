@@ -1,0 +1,105 @@
+{
+  "Celulares": [
+    {
+      "name": "Smartphone Xiaomi Redmi Note 12",
+      "image": "https://m.media-amazon.com/images/I/61+k2EbgHLL._AC_UL320_.jpg",
+      "originalPrice": "1.499,00",
+      "salePrice": "1.199,00",
+      "discount": 20,
+      "detailUrl": "https://www.amazon.com.br/dp/B0BYN6J9ZH"
+    },
+    {
+      "name": "Samsung Galaxy A14 128GB",
+      "image": "https://m.media-amazon.com/images/I/51ANPzwsJOL._AC_UL320_.jpg",
+      "originalPrice": "1.399,00",
+      "salePrice": "1.099,00",
+      "discount": 21,
+      "detailUrl": "https://www.amazon.com.br/dp/B0C2N7R3K4"
+    },
+    {
+      "name": "Motorola Moto G84 5G",
+      "image": "https://m.media-amazon.com/images/I/51vjQLRYFzL._AC_UL320_.jpg",
+      "originalPrice": "1.799,00",
+      "salePrice": "1.399,00",
+      "discount": 22,
+      "detailUrl": "https://www.amazon.com.br/dp/B0CGJKC6F3"
+    },
+    {
+      "name": "Apple iPhone 14 (128 GB) – Estelar",
+      "image": "https://m.media-amazon.com/images/I/618Bb+QzCmL._AC_SX679_.jpg",
+      "originalPrice": "1.799,00",
+      "salePrice": "1.399,00",
+      "discount": 22,
+      "detailUrl": "https://www.amazon.com.br/dp/B0CGJKC6F3"
+    }
+  ],
+  "Notebooks": [
+    {
+      "name": "Notebook Acer Aspire 5 A515",
+      "image": "https://m.media-amazon.com/images/I/51d951scg-L._AC_UL320_.jpg",
+      "originalPrice": "3.199,00",
+      "salePrice": "2.799,00",
+      "discount": 13,
+      "detailUrl": "https://www.amazon.com.br/dp/B0BXY6RTSH"
+    },
+    {
+      "name": "Notebook Lenovo IdeaPad 3i",
+      "image": "https://m.media-amazon.com/images/I/51BAXyPy0HL._AC_UL320_.jpg",
+      "originalPrice": "3.000,00",
+      "salePrice": "2.499,00",
+      "discount": 17,
+      "detailUrl": "https://www.amazon.com.br/dp/B0BHZ22K8Y"
+    },
+    {
+      "name": "Notebook Samsung Book i5 8GB",
+      "image": "https://m.media-amazon.com/images/I/51cj43d2FUL._AC_UL320_.jpg",
+      "originalPrice": "3.499,00",
+      "salePrice": "2.999,00",
+      "discount": 14,
+      "detailUrl": "https://www.amazon.com.br/dp/B09TWHHZWK"
+    },
+    {
+      "name": "Chromebook Samsung 11.6 Intel 4GB 64GB XE310XBA-KT4BR",
+      "image": "https://m.media-amazon.com/images/I/51RqbLJCFIL._AC_SY355_.jpg",
+      "originalPrice": "1.499,00",
+      "salePrice": "1.399,00",
+      "discount": 14,
+      "detailUrl": "https://www.amazon.com.br/dp/B09TWHHZWK"
+    }
+
+  ],
+  "Fones de Ouvido": [
+    {
+      "name": "Fone Bluetooth JBL Tune 510BT",
+      "image": "https://m.media-amazon.com/images/I/61kFL7ywsZS._AC_UL320_.jpg",
+      "originalPrice": "299,00",
+      "salePrice": "199,00",
+      "discount": 33,
+      "detailUrl": "https://www.amazon.com.br/dp/B08VM96W4C"
+    },
+    {
+      "name": "Fone de Ouvido Xiaomi Redmi Buds 4",
+      "image": "https://m.media-amazon.com/images/I/61d03Y2E89L._AC_UL320_.jpg",
+      "originalPrice": "279,00",
+      "salePrice": "189,00",
+      "discount": 32,
+      "detailUrl": "https://www.amazon.com.br/dp/B0BX2TDK3J"
+    },
+    {
+      "name": "Fone Bluetooth Edifier W820NB",
+      "image": "https://m.media-amazon.com/images/I/616ogsd6IzS._AC_UL320_.jpg",
+      "originalPrice": "399,00",
+      "salePrice": "299,00",
+      "discount": 25,
+      "detailUrl": "https://www.amazon.com.br/dp/B0BJ2GHQ7K"
+    },
+    {
+      "name": "Edifier FONE DE OUVIDO BLUETOOTH 5.1 W600BT - PRETO, Pequeno",
+      "image": "https://m.media-amazon.com/images/I/51zIDeYC+hL._AC_SX679_.jpg",
+      "originalPrice": "198,00",
+      "salePrice": "145,00",
+      "discount": 25,
+      "detailUrl": "https://www.amazon.com.br/dp/B0BJ2GHQ7K"
+    }
+  ]
+}
