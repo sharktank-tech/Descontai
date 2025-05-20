@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="{{ url_for('static', filename='img/cupom.png') }}" type="image/png">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <!-- Registration Card -->
+  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+    <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Crie sua conta</h1>
+    <p class="text-gray-600 text-center mb-4">Preencha os campos abaixo</p>
+
+    <!-- Formulário -->
+    <form action="/register" method="POST" class="space-y-4">
+      <!-- Nome de Usuário -->
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700">Nome de Usuário</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Digite seu nome de usuário"
+          required>
+      </div>
+
+      <!-- E-mail -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="seuemail@email.com"
+          required>
+      </div>
+
+      <!-- Senha -->
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Crie uma senha"
+          required>
+      </div>
+
+      <!-- Confirmar Senha -->
+      <div>
+        <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirmar Senha</label>
+        <input
+          type="password"
+          id="confirm_password"
+          name="confirm_password"
+          class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Confirme sua senha"
+          required>
+      </div>
+
+      <!-- Botão de Registro -->
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium text-lg hover:bg-blue-700">
+        Registrar
+      </button>
+    </form>
+
+    <!-- Separador -->
+    <div class="flex items-center my-6">
+      <div class="border-t border-gray-300 flex-grow"></div>
+      <span class="text-gray-500 mx-4">ou</span>
+      <div class="border-t border-gray-300 flex-grow"></div>
+    </div>
+
+    <!-- Registro com redes sociais -->
+    <div class="flex flex-col space-y-4">
+      <button class="w-full flex items-center justify-center bg-gray-100 py-2 px-4 rounded-lg shadow hover:bg-gray-200">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Facebook_f_logo_%282019%29.svg/1200px-Facebook_f_logo_%282019%29.svg.png" alt="Facebook" class="w-5 h-5 mr-2">
+        Registrar com Facebook
+      </button>
+      <button class="w-full flex items-center justify-center bg-gray-100 py-2 px-4 rounded-lg shadow hover:bg-gray-200">
+        <img src="https://imgs.search.brave.com/bEoj9oydlm4QEA8KUuZr6L0akwRrZS994IzB_SoAdpw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dmVjdG9yc3RvY2su/Y29tL2kvcHJldmll/dy0xeC83NS81NC9n/b29nbGUtbG9nby12/ZWN0b3ItMjgzODc1/NTQuanBn" alt="Google" class="w-5 h-5 mr-2">
+        Registrar com Google
+      </button>
+    </div>
+
+    <!-- Rodapé -->
+    <p class="text-gray-600 text-sm text-center mt-6">
+      Já tem uma conta? <a href="/login" class="text-blue-600 hover:underline">Faça login</a>
+    </p>
+  </div>
+
+</body>
+</html>

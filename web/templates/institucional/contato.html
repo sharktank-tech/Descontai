@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Contato - DescontAí.com{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  <h1 class="text-4xl font-extrabold text-yellow-500 mb-6 text-center">
+    Fale Conosco
+  </h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="space-y-4 mb-6">
+        {% for category, message in messages %}
+          <div
+            class="p-4 rounded {{
+              'bg-green-100 text-green-800' if category == 'success' else
+              'bg-yellow-100 text-yellow-800' if category == 'warning' else
+              'bg-red-100 text-red-800' if category == 'danger' else ''
+            }}"
+            role="alert"
+          >
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST" action="{{ url_for('main.contato') }}" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
+    <div>
+      <label for="nome" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
+      <input type="text" id="nome" name="nome" required
+             placeholder="Seu nome completo"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+      <input type="email" id="email" name="email" required
+             placeholder="seuemail@exemplo.com"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="assunto" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Assunto</label>
+      <input type="text" id="assunto" name="assunto" required
+             placeholder="Motivo do contato"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="mensagem" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mensagem</label>
+      <textarea id="mensagem" name="mensagem" rows="5" required
+                placeholder="Escreva sua mensagem aqui..."
+                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"></textarea>
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded">
+        Enviar Mensagem
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

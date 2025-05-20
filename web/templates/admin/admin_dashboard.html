@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Painel Administrativo - DescontAí.com{% endblock %}
+
+{% block content %}
+  <header class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 tracking-tight mb-2">
+      Painel <span class="text-gray-900 dark:text-white">Administrativo</span>
+    </h1>
+    <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300">
+      Gerencie as ofertas, categorias, usuários e configurações da plataforma DescontAí.com
+    </p>
+  </header>
+
+  <!-- Cards de Ações -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+    <!-- Ofertas -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
+      <h2 class="text-xl font-semibold text-yellow-500 mb-2">Ofertas</h2>
+      <p class="text-gray-600 dark:text-gray-300 mb-4">Adicione, edite ou remova ofertas promocionais.</p>
+      <a href="/admin/ofertas" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+        Gerenciar Ofertas
+      </a>
+    </div>
+
+    <!-- Categorias -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
+      <h2 class="text-xl font-semibold text-yellow-500 mb-2">Categorias</h2>
+      <p class="text-gray-600 dark:text-gray-300 mb-4">Atualize os departamentos disponíveis para os usuários.</p>
+      <a href="/admin/categorias" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+        Gerenciar Categorias
+      </a>
+    </div>
+
+    <!-- Usuários -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
+      <h2 class="text-xl font-semibold text-yellow-500 mb-2">Usuários</h2>
+      <p class="text-gray-600 dark:text-gray-300 mb-4">Adicione, edite ou remova usuários do sistema.</p>
+      <a href="/admin_user" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+        Gerenciar Usuários
+      </a>
+    </div>
+
+    <!-- Configurações -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
+      <h2 class="text-xl font-semibold text-yellow-500 mb-2">Configurações</h2>
+      <p class="text-gray-600 dark:text-gray-300 mb-4">Ajuste as preferências do sistema e autenticação.</p>
+      <a href="/admin/configuracoes" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+        Configurações
+      </a>
+    </div>
+  </div>
+
+  <!-- Seção de Relatórios -->
+  <section class="mt-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold mb-6 text-center">Relatórios Recentes</h2>
+    <ul class="space-y-4 text-gray-700 dark:text-gray-300">
+      <li class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        📈 120 novas ofertas adicionadas nos últimos 7 dias.
+      </li>
+      <li class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        🛍️ Categoria "Moda" teve um aumento de 40% em buscas.
+      </li>
+      <li class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        ⚠️ 5 ofertas expiradas foram removidas automaticamente.
+      </li>
+    </ul>
+  </section>
+{% endblock %}

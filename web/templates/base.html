@@ -1,18 +1,49 @@
 <!DOCTYPE html>
 <html lang="pt-br" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Buscador de Descontos da Amazon 🏷️{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="{{ url_for('static', filename='img/cupom.png') }}" type="image/png">
+  <link
+    rel="icon"
+    href="{{ url_for('static', filename='img/cupom.png') }}"
+    type="image/png"
+  />
 </head>
-<body class="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
+<body
+  class="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white"
+>
+  <!-- Container para mensagens flash -->
+  <div
+    id="flash-messages"
+    class="fixed top-4 right-4 z-50 space-y-2 max-w-sm"
+  >
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div
+            class="p-4 rounded shadow text-sm font-medium
+              {% if category == 'success' %} bg-green-100 text-green-800 {% endif %}
+              {% if category == 'warning' %} bg-yellow-100 text-yellow-800 {% endif %}
+              {% if category == 'danger'  %} bg-red-100 text-red-800 {% endif %}
+            "
+          >
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
 
   <!-- Barra de navegação -->
   <header class="bg-gray-800 text-white shadow-md">
     <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-      <a href="/" class="text-xl font-bold text-yellow-400 hover:text-yellow-300">DescontAí</a>
+      <a
+        href="/"
+        class="text-xl font-bold text-yellow-400 hover:text-yellow-300"
+        >DescontAí</a
+      >
       <nav class="space-x-4 text-sm">
         <a href="/ofertas" class="hover:text-yellow-400">Ofertas</a>
         <a href="/sobre" class="hover:text-yellow-400">Sobre</a>
@@ -22,47 +53,88 @@
   </header>
 
   <!-- Conteúdo principal -->
-  <main class="flex-grow">
-    {% block content %}{% endblock %}
-  </main>
+  <main class="flex-grow">{% block content %}{% endblock %}</main>
 
   <!-- Rodapé com links úteis -->
   <footer class="bg-gray-800 text-gray-300 py-8 mt-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row justify-between items-center gap-8">
-
+      <div
+        class="flex flex-col sm:flex-row justify-between items-center gap-8"
+      >
         <!-- Seção de links úteis -->
         <div class="text-center sm:text-left">
           <h3 class="text-sm font-semibold mb-2 text-yellow-400">Links úteis</h3>
           <ul class="space-y-1 text-sm">
-            <li><a href="/privacidade" class="hover:underline hover:text-yellow-400">Política de Privacidade</a></li>
-            <li><a href="/termos" class="hover:underline hover:text-yellow-400">Termos de Uso</a></li>
-            <li><a href="/sobre" class="hover:underline hover:text-yellow-400">Sobre</a></li>
-            <li><a href="/contato" class="hover:underline hover:text-yellow-400">Contato</a></li>
+            <li>
+              <a
+                href="/privacidade"
+                class="hover:underline hover:text-yellow-400"
+                >Política de Privacidade</a
+              >
+            </li>
+            <li>
+              <a
+                href="/termos"
+                class="hover:underline hover:text-yellow-400"
+                >Termos de Uso</a
+              >
+            </li>
+            <li>
+              <a
+                href="/sobre"
+                class="hover:underline hover:text-yellow-400"
+                >Sobre</a
+              >
+            </li>
+            <li>
+              <a
+                href="/contato"
+                class="hover:underline hover:text-yellow-400"
+                >Contato</a
+              >
+            </li>
           </ul>
         </div>
 
         <!-- Direitos autorais -->
         <div class="text-center sm:text-left">
           <p class="text-sm">&copy; 2025 DescontAí.com – Todos os direitos reservados.</p>
-          <p class="text-xs mt-1">Como um Associado da Amazon, ganho com compras qualificadas.</p>
+          <p class="text-xs mt-1">
+            Como um Associado da Amazon, ganho com compras qualificadas.
+          </p>
         </div>
 
         <!-- Créditos de ícones -->
         <div class="text-center sm:text-right">
           <p class="text-sm">
             Ícones por
-            <a href="https://www.flaticon.com/authors/pixel-perfect" class="underline text-yellow-400 hover:text-yellow-500" target="_blank">
-              Pixel perfect - Flaticon
-            </a>
+            <a
+              href="https://www.flaticon.com/authors/pixel-perfect"
+              class="underline text-yellow-400 hover:text-yellow-500"
+              target="_blank"
+              >Pixel perfect - Flaticon</a
+            >
           </p>
         </div>
-
       </div>
     </div>
   </footer>
 
   <!-- Scripts -->
   <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+
+  <!-- Script para esconder mensagens flash após 5 segundos -->
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const flashMessages = document.getElementById("flash-messages");
+      if (flashMessages) {
+        setTimeout(() => {
+          flashMessages.style.transition = "opacity 0.8s ease";
+          flashMessages.style.opacity = "0";
+          setTimeout(() => flashMessages.remove(), 800);
+        }, 5000); // 5 segundos
+      }
+    });
+  </script>
 </body>
 </html>
