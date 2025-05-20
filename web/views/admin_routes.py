@@ -4,7 +4,7 @@ from flask_login import login_required
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates/admin')
 
-# Rota principal do painel de administração
+# =========== Rota principal do painel de administração =================
 @admin_blueprint.route('/admin_dashboard')
 @login_required
 def admin_dashboard():
