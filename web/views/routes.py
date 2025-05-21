@@ -1,11 +1,9 @@
-from flask import render_template, Blueprint, flash, redirect, url_for, request
+from flask import render_template, Blueprint, flash, redirect, url_for, request, abort
 from web.modules.enviar_email import enviar_email
 from web.modules.models import Produto, Users, db
 from sqlalchemy.exc import IntegrityError
 from flask_login import  login_user, logout_user, login_required
-
 from werkzeug.security import check_password_hash
-
 from config import Config
 
 main_blueprint = Blueprint('main', __name__)
@@ -20,11 +18,41 @@ def home():
 @main_blueprint.route("/ofertas")
 def ofertas():
     try:
+        # Busca todos os produtos do banco
         produtos = Produto.query.all()
-        return render_template('main/post.html', produtos=produtos)
+
+        # Se não houver produtos, retorna 404
+        if not produtos:
+            abort(404)
+
+        # Formata os dados para o template
+        produtos_formatados = []
+        for produto in produtos:
+            produtos_formatados.append({
+                'id': produto.id,
+                'name': produto.name,
+                'image': produto.image,
+                'originalPrice': f"R$ {produto.originalprice:.2f}".replace('.', ','),
+                'salePrice': f"R$ {produto.saleprice:.2f}".replace('.', ','),
+                'discount': int(produto.discount),  # Converte para inteiro (ex: 15.0 → 15)
+                'detailUrl': produto.detailurl,
+                # Campos opcionais com valores padrão
+                'rating': 4.5,  # Valor padrão caso não exista no modelo
+                'vendidos': '1k+',  # Valor padrão
+                'categoria': 'Ofertas'  # Categoria padrão ou modifique conforme necessário
+            })
+
+        # Agrupa por categoria (exemplo - ajuste conforme sua necessidade)
+        grupos = [{
+            'categoria': 'Ofertas em Destaque',  # Ou use categorias reais se existirem
+            'produtos': produtos_formatados
+        }]
+
+        return render_template('main/post.html', produtos=grupos)
+
     except Exception as e:
-        print(f"Erro ao buscar produtos: {e}")
-        redirect(erro_interno())
+        print(f"Erro ao carregar ofertas: {str(e)}")
+        abort(500)
 
 # ============= Páginas de login e registro =====================
 

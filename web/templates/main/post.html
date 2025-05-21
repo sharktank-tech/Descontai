@@ -13,9 +13,9 @@ Ofertas Shopee 🛍️ | {{ super() }}
 <!-- Hero Slider Mobile-Optimized -->
 <header class="w-full h-[40vh] sm:h-[50vh] max-h-[500px] relative overflow-hidden bg-orange-100" x-data="{
   banners: [
-    {'image': 'https://m.media-amazon.com/images/G/32/associates/email/2024/Youtube_2.png', 'alt': 'Ofertas especiais'},
-    {'image': '/static/images/banner2.jpg', 'alt': 'Promoções de verão'},
-    {'image': '/static/images/banner3.jpg', 'alt': 'Novos lançamentos'}
+    {'image': 'https://m.media-amazon.com/images/G/32/associates/PersonalizedNode/BAU/Personalized.png', 'alt': 'Ofertas especiais'},
+    {'image': 'https://m.media-amazon.com/images/G/32/associates/email/2024/Youtube_2.png', 'alt': 'Promoções de verão'},
+    {'image': 'https://m.media-amazon.com/images/G/32/associates/educational/GraphicsRevamp_2148x588/11169_AssociatesGraphicsRevamp_2148x588_03._CB557683160_.jpg', 'alt': 'Novos lançamentos'}
   ],
   current: 0,
   init() {
@@ -23,8 +23,21 @@ Ofertas Shopee 🛍️ | {{ super() }}
       this.current = (this.current + 1) % this.banners.length;
     }, 5000);
   }
-}" x-init="init">
-  <!-- Conteúdo do slider (já está completo e funcional) -->
+}" x-init="init" x-cloak>
+  <!-- Slides -->
+  <template x-for="(banner, index) in banners" :key="index">
+    <div x-show="current === index" x-transition.opacity.duration.500ms class="absolute inset-0">
+      <img :src="banner.image" :alt="banner.alt" class="w-full h-full object-cover">
+    </div>
+  </template>
+
+  <!-- Indicadores -->
+  <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+    <template x-for="(_, index) in banners" :key="index">
+      <button @click="current = index" class="w-3 h-3 rounded-full transition-colors"
+              :class="{'bg-white': current === index, 'bg-white/50': current !== index}"></button>
+    </template>
+  </div>
 </header>
 
 <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
