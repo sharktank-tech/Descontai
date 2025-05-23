@@ -10,32 +10,64 @@ Ofertas Shopee 🛍️ | {{ super() }}
 
 {% block content %}
 
-<!-- Hero Slider Mobile-Optimized -->
-<header class="w-full h-[40vh] sm:h-[50vh] max-h-[500px] relative overflow-hidden bg-orange-100" x-data="{
-  banners: [
-    {'image': 'https://m.media-amazon.com/images/G/32/associates/PersonalizedNode/BAU/Personalized.png', 'alt': 'Ofertas especiais'},
-    {'image': 'https://m.media-amazon.com/images/G/32/associates/email/2024/Youtube_2.png', 'alt': 'Promoções de verão'},
-    {'image': 'https://m.media-amazon.com/images/G/32/associates/educational/GraphicsRevamp_2148x588/11169_AssociatesGraphicsRevamp_2148x588_03._CB557683160_.jpg', 'alt': 'Novos lançamentos'}
-  ],
-  current: 0,
-  init() {
-    setInterval(() => {
-      this.current = (this.current + 1) % this.banners.length;
-    }, 5000);
-  }
-}" x-init="init" x-cloak>
-  <!-- Slides -->
+<!-- Hero Slider - Desktop/Tablet -->
+<header class="hidden sm:block w-full h-[35vh] md:h-[45vh] relative overflow-hidden bg-orange-100"
+  x-data="{
+    banners: [
+      {'image': '/static/img/banners/desktop/banner1.webp', 'alt': 'Ofertas especiais'},
+      {'image': '/static/img/banners/desktop/banner2.webp', 'alt': 'Promoções de verão'},
+      {'image': '/static/img/banners/desktop/banner3.webp', 'alt': 'Novos lançamentos'}
+    ],
+    current: 0,
+    init() {
+      setInterval(() => {
+        this.current = (this.current + 1) % this.banners.length;
+      }, 5000);
+    }
+  }"
+  x-init="init"
+  x-cloak
+>
   <template x-for="(banner, index) in banners" :key="index">
     <div x-show="current === index" x-transition.opacity.duration.500ms class="absolute inset-0">
       <img :src="banner.image" :alt="banner.alt" class="w-full h-full object-cover">
     </div>
   </template>
-
-  <!-- Indicadores -->
   <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
     <template x-for="(_, index) in banners" :key="index">
       <button @click="current = index" class="w-3 h-3 rounded-full transition-colors"
-              :class="{'bg-white': current === index, 'bg-white/50': current !== index}"></button>
+              :class="{'bg-orange-500': current === index, 'bg-black/60': current !== index}"></button>
+    </template>
+  </div>
+</header>
+
+<!-- Hero Slider - Mobile -->
+<header class="block sm:hidden w-full h-[25vh] relative overflow-hidden bg-orange-100"
+  x-data="{
+    mobileBanners: [
+      {'image': '/static/img/banners/mobile/banner-mobile.png', 'alt': 'Mobile Oferta 1'},
+      {'image': '/static/img/banners/mobile/banner-mobile2.png', 'alt': 'Mobile Promoção'},
+      {'image': '/static/img/banners/mobile/banner-mobile3.png', 'alt': 'Mobile Lançamento'}
+    ],
+    current: 0,
+    init() {
+      setInterval(() => {
+        this.current = (this.current + 1) % this.mobileBanners.length;
+      }, 5000);
+    }
+  }"
+  x-init="init"
+  x-cloak
+>
+  <template x-for="(banner, index) in mobileBanners" :key="index">
+    <div x-show="current === index" x-transition.opacity.duration.500ms class="absolute inset-0">
+      <img :src="banner.image" :alt="banner.alt" class="w-full h-full object-cover">
+    </div>
+  </template>
+  <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+    <template x-for="(_, index) in mobileBanners" :key="index">
+      <button @click="current = index" class="w-2.5 h-2.5 rounded-full transition-colors"
+              :class="{'bg-orange-500': current === index, 'bg-black/50': current !== index}"></button>
     </template>
   </div>
 </header>
@@ -43,7 +75,6 @@ Ofertas Shopee 🛍️ | {{ super() }}
 <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
   {% for grupo in produtos %}
   <section class="mb-10 sm:mb-16">
-    <!-- Cabeçalho da categoria -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-8">
       <div class="flex items-center mb-2 sm:mb-0">
         <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ grupo.categoria }}</h2>
@@ -59,7 +90,6 @@ Ofertas Shopee 🛍️ | {{ super() }}
       </a>
     </div>
 
-    <!-- Grid de produtos -->
     <div class="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 sm:grid-cols-3 lg:grid-cols-5">
       {% for produto in grupo.produtos %}
       <div class="group relative bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-xs hover:shadow-sm sm:shadow-sm sm:hover:shadow-md transition-all duration-300 overflow-hidden">
