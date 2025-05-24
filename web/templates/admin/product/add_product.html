@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Produto - DescontAí.com{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  <h1 class="text-3xl font-bold text-yellow-500 mb-6 text-center">
+    Adicionar <span class="text-gray-900 dark:text-white">Novo Produto</span>
+  </h1>
+
+  <form method="POST" action="{{ url_for('admin.add_product') }}" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-6">
+    <div>
+      <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Produto</label>
+      <input type="text" id="name" name="name" required
+             placeholder="Digite o nome do produto"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Preço</label>
+      <input type="number" step="0.01" id="price" name="price" required
+             placeholder="Digite o preço do produto"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">URL da Imagem</label>
+      <input type="text" id="image" name="image" required
+             placeholder="https://exemplo.com/imagem.jpg"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Categoria</label>
+      <input type="text" id="category" name="category"
+             placeholder="Ex: eletrônicos, roupas..."
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
+      <textarea id="description" name="description" rows="3"
+                placeholder="Descrição do produto..."
+                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"></textarea>
+    </div>
+
+    <div class="flex justify-between">
+      <a href="{{ url_for('admin.admin_products') }}" class="text-sm text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400">
+        ← Voltar
+      </a>
+      <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+        Adicionar Produto
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

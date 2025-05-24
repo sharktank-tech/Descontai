@@ -9,8 +9,8 @@ admin_blueprint = Blueprint('admin', __name__, template_folder='templates/admin'
 @login_required
 def admin_dashboard():
     users = Users.query.all()
-    products = Produto.query.all()
-    return render_template('admin/admin_dashboard.html', users=users, products=products)
+    produtos = Produto.query.all()
+    return render_template('admin/admin_dashboard.html', users=users, products=produtos)
 
 
 # =========== Gerenciamento de produto =============
@@ -59,6 +59,28 @@ def edit_product(id):
         return redirect(url_for('admin.admin_dashboard'))
 
     return render_template('admin/product/edit_product.html', product=product)
+
+
+# =========== Gerenciamento de ofertas =============
+@admin_blueprint.route('/admin/ofertas')
+@login_required
+def manage_offers():
+    # Implementar lógica para listar ofertas
+    return render_template('admin/product/ofertas.html')
+
+# =========== Gerenciamento de categorias =============
+@admin_blueprint.route('/admin/categorias')
+@login_required
+def manage_categories():
+    # Implementar lógica para listar categorias
+    return render_template('admin/product/categorias.html')
+
+# =========== Configurações =============
+@admin_blueprint.route('/admin/configuracoes')
+@login_required
+def admin_settings():
+    # Implementar lógica para configurações
+    return render_template('admin/product/config.html')
 
 # =================== Gerenciamento de usuario ==================
 

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações - DescontAí.com{% endblock %}
+
+{% block content %}
+<header class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+  <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 tracking-tight mb-2">
+    Configurações <span class="text-gray-900 dark:text-white">do Sistema</span>
+  </h1>
+  <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300">
+    Ajuste as preferências e configurações da plataforma.
+  </p>
+</header>
+
+<!-- Formulário de configurações -->
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+    <form method="POST" action="#">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Site</label>
+        <input type="text" value="DescontAí.com" required
+               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email de Contato</label>
+        <input type="email" value="contato@descontai.com" required
+               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Manutenção</label>
+        <div class="flex items-center">
+          <input type="checkbox" id="maintenance" class="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded">
+          <label for="maintenance" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Ativar modo manutenção</label>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button type="submit"
+                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+          Salvar Configurações
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

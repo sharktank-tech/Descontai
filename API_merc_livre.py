@@ -9,7 +9,7 @@ headers = {
     'Authorization': f"Bearer {tokens['access_token']}"
 }
 
-# Exemplo: Busca de produtos da categoria 'celulares' com ordenação por maior desconto
+# Exemplo: Busca de product da categoria 'celulares' com ordenação por maior desconto
 # Você pode trocar 'MLB1055' (categoria de celulares) por outras categorias
 url = 'https://api.mercadolibre.com/sites/MLB/search?category=MLB1055&sort=discount_percentage_desc&limit=10'
 
