@@ -12,45 +12,56 @@
   </p>
 </header>
 
-<!-- Botão para adicionar nova categoria -->
-<div class="max-w-4xl mx-auto text-right px-4 sm:px-6 lg:px-8 mb-6">
-  <a href="#"
-     class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
-    + Nova Categoria
-  </a>
-</div>
-
-<!-- Tabela de categorias -->
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-  <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-      <thead class="bg-gray-50 dark:bg-gray-700">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Categoria</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Produtos</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ações</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-        <!-- Exemplo de linha - substituir por loop real -->
-        <tr>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">1</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">Eletrônicos</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">42</td>
-          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <a href="#"
-               class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-4">Editar</a>
-            <form method="POST" action="#" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?');">
-              <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
-                Excluir
-              </button>
-            </form>
-          </td>
-        </tr>
-        <!-- Fim exemplo -->
-      </tbody>
-    </table>
+  <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+    <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+      <h2 class="text-lg font-medium">Lista de Categorias</h2>
+      <a href="{{ url_for('admin.add_category') }}"
+         class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+        + Nova Categoria
+      </a>
+    </div>
+
+    <div class="divide-y divide-gray-200 dark:divide-gray-700">
+      {% for categoria in categorias %}
+      <div class="p-6 flex justify-between items-center">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ categoria.nome }}</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ categoria.produtos|length }} produto(s) |
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+              {% if categoria.ativa %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+              {{ 'Ativa' if categoria.ativa else 'Inativa' }}
+            </span>
+          </p>
+          {% if categoria.descricao %}
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">{{ categoria.descricao }}</p>
+          {% endif %}
+        </div>
+        <div class="flex space-x-4">
+          <form method="POST" action="{{ url_for('admin.toggle_category', id=categoria.id) }}" style="display:inline;">
+            <button type="submit" class="text-{% if categoria.ativa %}red{% else %}green{% endif %}-600 hover:text-{% if categoria.ativa %}red{% else %}green{% endif %}-800 mr-4">
+              {{ 'Desativar' if categoria.ativa else 'Ativar' }}
+            </button>
+          </form>
+          <a href="{{ url_for('admin.edit_category', id=categoria.id) }}"
+             class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-4">
+            Editar
+          </a>
+          <form method="POST" action="{{ url_for('admin.delete_category', id=categoria.id) }}" style="display:inline;"
+                onsubmit="return confirm('Tem certeza que deseja excluir esta categoria? Os produtos serão movidos para a categoria padrão.');">
+            <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
+              Excluir
+            </button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <div class="p-6 text-center text-gray-500 dark:text-gray-400">
+        Nenhuma categoria encontrada.
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}

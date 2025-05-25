@@ -16,10 +16,16 @@ def home():
 
 
 @main_blueprint.route("/ofertas")
-def ofertas():
+@main_blueprint.route("/ofertas/<string:marketplace>")
+def ofertas(marketplace=None):
     try:
-        # Busca todos os produtos do banco
-        produtos = Produto.query.all()
+        # Filtra produtos por marketplace se especificado
+        query = Produto.query
+        if marketplace:
+            query = query.filter_by(origem=marketplace)
+
+        # Busca produtos do banco
+        produtos = query.all()
 
         # Se não houver produtos, retorna 404
         if not produtos:
@@ -34,21 +40,21 @@ def ofertas():
                 'image': produto.image,
                 'originalPrice': f"R$ {produto.originalprice:.2f}".replace('.', ','),
                 'salePrice': f"R$ {produto.saleprice:.2f}".replace('.', ','),
-                'discount': int(produto.discount),  # Converte para inteiro (ex: 15.0 → 15)
+                'discount': int(produto.discount),
                 'detailUrl': produto.detailurl,
-                # Campos opcionais com valores padrão
-                'rating': 4.5,  # Valor padrão caso não exista no modelo
-                'vendidos': '1k+',  # Valor padrão
-                'categoria': 'Ofertas'  # Categoria padrão ou modifique conforme necessário
+                'rating': produto.rating,
+                'vendidos': produto.vendidos,
+                'categoria': produto.categoria,
+                'origem': produto.origem  # Adicionado o campo origem
             })
 
-        # Agrupa por categoria (exemplo - ajuste conforme sua necessidade)
+        # Agrupa por categoria
         grupos = [{
-            'categoria': 'Ofertas em Destaque',  # Ou use categorias reais se existirem
+            'categoria': f"Ofertas {'em ' + marketplace.capitalize() if marketplace else 'em Destaque'}",
             'produtos': produtos_formatados
         }]
 
-        return render_template('main/post.html', produtos=grupos)
+        return render_template('main/post.html', produtos=grupos, marketplace_selecionado=marketplace)
 
     except Exception as e:
         print(f"Erro ao carregar ofertas: {str(e)}")
@@ -76,7 +82,7 @@ def login():
         # Autenticar usuário com Flask-Login
         login_user(user)
         flash("Login realizado com sucesso!", "success")
-        return redirect(url_for('main.home'))
+        return redirect(url_for('admin.admin_dashboard'))
 
     return render_template('conta/login.html')
 
