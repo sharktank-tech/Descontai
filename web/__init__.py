@@ -4,6 +4,7 @@ from config import Config
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
+import os
 from flask_login import LoginManager
 
 # = Instância global do banco =
@@ -12,7 +13,7 @@ login_manager = LoginManager()
 
 # ======== Função de criação do app =================
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static', template_folder='templates')
 
     # ============== Carregar configurações do config.py ========
     app.config.from_object(Config)

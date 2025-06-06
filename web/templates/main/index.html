@@ -8,7 +8,7 @@
     <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 tracking-tight mb-2">
       Descont<span class="text-gray-900 dark:text-white">Aí.com</span>
     </h1>
-    <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300">
+    <p class="text-base sm:text-lg text-white">
       Encontre ofertas e descontos em vários sites incríveis como Amazon, Shopee e outros com apenas alguns cliques 🇧🇷
     </p>
   </header>
@@ -22,12 +22,12 @@
         <div>
           <label for="departamento" class="block mb-1 text-white font-medium">Departamento</label>
           <select id="departamento" name="departamento" class="w-full rounded border px-3 py-2">
-            <option>Todos</option>
-            <option>Eletrônicos</option>
-            <option>Casa</option>
-            <option>Moda</option>
-            <option>Livros</option>
-            <option>Beleza</option>
+            <option value="Todos">Todos</option>
+            <option value="Eletrônicos">Eletrônicos</option>
+            <option value="Casa">Casa</option>
+            <option value="Moda">Moda</option>
+            <option value="Livros">Livros</option>
+            <option value="Beleza">Beleza</option>
           </select>
         </div>
 
@@ -39,21 +39,21 @@
         <div>
           <label for="desconto" class="block mb-1 text-white font-medium">Desconto</label>
           <select id="desconto" name="desconto" class="w-full rounded border px-3 py-2">
-            <option>10% ou mais</option>
-            <option>25% ou mais</option>
-            <option>50% ou mais</option>
-            <option>70% ou mais</option>
+            <option value="10% ou mais">10% ou mais</option>
+            <option value="25% ou mais">25% ou mais</option>
+            <option value="50% ou mais">50% ou mais</option>
+            <option value="70% ou mais">70% ou mais</option>
           </select>
         </div>
 
         <div>
           <label for="preco" class="block mb-1 text-white font-medium">Faixa de Preço</label>
           <select id="preco" name="preco" class="w-full rounded border px-3 py-2">
-            <option>Qualquer</option>
-            <option>Abaixo de R$50</option>
-            <option>Abaixo de R$100</option>
-            <option>Abaixo de R$200</option>
-            <option>Acima de R$200</option>
+            <option value="Qualquer">Qualquer</option>
+            <option value="Abaixo de R$50">Abaixo de R$50</option>
+            <option value="Abaixo de R$100">Abaixo de R$100</option>
+            <option value="Abaixo de R$200">Abaixo de R$200</option>
+            <option value="Acima de R$200">Acima de R$200</option>
           </select>
         </div>
       </div>
@@ -95,4 +95,9 @@
       </details>
     </div>
   </section>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
 {% endblock %}

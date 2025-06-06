@@ -23,7 +23,7 @@ Acesse: [www.descontai.com](https://bot-precos.vercel.app/)
 - **Banco de Dados**: PostgreSQL
 - **Framework Front-end**: Tailwind
 - **Hospedagem**: Vercel
-- **Seriço de e-mail**: Python-smtplib
+- **Serviço de e-mail**: Python-smtplib
 - **Gerenciamento de Dependências:** Pip
 
 ### Pré-requisitos
