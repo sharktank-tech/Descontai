@@ -1,14 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %} Ofertas Shopee 🏩️ | {{ super() }} {% endblock %}
+{% block title %}
+Ofertas Shopee 🏩️ | {{ super() }}
+{% endblock %}
 
-{% block meta %} <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> {% endblock %}
+{% block meta %}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+{% endblock %}
 
 {% block content %}
 
-<!-- Banner introdutório mobile --><section class="w-full sm:hidden px-3 pt-4">
+<!-- Banner introdutório mobile -->
+<section class="w-full sm:hidden px-3 pt-4">
   <h1 class="text-lg font-semibold text-gray-800 dark:text-white">Ofertas exclusivas no seu bolso! 💼</h1>
-</section><!-- Hero Slider - Desktop/Tablet --><header class="hidden sm:block w-full h-[35vh] md:h-[45vh] relative overflow-hidden bg-orange-100"
+</section>
+
+<!-- Hero Slider - Desktop/Tablet -->
+<header class="hidden sm:block w-full h-[35vh] md:h-[45vh] relative overflow-hidden bg-orange-100"
   x-data="{
     banners: [
       {'image': '/static/img/banners/desktop/banner1.webp', 'alt': 'Ofertas especiais'},
@@ -35,7 +43,10 @@
               :class="{'bg-orange-500': current === index, 'bg-black/60': current !== index}"></button>
     </template>
   </div>
-</header><!-- Hero Slider - Mobile --><header class="block sm:hidden w-full h-[20vh] relative overflow-hidden bg-orange-100"
+</header>
+
+<!-- Hero Slider - Mobile -->
+<header class="block sm:hidden w-full h-[20vh] relative overflow-hidden bg-orange-100"
   x-data="{
     mobileBanners: [
       {'image': '/static/img/banners/mobile/banner-mobile.png', 'alt': 'Mobile Oferta 1'},
@@ -62,13 +73,21 @@
               :class="{'bg-orange-500': current === index, 'bg-black/50': current !== index}"></button>
     </template>
   </div>
-</header><!-- Seção de Marketplaces --><section class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+</header>
+
+<!-- Seção de Marketplaces -->
+<section class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-    {% comment %} Marketplace blocks permanecem iguais {% endcomment %}
-    {# Coloque aqui os blocos de Amazon, Aliexpress, etc. conforme seu código #}
+    {# Marketplace blocks permanecem iguais: Amazon, AliExpress, Mercado Livre, Shopee #}
+    {% include "marketplaces.html" %}
   </div>
-</section><!-- Carrossel de Ofertas Especiais --><section class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-  <h2 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Ofertas em Destaque 🔥</h2>  <div class="relative overflow-x-auto"
+</section>
+
+<!-- Carrossel de Ofertas Especiais -->
+<section class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <h2 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Ofertas em Destaque 🔥</h2>
+
+  <div class="relative overflow-x-auto"
        x-data="{
          currentSlide: 0,
          slides: [...], // mantenha seus dados
@@ -103,10 +122,16 @@
          };
          updateSlides();
          window.addEventListener('resize', updateSlides);
-       }"><!-- Slides Container e botões permanecem como no seu original com grid responsivo -->
+       }">
+
+    {# Slides container e controles ficam como no código original #}
+    {% include "carrossel.html" %}
 
   </div>
-</section><!-- Produtos por categoria --><main class="max-w-screen-xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
+</section>
+
+<!-- Produtos por categoria -->
+<main class="max-w-screen-xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
   {% for grupo in produtos %}
   <section class="mb-10 sm:mb-16">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-8">
@@ -116,15 +141,19 @@
           {{ grupo.produtos|length }} itens
         </span>
       </div>
-    </div><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
-  {% for produto in grupo.produtos %}
-  {# produto card permanece igual #}
-  {% endfor %}
-</div>
-
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+      {% for produto in grupo.produtos %}
+      {# cartão do produto permanece igual #}
+      {% include "card_produto.html" %}
+      {% endfor %}
+    </div>
   </section>
   {% endfor %}
-</main><!-- Newsletter --><section class="bg-gray-50 dark:bg-gray-800 py-8 sm:py-12">
+</main>
+
+<!-- Newsletter -->
+<section class="bg-gray-50 dark:bg-gray-800 py-8 sm:py-12">
   <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center">
       <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Ofertas no seu e-mail</h2>
@@ -142,5 +171,6 @@
       </button>
     </form>
   </div>
-</section>{% endblock %}
+</section>
 
+{% endblock %}
