@@ -1,4 +1,5 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort
+feom web.modules.is_admin import admin_required
 from web.modules.enviar_email import enviar_email
 from web.modules.models import Produto, Users, db
 from sqlalchemy.exc import IntegrityError
@@ -17,6 +18,7 @@ def home():
 
 @main_blueprint.route("/ofertas")
 @main_blueprint.route("/ofertas/<string:marketplace>")
+@admin_required
 def ofertas(marketplace=None):
     try:
         # Filtra produtos por marketplace se especificado
