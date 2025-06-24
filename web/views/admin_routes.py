@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from web.modules.models import db, Users, Produto, Categoria
+from web.modules import is_admin
 from flask_login import login_required
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates/admin')
