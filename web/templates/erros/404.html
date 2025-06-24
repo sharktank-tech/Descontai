@@ -7,12 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="{{ url_for('static', filename='img/cupom.png') }}" type="image/png">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white flex items-center justify-center min-h-screen px-4">
+<body class="bg-gray-100 dark:bg-gray-900 flex flex-col min-h-screen justify-center items-center text-center">
 
-  <div class="text-center">
-    <h1 class="text-6xl font-bold text-yellow-400 mb-4">404</h1>
+  <div class="max-w-md bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-6xl font-bold text-yellow-500 mb-4">404</h1>
+    <div class="text-[8rem] sm:text-[10rem] font-extrabold text-yellow-400 leading-none">404</div>
     <p class="text-2xl font-semibold mb-2">Ops! Página não encontrada</p>
-    <p class="text-lg text-gray-500 dark:text-gray-400 mb-6">A página que você está procurando pode ter sido removida ou nunca existiu.</p>
+    <p class="text-lg text-gray-600 dark:text-gray-600 mb-6">A página que você está procurando pode ter sido removida ou nunca existiu.</p>
     <a href="/" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-6 rounded shadow">
       Voltar para a Página Inicial
     </a>
