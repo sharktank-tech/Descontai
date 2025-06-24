@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from web.modules.models import db, Users, Produto, Categoria
-from web.modules import is_admin
+from web.modules.is_admin import admin_required 
 from flask_login import login_required
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates/admin')
@@ -9,6 +9,7 @@ admin_blueprint = Blueprint('admin', __name__, template_folder='templates/admin'
 # =========== Rota principal do painel de administração =================
 @admin_blueprint.route('/admin_dashboard')
 @login_required
+@admin_required
 def admin_dashboard():
     users = Users.query.all()
     produtos = Produto.query.all()
@@ -22,6 +23,7 @@ def admin_dashboard():
 # =========== Gerenciamento de produto =============
 @admin_blueprint.route('/admin/products/add', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_product():
     categorias = Categoria.query.filter_by(ativa=True).all()
 
@@ -58,6 +60,7 @@ def add_product():
 
 @admin_blueprint.route('/admin/products/delete/<int:id>', methods=['POST'])
 @login_required
+@admin_required
 def delete_product(id):
     product = Produto.query.get_or_404(id)
     db.session.delete(product)
@@ -68,6 +71,7 @@ def delete_product(id):
 
 @admin_blueprint.route('/admin/products/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_product(id):
     product = Produto.query.get_or_404(id)
     categorias = Categoria.query.filter_by(ativa=True).all()
@@ -95,6 +99,7 @@ def edit_product(id):
 # =========== Gerenciamento de Categorias =============
 @admin_blueprint.route('/admin/categorias')
 @login_required
+@admin_required
 def manage_categories():
     categorias = Categoria.query.order_by(Categoria.nome).all()
     return render_template('admin/product/categorias.html', categorias=categorias)
@@ -102,6 +107,7 @@ def manage_categories():
 
 @admin_blueprint.route('/admin/categorias/add', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_category():
     if request.method == 'POST':
         nome = request.form['nome'].strip()
@@ -125,6 +131,7 @@ def add_category():
 
 @admin_blueprint.route('/admin/categorias/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_category(id):
     categoria = Categoria.query.get_or_404(id)
 
@@ -146,6 +153,7 @@ def edit_category(id):
 
 @admin_blueprint.route('/admin/categorias/delete/<int:id>', methods=['POST'])
 @login_required
+@admin_required
 def delete_category(id):
     categoria = Categoria.query.get_or_404(id)
     categoria_padrao = Categoria.query.filter_by(nome='Ofertas').first()
@@ -166,6 +174,7 @@ def delete_category(id):
 
 @admin_blueprint.route('/admin/categorias/toggle/<int:id>', methods=['POST'])
 @login_required
+@admin_required
 def toggle_category(id):
     categoria = Categoria.query.get_or_404(id)
     categoria.ativa = not categoria.ativa
@@ -179,6 +188,7 @@ def toggle_category(id):
 # =========== Configurações =============
 @admin_blueprint.route('/admin/configuracoes')
 @login_required
+@admin_required
 def admin_settings():
     return render_template('admin/product/config.html')
 
@@ -186,6 +196,7 @@ def admin_settings():
 # =================== Gerenciamento de usuario ==================
 @admin_blueprint.route('/admin_user')
 @login_required
+@admin_required
 def admin_user():
     users = Users.query.all()
     return render_template('admin/admin_user.html', users=users)
@@ -193,6 +204,7 @@ def admin_user():
 
 @admin_blueprint.route('/admin/users/add', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_user():
     if request.method == 'POST':
         username = request.form['username']
@@ -213,6 +225,7 @@ def add_user():
 
 @admin_blueprint.route('/admin/users/delete/<int:id>', methods=['POST'])
 @login_required
+@admin_required
 def delete_user(id):
     user = Users.query.get_or_404(id)
     db.session.delete(user)
@@ -223,6 +236,7 @@ def delete_user(id):
 
 @admin_blueprint.route('/admin/users/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_user(id):
     user = Users.query.get_or_404(id)
 
