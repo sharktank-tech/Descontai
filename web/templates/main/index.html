@@ -59,12 +59,14 @@
       </div>
 
       <div class="text-center pt-2">
-        <button id="searchButton" type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded transition-colors relative">
+        <button id="searchButton" type="button" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded transition-colors duration-300 relative overflow-hidden min-w-[150px]">
           <span id="buttonText">Buscar Ofertas</span>
-          <svg id="spinner" class="w-6 h-6 text-white absolute hidden animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 018-8 8 8 0 018 8" stroke="currentColor" stroke-width="4"></path>
-          </svg>
+          <span id="loadingSpinner" class="absolute inset-0 flex items-center justify-center hidden">
+            <svg class="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </span>
         </button>
       </div>
     </form>
@@ -99,5 +101,71 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchButton = document.getElementById('searchButton');
+  const buttonText = document.getElementById('buttonText');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const searchForm = document.getElementById('searchForm');
+
+  searchButton.addEventListener('click', function() {
+    // Mostrar animação de carregamento
+    buttonText.style.opacity = '0';
+    loadingSpinner.classList.remove('hidden');
+    searchButton.disabled = true;
+    searchButton.classList.remove('hover:bg-yellow-600');
+    searchButton.classList.add('bg-yellow-600');
+
+    // Obter valores do formulário
+    const departamento = document.getElementById('departamento').value;
+    const palavrasChave = document.getElementById('palavras_chave').value.trim();
+    const desconto = document.getElementById('desconto').value;
+    const preco = document.getElementById('preco').value;
+
+    // Construir URL da Amazon
+    const baseUrl = "https://www.amazon.com.br/s?k=";
+    const searchTerm = encodeURIComponent(palavrasChave || "ofertas");
+    const tagAfiliado = "&tag=descontai-20"; // SUBSTITUA pelo seu código de afiliado
+
+    // Filtros
+    let filtros = "";
+
+    // Filtro por preço
+    switch(preco) {
+      case "Abaixo de R$50":
+        filtros += "&rh=p_36%3A0-5000";
+        break;
+      case "Abaixo de R$100":
+        filtros += "&rh=p_36%3A5000-10000";
+        break;
+      case "Abaixo de R$200":
+        filtros += "&rh=p_36%3A10000-20000";
+        break;
+      case "Acima de R$200":
+        filtros += "&rh=p_36%3A20000-";
+        break;
+    }
+
+    // Filtro por departamento
+    if(departamento && departamento !== "Todos") {
+      const departamentosMap = {
+        "Eletrônicos": "electronics",
+        "Casa": "kitchen",
+        "Moda": "fashion",
+        "Livros": "books",
+        "Beleza": "beauty"
+      };
+      filtros += `&i=${departamentosMap[departamento] || departamento.toLowerCase()}`;
+    }
+
+    const amazonUrl = `${baseUrl}${searchTerm}${filtros}${tagAfiliado}`;
+    console.log("Redirecionando para:", amazonUrl);
+
+    // Redirecionar após 1 segundo (para ver a animação)
+    setTimeout(() => {
+      window.location.href = amazonUrl;
+    }, 500);
+  });
+});
+</script>
 {% endblock %}

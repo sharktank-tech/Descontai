@@ -1,56 +1,77 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
   const form = document.getElementById("searchForm");
   const button = document.getElementById("searchButton");
   const spinner = document.getElementById("spinner");
   const buttonText = document.getElementById("buttonText");
 
-  form.addEventListener("submit", function (e) {
+  if (!form || !button) {
+    console.error("Elementos essenciais não encontrados!");
+    return;
+  }
+
+  form.addEventListener("submit", function(e) {
     e.preventDefault();
 
-    // Mostra o spinner e oculta o texto do botão
-    spinner.classList.remove("hidden");
-    buttonText.classList.add("hidden");
+    // Ativar estado de loading
+    if (spinner) spinner.classList.remove("hidden");
+    if (buttonText) buttonText.classList.add("hidden");
+    button.disabled = true;
 
-    // Obtém os valores
-    const departamento = document.getElementById("departamento").value;
-    const palavrasChave = document.getElementById("palavras_chave").value.trim();
-    const desconto = document.getElementById("desconto").value;
-    const preco = document.getElementById("preco").value;
+    // Obter valores do formulário
+    const formData = {
+      departamento: document.getElementById("departamento").value,
+      palavrasChave: document.getElementById("palavras_chave").value.trim() || "ofertas",
+      desconto: document.getElementById("desconto").value,
+      preco: document.getElementById("preco").value
+    };
 
-    // Codifica a URL de busca da Amazon
-    let searchTerm = encodeURIComponent(palavrasChave || "descontos");
+    console.log("Parâmetros da busca:", formData);
 
-    // Base da URL
-    const baseUrl = "https://www.amazon.com.br/s?k=";
-    const tagAfiliado = "&tag=descont_ai-20"; // Substitua se necessário
-    let filtros = "";
+    // Construir URL da Amazon
+    const amazonUrl = buildAmazonUrl(formData);
+    console.log("URL gerada:", amazonUrl);
 
-    // Filtro de preço (usando p_36 em centavos)
-    switch (preco) {
-      case "Abaixo de R$50":
-        filtros += "&rh=p_36%3A0-5000";
-        break;
-      case "R$50 a R$100":
-        filtros += "&rh=p_36%3A5000-10000";
-        break;
-      case "R$100 a R$200":
-        filtros += "&rh=p_36%3A10000-20000";
-        break;
-      case "Acima de R$200":
-        filtros += "&rh=p_36%3A20000-";
-        break;
-    }
-
-    // Filtro de departamento (opcional)
-    if (departamento && departamento !== "todos") {
-      filtros += `&i=${encodeURIComponent(departamento)}`;
-    }
-
-    // Monta a URL final
-    const finalUrl = `${baseUrl}${searchTerm}${filtros}${tagAfiliado}`;
-
-    // Redireciona
-    console.log("Redirecionando para:", finalUrl);  // Para depuração
-    window.location.href = finalUrl;
+    // Redirecionar após pequeno delay (para visualizar o loading)
+    setTimeout(() => {
+      window.location.assign(amazonUrl); // Método mais confiável que href
+    }, 800);
   });
+
+  function buildAmazonUrl(params) {
+    const baseUrl = "https://www.amazon.com.br/s?k=";
+    const searchTerm = encodeURIComponent(params.palavrasChave);
+    const tagAfiliado = "&tag=descontai-20"; // SUBSTITUA pelo seu código
+
+    // Mapeamento de departamentos
+    const departamentosMap = {
+      "Eletrônicos": "electronics",
+      "Casa": "kitchen",
+      "Moda": "fashion",
+      "Livros": "books",
+      "Beleza": "beauty"
+    };
+
+    // Filtro de preço (em centavos)
+    const faixasPreco = {
+      "Abaixo de R$50": "0-5000",
+      "R$50 a R$100": "5000-10000",
+      "R$100 a R$200": "10000-20000",
+      "Acima de R$200": "20000-"
+    };
+
+    // Construir parâmetros
+    let filters = "";
+
+    // Filtro por departamento
+    if (params.departamento && params.departamento !== "Todos") {
+      filters += `&i=${departamentosMap[params.departamento] || params.departamento.toLowerCase()}`;
+    }
+
+    // Filtro por preço
+    if (params.preco && faixasPreco[params.preco]) {
+      filters += `&rh=p_36%3A${faixasPreco[params.preco]}`;
+    }
+
+    return `${baseUrl}${searchTerm}${filters}${tagAfiliado}`;
+  }
 });
