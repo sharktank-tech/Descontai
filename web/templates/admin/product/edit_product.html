@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Produto - DescontAí.com{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  <h1 class="text-3xl font-bold text-yellow-500 mb-6 text-center">
+    Editar <span class="text-gray-900 dark:text-white">Produto</span>
+  </h1>
+
+  <form method="POST" action="{{ url_for('admin.edit_product', id=product.id) }}" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-6">
+    <div>
+      <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Produto</label>
+      <input type="text" id="name" name="name" required
+             value="{{ product.name }}"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">URL da Imagem</label>
+      <input type="url" id="image" name="image" required
+             value="{{ product.image }}"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="originalprice" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Preço Original</label>
+        <input type="number" step="0.01" id="originalprice" name="originalprice" required
+               value="{{ product.originalprice }}"
+               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+      </div>
+      <div>
+        <label for="saleprice" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Preço com Desconto</label>
+        <input type="number" step="0.01" id="saleprice" name="saleprice" required
+               value="{{ product.saleprice }}"
+               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+      </div>
+    </div>
+
+    <div>
+      <label for="discount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Desconto (%)</label>
+      <input type="number" step="0.01" id="discount" name="discount" required
+             value="{{ product.discount }}"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="detailurl" class="block text-sm font-medium text-gray-700 dark:text-gray-300">URL do Produto</label>
+      <input type="url" id="detailurl" name="detailurl" required
+             value="{{ product.detailurl }}"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="origem" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Origem</label>
+      <input type="text" id="origem" name="origem" required
+             value="{{ product.origem }}"
+             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+    </div>
+
+    <div>
+      <label for="categoria_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Categoria</label>
+      <select id="categoria_id" name="categoria_id" required
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        {% for categoria in categorias %}
+          <option value="{{ categoria.id }}" {% if product.categoria_id == categoria.id %}selected{% endif %}>{{ categoria.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="flex justify-between">
+      <a href="{{ url_for('admin.admin_products') }}" class="text-sm text-gray-600 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400">
+        ← Voltar
+      </a>
+      <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+        Salvar Alterações
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

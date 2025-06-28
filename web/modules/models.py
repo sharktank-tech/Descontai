@@ -52,7 +52,7 @@ class Produto(db.Model):
     # Campos adicionais
     rating = db.Column(db.Float, default=4.5)
     vendidos = db.Column(db.String(20), default='1k+')
-    origem = db.Column(db.String(50), nullable=False)  # Nova coluna para site de origem
+    origem = db.Column(db.String(50), nullable=False)
 
     # Relacionamento com categoria
     categoria_id = db.Column(db.Integer, db.ForeignKey('categorias.id'))

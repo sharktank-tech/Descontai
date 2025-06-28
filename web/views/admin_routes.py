@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from web.modules.models import db, Users, Produto, Categoria
 from web.modules.is_admin import admin_required 
 from flask_login import login_required
+from sqlalchemy import or_, func
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates/admin')
 
@@ -19,8 +20,37 @@ def admin_dashboard():
                            products=produtos,
                            categories=categorias)
 
+# =========== Gerenciamento de produtos =============
+@admin_blueprint.route('/admin_products')
+@login_required
+@admin_required
+def admin_products():
+    search_query = request.args.get('q', '').strip()
+    products = []
 
-# =========== Gerenciamento de produto =============
+    if search_query:
+        keywords = search_query.split()
+        filters = []
+
+        for keyword in keywords:
+            pattern = f"%{keyword}%"
+            filters.append(func.unaccent(func.lower(Produto.name)).ilike(func.unaccent(pattern.lower())))
+            filters.append(func.unaccent(func.lower(Produto.origem)).ilike(func.unaccent(pattern.lower())))
+            filters.append(func.unaccent(func.lower(Categoria.nome)).ilike(func.unaccent(pattern.lower())))
+
+        products = (
+            Produto.query
+            .join(Categoria, Produto.categoria_rel)
+            .filter(or_(*filters))
+            .order_by(Produto.name)
+            .all()
+        )
+    else:
+        products = Produto.query.order_by(Produto.name).all()
+
+    return render_template('admin/product/admin_product.html', products=products)
+
+# =========== Adicionar novo produto ===============
 @admin_blueprint.route('/admin/products/add', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -53,7 +83,7 @@ def add_product():
         db.session.add(new_product)
         db.session.commit()
         flash('Produto adicionado com sucesso!', 'success')
-        return redirect(url_for('admin.admin_dashboard'))
+        return redirect(url_for('admin.admin_products'))
 
     return render_template('admin/product/add_product.html', categories=categorias)
 
@@ -193,13 +223,13 @@ def admin_settings():
     return render_template('admin/product/config.html')
 
 
-# =================== Gerenciamento de usuario ==================
+# =================== Gerenciamento de usuários ==================
 @admin_blueprint.route('/admin_user')
 @login_required
 @admin_required
 def admin_user():
     users = Users.query.all()
-    return render_template('admin/admin_user.html', users=users)
+    return render_template('admin/user/admin_user.html', users=users)
 
 
 @admin_blueprint.route('/admin/users/add', methods=['GET', 'POST'])
@@ -218,7 +248,7 @@ def add_user():
         db.session.add(new_user)
         db.session.commit()
         flash('Usuário adicionado com sucesso!', 'success')
-        return redirect(url_for('admin.admin_dashboard'))
+        return redirect(url_for('admin.admin_user'))
 
     return render_template('admin/user/add_user.html')
 
