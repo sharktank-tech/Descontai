@@ -11,7 +11,7 @@
     href="{{ url_for('static', filename='img/cupom.png') }}"
     type="image/png"
   />
-  <!-- Adicionando estilos para o spinner -->
+  <!-- Estilo para o spinner -->
   <style>
     .spinner {
       animation: spin 1s linear infinite;
@@ -94,14 +94,86 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
-  {% block scripts %}{% endblock %}
-  <script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
+  <!-- Scripts customizáveis -->
+  {% block scripts %}
 
   <script>
-    // Garantir que o DOM está completamente carregado
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("searchForm");
+      const button = document.getElementById("searchButton");
+      const spinner = document.getElementById("spinner");
+      const buttonText = document.getElementById("buttonText");
+
+      if (!form || !button) {
+        console.error("Elementos essenciais não encontrados!");
+        return;
+      }
+
+      form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        if (spinner) spinner.classList.remove("hidden");
+        if (buttonText) buttonText.classList.add("hidden");
+        button.disabled = true;
+
+        const formData = {
+          departamento: document.getElementById("departamento").value,
+          palavrasChave: document.getElementById("palavras_chave").value.trim() || "ofertas",
+          desconto: document.getElementById("desconto").value,
+          preco: document.getElementById("preco").value
+        };
+
+        console.log("Parâmetros da busca:", formData);
+
+        const amazonUrl = buildAmazonUrl(formData);
+        console.log("URL gerada:", amazonUrl);
+
+        setTimeout(() => {
+          window.location.assign(amazonUrl);
+        }, 800);
+      });
+
+      function buildAmazonUrl(params) {
+        const baseUrl = "https://www.amazon.com.br/s?k=";
+        const searchTerm = encodeURIComponent(params.palavrasChave);
+        const tagAfiliado = "&tag=descontai-20";
+
+        const departamentosMap = {
+          "Eletrônicos": "electronics",
+          "Casa": "kitchen",
+          "Moda": "fashion",
+          "Livros": "books",
+          "Beleza": "beauty"
+        };
+
+        const faixasPreco = {
+          "Abaixo de R$50": "0-5000",
+          "R$50 a R$100": "5000-10000",
+          "R$100 a R$200": "10000-20000",
+          "Acima de R$200": "20000-"
+        };
+
+        let filters = "";
+
+        if (params.departamento && params.departamento !== "Todos") {
+        filters += `&i=${departamentosMap[params.departamento] || params.departamento.toLowerCase()}`;
+        }
+
+        if (params.preco && faixasPreco[params.preco]) {
+          filters += `&rh=p_36%3A${faixasPreco[params.preco]}`;
+        }
+
+        return `${baseUrl}${searchTerm}${filters}${tagAfiliado}`;
+      }
+    });
+  </script>
+
+  {% endblock %}
+
+  <!-- Script principal carregado após o DOM -->
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Fade out para mensagens flash
+      // Mensagens flash com fade
       const flashMessages = document.getElementById("flash-messages");
       if (flashMessages) {
         setTimeout(() => {
@@ -111,22 +183,12 @@
         }, 5000);
       }
 
-      // Fallback para elementos não encontrados
-      if (!document.getElementById('spinner')) {
-        console.warn('Elemento spinner não encontrado - criando fallback');
-        const searchButton = document.getElementById('searchButton');
-        if (searchButton) {
-          searchButton.insertAdjacentHTML('beforeend', `
-            <span id="spinner" class="hidden ml-2">
-              <svg class="w-5 h-5 text-white spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            </span>
-          `);
-        }
-      }
+      // Carrega search.js após o DOM estar pronto
+      const script = document.createElement("script");
+      script.src = "{{ url_for('static', filename='scripts/search.js') }}";
+      document.body.appendChild(script);
     });
   </script>
+
 </body>
 </html>
