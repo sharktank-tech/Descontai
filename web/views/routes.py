@@ -145,6 +145,10 @@ def sobre():
 def privacidade():
     return render_template("institucional/privacidade.html")
 
+# Página dos termos de uso
+@main_blueprint.route("/termos")
+def termos():
+    return render_template("institucional/termos.html")
 
 # Enviar email de contato
 @main_blueprint.route('/contato', methods=['GET', 'POST'])
