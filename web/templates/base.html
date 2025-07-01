@@ -7,12 +7,8 @@
   <meta name="description" content="Descubra descontos imperdíveis e ofertas em produtos da Amazon Brasil com o DescontAí. Filtre por categoria, preço e mais!" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="icon"
-    href="{{ url_for('static', filename='img/cupom.png') }}"
-    type="image/png"
-  />
-  <!-- Estilo para o spinner -->
+  <link rel="icon" href="{{ url_for('static', filename='img/cupom.png') }}" type="image/png" />
+
   <style>
     .spinner {
       animation: spin 1s linear infinite;
@@ -30,7 +26,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="p-4 rounded shadow text-sm font-medium
+          <div class="flash-message p-4 rounded shadow text-sm font-medium
             {% if category == 'success' %} bg-green-100 text-green-800 {% endif %}
             {% if category == 'warning' %} bg-yellow-100 text-yellow-800 {% endif %}
             {% if category == 'danger'  %} bg-red-100 text-red-800 {% endif %}">
@@ -59,8 +55,6 @@
   <!-- Footer -->
   <footer class="bg-gray-900 text-gray-400 py-10 px-4">
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-
-      <!-- Links úteis -->
       <div>
         <h3 class="text-lg font-semibold text-yellow-400 mb-4">Links úteis</h3>
         <ul class="space-y-2 text-sm">
@@ -71,21 +65,17 @@
         </ul>
       </div>
 
-      <!-- Direitos autorais -->
       <div class="text-sm leading-relaxed">
         <p class="text-yellow-400 font-semibold text-base mb-2">DescontAí.com</p>
         <p>&copy; 2025 – Todos os direitos reservados.</p>
         <p class="text-xs mt-2 italic">Como um Associado da Amazon, ganho com compras qualificadas.</p>
       </div>
 
-      <!-- Créditos -->
       <div class="text-sm">
         <h4 class="text-yellow-400 font-semibold mb-2">Créditos</h4>
         <p>
           Ícones por
-          <a href="https://www.flaticon.com/authors/pixel-perfect"
-             class="underline hover:text-yellow-300"
-             target="_blank">Pixel perfect - Flaticon</a>
+          <a href="https://www.flaticon.com/authors/pixel-perfect" class="underline hover:text-yellow-300" target="_blank">Pixel perfect - Flaticon</a>
         </p>
       </div>
     </div>
@@ -95,9 +85,8 @@
     </div>
   </footer>
 
-  <!-- Scripts customizáveis -->
+  <!-- Scripts personalizados -->
   {% block scripts %}
-
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const form = document.getElementById("searchForm");
@@ -125,7 +114,6 @@
         };
 
         console.log("Parâmetros da busca:", formData);
-
         const amazonUrl = buildAmazonUrl(formData);
         console.log("URL gerada:", amazonUrl);
 
@@ -157,7 +145,7 @@
         let filters = "";
 
         if (params.departamento && params.departamento !== "Todos") {
-        filters += `&i=${departamentosMap[params.departamento] || params.departamento.toLowerCase()}`;
+          filters += `&i=${departamentosMap[params.departamento] || params.departamento.toLowerCase()}`;
         }
 
         if (params.preco && faixasPreco[params.preco]) {
@@ -168,13 +156,10 @@
       }
     });
   </script>
-
   {% endblock %}
 
-  <!-- Script principal carregado após o DOM -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Mensagens flash com fade
       const flashMessages = document.getElementById("flash-messages");
       if (flashMessages) {
         setTimeout(() => {
@@ -184,12 +169,10 @@
         }, 5000);
       }
 
-      // Carrega search.js após o DOM estar pronto
       const script = document.createElement("script");
       script.src = "{{ url_for('static', filename='scripts/search.js') }}";
       document.body.appendChild(script);
     });
   </script>
-
 </body>
 </html>

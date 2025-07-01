@@ -27,7 +27,7 @@
       // Remove mensagens flash após 5 segundos
       setTimeout(() => {
         document.querySelectorAll('.flash-message').forEach(el => {
-          el.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+          el.classList.add('opacity-0', 'transition-opacity', 'duration-200');
           setTimeout(() => el.remove(), 500);
         });
       }, 5000);

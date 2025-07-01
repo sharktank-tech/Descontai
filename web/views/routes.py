@@ -18,7 +18,7 @@ def home():
 
 @main_blueprint.route("/ofertas")
 @main_blueprint.route("/ofertas/<string:marketplace>")
-@admin_required
+@login_required
 def ofertas(marketplace=None):
     try:
         # Filtra produtos por marketplace se especificado
@@ -56,7 +56,7 @@ def ofertas(marketplace=None):
             'produtos': produtos_formatados
         }]
 
-        return render_template('main/post.html', produtos=grupos, marketplace_selecionado=marketplace)
+        return render_template('main/ofertas.html', produtos=grupos, marketplace_selecionado=marketplace)
 
     except Exception as e:
         print(f"Erro ao carregar ofertas: {str(e)}")
@@ -84,7 +84,7 @@ def login():
         # Autenticar usuário com Flask-Login
         login_user(user)
         flash("Login realizado com sucesso!", "success")
-        return redirect(url_for('admin.admin_dashboard'))
+        return redirect(url_for('main.ofertas'))
 
     return render_template('conta/login.html')
 
