@@ -19,6 +19,7 @@ def home():
 @main_blueprint.route("/ofertas")
 @main_blueprint.route("/ofertas/<string:marketplace>")
 @login_required
+@admin_required
 def ofertas(marketplace=None):
     try:
         # Filtra produtos por marketplace se especificado
