@@ -10,13 +10,13 @@ Ofertas Shopee 🛍️ | {{ super() }}
 
 {% block content %}
 
-<!-- Hero Slider - Desktop/Tablet -->
-<header class="hidden sm:block w-full h-[30vh] md:h-[40vh] lg:h-[50vh] relative overflow-hidden bg-orange-100"
+<!-- Hero Slider - Responsive -->
+<header class="w-full h-[25vh] sm:h-[30vh] md:h-[40vh] lg:h-[50vh] relative overflow-hidden bg-orange-100"
   x-data="{
     banners: [
+      {'image': '/static/img/banners/mobile/banner-mobile.png', 'alt': 'Mobile Oferta 1'},
       {'image': '/static/img/banners/desktop/banner1.webp', 'alt': 'Ofertas especiais'},
-      {'image': '/static/img/banners/desktop/banner2.webp', 'alt': 'Promoções de verão'},
-      {'image': '/static/img/banners/desktop/banner3.webp', 'alt': 'Novos lançamentos'}
+      {'image': '/static/img/banners/desktop/banner2.webp', 'alt': 'Promoções de verão'}
     ],
     current: 0,
     interval: null,
@@ -42,254 +42,155 @@ Ofertas Shopee 🛍️ | {{ super() }}
       <img :src="banner.image" :alt="banner.alt" class="w-full h-full object-cover">
     </div>
   </template>
-  <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+  <div class="absolute bottom-3 sm:bottom-4 left-0 right-0 flex justify-center gap-2">
     <template x-for="(_, index) in banners" :key="index">
-      <button @click="current = index" class="w-3 h-3 rounded-full transition-colors"
+      <button @click="current = index" class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-colors"
               :class="{'bg-orange-500': current === index, 'bg-black/60': current !== index}"></button>
     </template>
   </div>
 </header>
 
-<!-- Hero Slider - Mobile -->
-<header class="block sm:hidden w-full h-[25vh] xs:h-[30vh] relative overflow-hidden bg-orange-100"
-  x-data="{
-    mobileBanners: [
-      {'image': '/static/img/banners/mobile/banner-mobile.png', 'alt': 'Mobile Oferta 1'},
-      {'image': '/static/img/banners/mobile/banner-mobile2.png', 'alt': 'Mobile Promoção'},
-      {'image': '/static/img/banners/mobile/banner-mobile3.png', 'alt': 'Mobile Lançamento'}
-    ],
-    current: 0,
-    init() {
-      setInterval(() => {
-        this.current = (this.current + 1) % this.mobileBanners.length;
-      }, 5000);
-    }
-  }"
-  x-init="init"
-  x-cloak
->
-  <template x-for="(banner, index) in mobileBanners" :key="index">
-    <div x-show="current === index" x-transition.opacity.duration.500ms class="absolute inset-0">
-      <img :src="banner.image" :alt="banner.alt" class="w-full h-full object-cover">
-    </div>
-  </template>
-  <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-    <template x-for="(_, index) in mobileBanners" :key="index">
-      <button @click="current = index" class="w-2.5 h-2.5 rounded-full transition-colors"
-              :class="{'bg-orange-500': current === index, 'bg-black/50': current !== index}"></button>
-    </template>
-  </div>
-</header>
+<!-- Marketplaces Grid -->
+<section class="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+  <h2 class="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 px-2">Navegue por Marketplace</h2>
+  <div class="grid grid-cols-4 gap-2 sm:gap-3">
+    {% set marketplaces = [
+      {'name': 'Amazon', 'icon': 'https://imgs.search.brave.com/jfNLzl5uDCsEohKmMFt4CSJhn8TQ-zYFWO9Vm3soVHQ/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi80LzRhL0Ft/YXpvbl9pY29uLnN2/Zy82NDBweC1BbWF6/b25faWNvbi5zdmcu/cG5n'},
+      {'name': 'AliExpress', 'icon': 'https://imgs.search.brave.com/wGr_YNITF4yhatl4Oh603hVIm_v-VzJrESxU55saZaM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi80LzQxL0Fs/aUV4cHJlc3NfMjAy/NC5zdmcvMjUwcHgt/QWxpRXhwcmVzc18y/MDI0LnN2Zy5wbmc'},
+      {'name': 'Mercado Livre', 'icon': '/static/img/icones/mercado-livre.png'},
+      {'name': 'Shopee', 'icon': 'https://imgs.search.brave.com/RD9MZd_cpB9zCnBbBVIzGt-7p5g04gxu8OGLMduhJmE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi8wLzBlL1No/b3BlZV9sb2dvLnN2/Zy8yNTBweC1TaG9w/ZWVfbG9nby5zdmcu/cG5n'}
+    ] %}
 
-<!-- Seção de Marketplaces -->
-<section class="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
-  <div class="grid grid-cols-2 xs:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-    <!-- Amazon -->
-    <a href="/ofertas/amazon"
-       class="group flex flex-col items-center p-2 sm:p-3 md:p-4 rounded-lg shadow-xs hover:shadow-sm transition-all duration-300
-              {% if marketplace_selecionado == 'amazon' %}bg-yellow-100 dark:bg-yellow-900{% else %}bg-white dark:bg-gray-800{% endif %}">
-      <div class="w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mb-1 sm:mb-2 flex items-center justify-center">
-        <img src="https://imgs.search.brave.com/jfNLzl5uDCsEohKmMFt4CSJhn8TQ-zYFWO9Vm3soVHQ/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi80LzRhL0Ft/YXpvbl9pY29uLnN2/Zy82NDBweC1BbWF6/b25faWNvbi5zdmcu/cG5n"
-             alt="Amazon"
-             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
+    {% for marketplace in marketplaces %}
+    <a href="/ofertas/{{ marketplace.name|lower|replace(' ', '_') }}"
+       class="group flex flex-col items-center p-2 sm:p-3 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+      <div class="w-10 h-10 sm:w-12 sm:h-12 mb-1 flex items-center justify-center">
+        <img src="{{ marketplace.icon }}"
+             alt="{{ marketplace.name }}"
+             class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300">
       </div>
-      <span class="text-[10px] xs:text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-auto">Amazon</span>
+      <span class="text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 text-center">{{ marketplace.name }}</span>
     </a>
-
-    <!-- AliExpress -->
-    <a href="/ofertas/alixpress"
-       class="group flex flex-col items-center p-2 sm:p-3 md:p-4 rounded-lg shadow-xs hover:shadow-sm transition-all duration-300
-              {% if marketplace_selecionado == 'alixpress' %}bg-yellow-100 dark:bg-yellow-900{% else %}bg-white dark:bg-gray-800{% endif %}">
-      <div class="w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mb-1 sm:mb-2 flex items-center justify-center">
-        <img src="https://imgs.search.brave.com/wGr_YNITF4yhatl4Oh603hVIm_v-VzJrESxU55saZaM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi80LzQxL0Fs/aUV4cHJlc3NfMjAy/NC5zdmcvMjUwcHgt/QWxpRXhwcmVzc18y/MDI0LnN2Zy5wbmc"
-             alt="AliExpress"
-             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <span class="text-[10px] xs:text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-auto">AliExpress</span>
-    </a>
-
-    <!-- Mercado Livre -->
-    <a href="/ofertas/mercado_livre"
-       class="group flex flex-col items-center p-2 sm:p-3 md:p-4 rounded-lg shadow-xs hover:shadow-sm transition-all duration-300
-              {% if marketplace_selecionado == 'mercado_livre' %}bg-yellow-100 dark:bg-yellow-900{% else %}bg-white dark:bg-gray-800{% endif %}">
-      <div class="w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mb-1 sm:mb-2 flex items-center justify-center">
-        <img src="/static/img/icones/mercado-livre.png"
-             alt="Mercado Livre"
-             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <span class="text-[10px] xs:text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-auto">Mercado Livre</span>
-    </a>
-
-    <!-- Shopee -->
-    <a href="/ofertas/shopee"
-       class="group flex flex-col items-center p-2 sm:p-3 md:p-4 rounded-lg shadow-xs hover:shadow-sm transition-all duration-300
-              {% if marketplace_selecionado == 'shopee' %}bg-yellow-100 dark:bg-yellow-900{% else %}bg-white dark:bg-gray-800{% endif %}">
-      <div class="w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mb-1 sm:mb-2 flex items-center justify-center">
-        <img src="https://imgs.search.brave.com/RD9MZd_cpB9zCnBbBVIzGt-7p5g04gxu8OGLMduhJmE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi8wLzBlL1No/b3BlZV9sb2dvLnN2/Zy8yNTBweC1TaG9w/ZWVfbG9nby5zdmcu/cG5n"
-             alt="Shopee"
-             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
-      </div>
-      <span class="text-[10px] xs:text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-auto">Shopee</span>
-    </a>
+    {% endfor %}
   </div>
 </section>
 
-<!-- Novo Carrossel de Ofertas Especiais -->
-<section class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
-  <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-white dark:text-white mb-3 sm:mb-5">Ofertas em Destaque 🔥</h2>
+<!-- Featured Products Carousel -->
+<section class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+  <div class="flex items-center justify-between mb-3 sm:mb-5 px-2">
+    <h2 class="text-base sm:text-lg md:text-xl font-bold text-white">Ofertas em Destaque 🔥</h2>
+    <a href="#" class="text-xs sm:text-sm text-yellow-400 hover:text-yellow-300 flex items-center">
+      Ver todas
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </a>
+  </div>
 
-  <div class="relative"
-       x-data="{
-         currentSlide: 0,
-         slides: [
-           {'image': 'https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg', 'title': 'Smartphones', 'price': 'R$ 999,90'},
-           {'image': 'https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg', 'title': 'Notebooks', 'price': 'R$ 2.499,90'},
-           {'image': 'https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg', 'title': 'Fones de Ouvido', 'price': 'R$ 199,90'},
-           {'image': 'https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg', 'title': 'Smart TVs', 'price': 'R$ 1.799,90'},
-           {'image': 'https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg', 'title': 'Eletrodomésticos', 'price': 'R$ 599,90'},
-           {'image': 'https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg', 'title': 'Câmeras', 'price': 'R$ 1.299,90'},
-           {'image': 'https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg', 'title': 'Games', 'price': 'R$ 249,90'},
-           {'image': 'https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg', 'title': 'Acessórios', 'price': 'R$ 49,90'}
-         ],
-         visibleSlides: 4,
-         next() {
-           if (this.currentSlide < this.slides.length - this.visibleSlides) {
-             this.currentSlide += 1;
-           } else {
-             this.currentSlide = 0;
-           }
-         },
-         prev() {
-           if (this.currentSlide > 0) {
-             this.currentSlide -= 1;
-           } else {
-             this.currentSlide = this.slides.length - this.visibleSlides;
-           }
-         },
-         get slideWidth() {
-           return 100 / this.visibleSlides;
-         }
-       }"
-       x-init="() => {
-         const updateSlides = () => {
-           if (window.innerWidth < 480) {
-             this.visibleSlides = 1;
-           } else if (window.innerWidth < 640) {
-             this.visibleSlides = 2;
-           } else if (window.innerWidth < 1024) {
-             this.visibleSlides = 3;
-           } else {
-             this.visibleSlides = 4;
-           }
-         };
-         updateSlides();
-         window.addEventListener('resize', debounce(updateSlides, 250));
-       }">
-
-    <!-- Slides Container -->
+  <div class="relative" x-data="carousel()">
     <div class="overflow-hidden">
-      <div class="flex transition-transform duration-500 ease-in-out"
-           :style="`transform: translateX(-${currentSlide * (100 / visibleSlides)}%)`">
-        <template x-for="(slide, index) in slides" :key="index">
-          <div class="flex-shrink-0 px-1 sm:px-2" :style="`width: ${slideWidth}%`">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden h-full flex flex-col">
-              <div class="relative pt-[70%] bg-gray-100 dark:bg-gray-700">
-                <img :src="slide.image" :alt="slide.title" class="absolute top-0 left-0 w-full h-full object-contain p-3 sm:p-4">
-              </div>
-              <div class="p-2 sm:p-3 flex-grow">
-                <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-2" x-text="slide.title"></h3>
+      <div class="flex transition-transform duration-300 ease-out"
+           :style="`transform: translateX(-${currentSlide * 100}%)`">
+        {% for i in range(8) %}
+        <div class="w-full flex-shrink-0 px-2">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 h-full flex flex-col">
+            <div class="relative pt-[100%] bg-gray-50 dark:bg-gray-700">
+              <img src="https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg"
+                   alt="Product"
+                   class="absolute top-0 left-0 w-full h-full object-contain p-3">
+            </div>
+            <div class="p-3 flex-grow">
+              <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-2">
+                {% if loop.index == 1 %}Smartphone Premium 128GB{% endif %}
+                {% if loop.index == 2 %}Notebook Ultrafino 15.6"{% endif %}
+                {% if loop.index == 3 %}Fone Bluetooth ANC{% endif %}
+                {% if loop.index == 4 %}Smart TV 4K 55"{% endif %}
+                {% if loop.index == 5 %}Console de Games{% endif %}
+                {% if loop.index == 6 %}Câmera DSLR 24MP{% endif %}
+                {% if loop.index == 7 %}Smartwatch Fitness{% endif %}
+                {% if loop.index == 8 %}Tablet 10.1" 64GB{% endif %}
+              </h3>
+              <div class="mt-2">
+                <span class="text-xs text-gray-500 dark:text-gray-400 line-through">R$ {{ [1299, 3499, 499, 2799, 2499, 1899, 799, 1299][loop.index0] }},99</span>
                 <div class="flex items-baseline">
-                  <span class="text-sm sm:text-base font-bold text-gray-900 dark:text-white" x-text="slide.price"></span>
+                  <span class="text-sm sm:text-base font-bold text-gray-900 dark:text-white">R$ {{ [999, 2999, 399, 2299, 1999, 1599, 599, 999][loop.index0] }},90</span>
                 </div>
               </div>
-              <button class="mt-1 sm:mt-2 mx-2 mb-2 sm:mx-3 sm:mb-3 py-1 sm:py-2 bg-yellow-400 hover:bg-yellow-500 text-black text-xs sm:text-sm font-medium rounded transition-colors duration-300">
-                Comprar
-              </button>
             </div>
+            <button class="mx-3 mb-3 py-2 bg-yellow-400 hover:bg-yellow-500 text-black text-xs sm:text-sm font-medium rounded transition-colors duration-300">
+              Comprar
+            </button>
           </div>
-        </template>
+        </div>
+        {% endfor %}
       </div>
     </div>
 
-    <!-- Controles - apenas se houver mais slides que visíveis -->
-    <template x-if="slides.length > visibleSlides">
-      <button @click="prev()"
-              class="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 sm:-ml-4 bg-white/80 hover:bg-white text-gray-800 p-1 sm:p-2 rounded-full shadow-md"
-              :class="{'opacity-50 cursor-default': currentSlide === 0}">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-    </template>
+    <button @click="prev()" :disabled="currentSlide === 0"
+            class="absolute left-0 top-1/2 -translate-y-1/2 -ml-1 sm:-ml-2 bg-white/80 hover:bg-white text-gray-800 p-1 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
 
-    <template x-if="slides.length > visibleSlides">
-      <button @click="next()"
-              class="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 sm:-mr-4 bg-white/80 hover:bg-white text-gray-800 p-1 sm:p-2 rounded-full shadow-md"
-              :class="{'opacity-50 cursor-default': currentSlide >= slides.length - visibleSlides}">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </template>
+    <button @click="next()" :disabled="currentSlide === 7"
+            class="absolute right-0 top-1/2 -translate-y-1/2 -mr-1 sm:-mr-2 bg-white/80 hover:bg-white text-gray-800 p-1 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
   </div>
 </section>
 
-<!-- Aréa de produtos -->
-<main class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-8">
+<!-- Product Categories -->
+<main class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
   {% for grupo in produtos %}
-  <section class="mb-6 sm:mb-10 md:mb-12">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-6">
-      <div class="flex items-center mb-1 sm:mb-0">
-        <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{{ grupo.categoria }}</h2>
-        <span class="ml-2 px-1.5 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
-          {{ grupo.produtos|length }} itens
-        </span>
-      </div>
+  <section class="mb-6 sm:mb-8">
+    <div class="flex items-center justify-between mb-3 sm:mb-4">
+      <h2 class="text-base sm:text-lg font-bold text-white">{{ grupo.categoria }}</h2>
+      <a href="#" class="text-xs sm:text-sm text-yellow-400 hover:text-yellow-300 flex items-center">
+        Ver mais
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
     </div>
 
-    <div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
       {% for produto in grupo.produtos %}
-      <div class="group relative bg-white dark:bg-gray-800 rounded-md sm:rounded-lg shadow-xs hover:shadow-sm sm:shadow-sm sm:hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full">
-        <div class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 z-10 bg-red-500 text-white text-[9px] sm:text-xs font-bold px-1 sm:px-1.5 py-0.5 rounded-full">
+      <div class="group relative bg-white dark:bg-gray-800 rounded-md shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-col h-full">
+        <div class="absolute top-2 right-2 z-10 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
           -{{ produto.discount }}%
         </div>
-        <div class="relative pt-[100%] bg-gray-50 dark:bg-gray-700 overflow-hidden">
-          <img
-            src="{{ produto.image }}"
-            alt="{{ produto.name }}"
-            class="absolute top-0 left-0 w-full h-full object-contain p-2 sm:p-3 transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          >
+        <div class="relative pt-[100%] bg-gray-50 dark:bg-gray-700">
+          <img src="{{ produto.image }}" alt="{{ produto.name }}"
+               class="absolute top-0 left-0 w-full h-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+               loading="lazy">
         </div>
-        <div class="p-2 sm:p-3 flex-grow">
-          <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-2" title="{{ produto.name }}">
+        <div class="p-3 flex-grow">
+          <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-2">
             {{ produto.name }}
           </h3>
           <div class="flex items-center mb-1">
-            <div class="flex items-center mr-1 sm:mr-2">
-              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+            <div class="flex items-center mr-1">
+              <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
               </svg>
-              <span class="text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 ml-0.5 sm:ml-1">{{ produto.rating|default(4.5) }}</span>
+              <span class="text-[10px] text-gray-600 dark:text-gray-300 ml-0.5">{{ produto.rating|default(4.5) }}</span>
             </div>
-            <span class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">• {{ produto.vendidos|default('1k+') }}</span>
+            <span class="text-[10px] text-gray-500 dark:text-gray-400">• {{ produto.vendidos|default('1k+') }}</span>
           </div>
-          <div class="mt-1 sm:mt-2">
-            <span class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 line-through">R$ {{ produto.originalPrice }}</span>
+          <div class="mt-1">
+            <span class="text-[10px] text-gray-500 dark:text-gray-400 line-through">R$ {{ produto.originalPrice }}</span>
             <div class="flex items-baseline">
-              <span class="text-xs sm:text-base md:text-lg font-bold text-gray-900 dark:text-white">R$ {{ produto.salePrice }}</span>
-              <span class="ml-0.5 sm:ml-1 text-[10px] sm:text-xs text-green-600">à vista</span>
+              <span class="text-sm sm:text-base font-bold text-gray-900 dark:text-white">R$ {{ produto.salePrice }}</span>
+              <span class="ml-1 text-[10px] text-green-600">à vista</span>
             </div>
-            <div class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1">ou até 12x</div>
           </div>
         </div>
         <a href="{{ produto.detailUrl }}" target="_blank"
-           class="block sm:absolute sm:inset-x-0 sm:bottom-0 bg-yellow-400 hover:bg-yellow-500 text-black text-xs sm:text-sm font-medium py-1.5 sm:py-2 text-center transition-colors duration-300 flex items-center justify-center">
-          <span class="hidden xs:inline">Comprar</span>
-          <span class="xs:hidden">R$ {{ produto.salePrice }}</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
+           class="block bg-yellow-400 hover:bg-yellow-500 text-black text-xs sm:text-sm font-medium py-2 text-center transition-colors duration-300">
+          Comprar
         </a>
       </div>
       {% endfor %}
@@ -299,24 +200,54 @@ Ofertas Shopee 🛍️ | {{ super() }}
 </main>
 
 <!-- Newsletter -->
-<section class="bg-gray-50 dark:bg-gray-800 py-6 sm:py-8 md:py-10">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center">
-      <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">Ofertas no seu e-mail</h2>
-      <p class="mt-1 sm:mt-2 text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300">
-        Promoções exclusivas e cupons direto na sua caixa de entrada.
-      </p>
-    </div>
-    <form action="#" method="POST" class="mt-4 sm:mt-6 flex flex-col xs:flex-row justify-center items-stretch xs:items-center gap-2 sm:gap-3 max-w-md mx-auto">
-      <input type="email" name="email" placeholder="Digite seu e-mail"
-             class="flex-grow px-3 sm:px-4 py-2 text-xs sm:text-sm md:text-base rounded-md sm:rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent dark:bg-gray-700 dark:text-white"
-             required>
+<section class="bg-gray-50 dark:bg-gray-800 py-6 sm:py-8">
+  <div class="max-w-2xl mx-auto px-4 text-center">
+    <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2">Ofertas no seu e-mail</h2>
+    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-4">
+      Receba promoções exclusivas e cupons direto na sua caixa de entrada
+    </p>
+    <form class="flex flex-col sm:flex-row gap-2">
+      <input type="email" placeholder="Digite seu e-mail"
+             class="flex-grow px-4 py-2 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 dark:bg-gray-700 dark:text-white">
       <button type="submit"
-              class="px-3 sm:px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-xs sm:text-sm md:text-base font-medium rounded-md sm:rounded-lg transition-colors duration-300">
+              class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-300">
         Inscrever-se
       </button>
     </form>
   </div>
 </section>
+
+<script>
+function carousel() {
+  return {
+    currentSlide: 0,
+    prev() {
+      if (this.currentSlide > 0) {
+        this.currentSlide--;
+      }
+    },
+    next() {
+      if (this.currentSlide < 7) {
+        this.currentSlide++;
+      }
+    },
+    init() {
+      // Responsive slide calculation
+      const updateSlides = () => {
+        if (window.innerWidth < 640) {
+          this.slidesToShow = 1;
+        } else if (window.innerWidth < 1024) {
+          this.slidesToShow = 2;
+        } else {
+          this.slidesToShow = 1;
+        }
+      };
+
+      updateSlides();
+      window.addEventListener('resize', updateSlides);
+    }
+  }
+}
+</script>
 
 {% endblock %}
