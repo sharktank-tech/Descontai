@@ -26,7 +26,7 @@ def create_app():
     google_bp = make_google_blueprint(
         client_id=Config.GOOGLE_CLIENT_ID,
         client_secret=Config.GOOGLE_CLIENT_SECRET,
-        redirect_to="main.login_google_callback",  # Rota após login com Google
+        redirect_to="main.login_google_finish",  # agora aponta para login_google_finish
         scope=["profile", "email"]
     )
 

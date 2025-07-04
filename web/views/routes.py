@@ -15,7 +15,6 @@ main_blueprint = Blueprint('main', __name__)
 def home():
     return render_template('main/index.html')
 
-
 @main_blueprint.route("/ofertas")
 @main_blueprint.route("/ofertas/<string:marketplace>")
 @login_required
@@ -65,7 +64,7 @@ def ofertas(marketplace=None):
 
 # ============= Páginas de login e registro =====================
 
-# Rota para a página de login
+# ========== Página de login local ========== #
 @main_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -82,25 +81,24 @@ def login():
             flash("Credenciais inválidas. Tente novamente.", "danger")
             return redirect(url_for('main.login'))
 
-        # Autenticar usuário com Flask-Login
-        login_user(user)
+        # Autenticar com opção de lembrar login
+        remember = 'remember' in request.form
+        login_user(user, remember=remember)
         flash("Login realizado com sucesso!", "success")
-        return redirect(url_for('main.ofertas'))
+        return redirect(url_for('main.ofertas', marketplace='amazon'))
 
     return render_template('conta/login.html')
 
-# ========== Rotas de callback para login com Google ==============
-# Redireciona para login com Google
+# ========== Login com Google (Redirecionamento) ========== #
 @main_blueprint.route("/login/google")
 def login_google():
     if not google.authorized:
         return redirect(url_for("google.login"))
-    return redirect(url_for("main.login_google_callback"))
+    return redirect(url_for("main.login_google_finish"))
 
-
-# Callback do login com Google
-@main_blueprint.route("/login/google/callback")
-def login_google_callback():
+# ========== Finalização do login com Google ========== #
+@main_blueprint.route("/login/google/finish")
+def login_google_finish():
     if not google.authorized:
         flash("Erro ao autenticar com Google", "danger")
         return redirect(url_for("main.login"))
@@ -111,21 +109,33 @@ def login_google_callback():
         return redirect(url_for("main.login"))
 
     user_info = resp.json()
-    email = user_info["email"]
+    email = user_info.get("email")
     username = user_info.get("name", email.split('@')[0])
+    picture = user_info.get("picture")
 
-    # Verifica se já existe usuário
     user = Users.query.filter_by(email=email).first()
 
-    # Se não existir, cria automaticamente
     if not user:
         user = Users(username=username, email=email, is_admin=False)
         db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            flash("Erro ao criar conta com Google.", "danger")
+            return redirect(url_for("main.login"))
 
     login_user(user)
     flash(f"Bem-vindo, {username}!", "success")
-    return redirect(url_for("main.ofertas"))
+    return redirect(url_for("main.ofertas", marketplace='amazon'))
+
+# ========== Logout ========== #
+@main_blueprint.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Logout realizado com sucesso.", "success")
+    return redirect(url_for('main.login'))
 
 
 # Rota para a página de cadastro
@@ -168,12 +178,6 @@ def register():
     # Exibe a página de cadastro
     return render_template('conta/register.html')
 
-# Rota para logout
-@main_blueprint.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('main.home'))
 
 # ============= Páginas Institucionais ==============
 
