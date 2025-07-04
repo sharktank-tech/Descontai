@@ -13,3 +13,7 @@ class Config:
     PASWD = "hxwi kiju ofko itwb"
     PORTA_SMPT = 587
     REMEMTENTE = "quicknotes527@gmail.com"
+
+    # ========= Configuração do login com Google =========
+    GOOGLE_CLIENT_ID = "1075858420893-3j9a2v5evrfgdmnas98pu4h3532qulqh.apps.googleusercontent.com"
+    GOOGLE_CLIENT_SECRET = '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'

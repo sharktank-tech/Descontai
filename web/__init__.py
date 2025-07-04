@@ -4,8 +4,9 @@ from config import Config
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-import os
+from flask_dance.contrib.google import make_google_blueprint, google
 from flask_login import LoginManager
+import os
 
 # = Instância global do banco =
 db = SQLAlchemy()
@@ -15,10 +16,21 @@ login_manager = LoginManager()
 def create_app():
     app = Flask(__name__, static_folder='static', template_folder='templates')
 
-    # ============== Carregar configurações do config.py ========
+    # Carregar configurações do config.py
     app.config.from_object(Config)
 
-    # ============== Inicializar extensões ===============
+    # Permitir OAuth inseguro em ambiente de desenvolvimento
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Remova em produção
+
+    # Blueprint do Google OAuth
+    google_bp = make_google_blueprint(
+        client_id=Config.GOOGLE_CLIENT_ID,
+        client_secret=Config.GOOGLE_CLIENT_SECRET,
+        redirect_to="main.login_google_callback",  # Rota após login com Google
+        scope=["profile", "email"]
+    )
+
+    # Inicializar extensões
     db.init_app(app)
     login_manager.init_app(app)
 
@@ -26,13 +38,14 @@ def create_app():
     login_manager.login_message = 'Por favor, faça login para acessar esta página.'
     login_manager.login_message_category = 'info'
 
-    # =============== Registrar Blueprints ==================
+    # Registrar Blueprints
     from web.views.routes import main_blueprint
     from web.views.admin_routes import admin_blueprint
     app.register_blueprint(main_blueprint)
     app.register_blueprint(admin_blueprint)
+    app.register_blueprint(google_bp, url_prefix="/login")
 
-    # ========= Carregar o usuário =============
+    # Carregar o usuário do banco
     from web.modules.models import Users
 
     @login_manager.user_loader
@@ -42,7 +55,7 @@ def create_app():
         except (ValueError, TypeError):
             return None
 
-    # ============= Tratadores de erro ================
+    # Tratamento de erros
     @app.errorhandler(404)
     def not_found_error(error):
         return render_template('erros/404.html'), 404
@@ -53,7 +66,7 @@ def create_app():
 
     return app
 
-# Função utilitária para envio de e-mails
+# Função para envio de e-mails
 def enviar_email(destinatario, assunto, corpo):
     servidor_smtp = Config.SERVIDOR
     porta_smtp = Config.PORTA_SMTP

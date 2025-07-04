@@ -1,5 +1,5 @@
-from flask import render_template, Blueprint, flash, redirect, url_for, request, abort
-from web.modules.is_admin import admin_required 
+from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, session
+from flask_dance.contrib.google import  google
 from web.modules.enviar_email import enviar_email
 from web.modules.models import Produto, Users, db
 from sqlalchemy.exc import IntegrityError
@@ -19,7 +19,7 @@ def home():
 @main_blueprint.route("/ofertas")
 @main_blueprint.route("/ofertas/<string:marketplace>")
 @login_required
-@admin_required
+#@admin_required
 def ofertas(marketplace=None):
     try:
         # Filtra produtos por marketplace se especificado
@@ -88,6 +88,45 @@ def login():
         return redirect(url_for('main.ofertas'))
 
     return render_template('conta/login.html')
+
+# ========== Rotas de callback para login com Google ==============
+# Redireciona para login com Google
+@main_blueprint.route("/login/google")
+def login_google():
+    if not google.authorized:
+        return redirect(url_for("google.login"))
+    return redirect(url_for("main.login_google_callback"))
+
+
+# Callback do login com Google
+@main_blueprint.route("/login/google/callback")
+def login_google_callback():
+    if not google.authorized:
+        flash("Erro ao autenticar com Google", "danger")
+        return redirect(url_for("main.login"))
+
+    resp = google.get("/oauth2/v2/userinfo")
+    if not resp.ok:
+        flash("Erro ao obter dados do Google", "danger")
+        return redirect(url_for("main.login"))
+
+    user_info = resp.json()
+    email = user_info["email"]
+    username = user_info.get("name", email.split('@')[0])
+
+    # Verifica se já existe usuário
+    user = Users.query.filter_by(email=email).first()
+
+    # Se não existir, cria automaticamente
+    if not user:
+        user = Users(username=username, email=email, is_admin=False)
+        db.session.add(user)
+        db.session.commit()
+
+    login_user(user)
+    flash(f"Bem-vindo, {username}!", "success")
+    return redirect(url_for("main.ofertas"))
+
 
 # Rota para a página de cadastro
 @main_blueprint.route('/register', methods=['GET', 'POST'])

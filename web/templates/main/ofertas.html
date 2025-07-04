@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Ofertas Shopee 🛍️ | {{ super() }}
+Ofertas Amazon 🛒 | {{ super() }}
 {% endblock %}
 
 {% block meta %}
@@ -10,244 +10,157 @@ Ofertas Shopee 🛍️ | {{ super() }}
 
 {% block content %}
 
-<!-- Hero Slider - Responsive -->
-<header class="w-full h-[25vh] sm:h-[30vh] md:h-[40vh] lg:h-[50vh] relative overflow-hidden bg-orange-100"
-  x-data="{
-    banners: [
-      {'image': '/static/img/banners/mobile/banner-mobile.png', 'alt': 'Mobile Oferta 1'},
-      {'image': '/static/img/banners/desktop/banner1.webp', 'alt': 'Ofertas especiais'},
-      {'image': '/static/img/banners/desktop/banner2.webp', 'alt': 'Promoções de verão'}
-    ],
-    current: 0,
-    interval: null,
-    init() {
-      this.interval = setInterval(() => {
-        this.current = (this.current + 1) % this.banners.length;
-      }, 5000);
-    },
-    stop() {
-      clearInterval(this.interval);
-    },
-    start() {
-      this.init();
-    }
-  }"
-  x-init="init"
-  @mouseenter="stop"
-  @mouseleave="start"
-  x-cloak
->
-  <template x-for="(banner, index) in banners" :key="index">
-    <div x-show="current === index" x-transition.opacity.duration.500ms class="absolute inset-0">
-      <img :src="banner.image" :alt="banner.alt" class="w-full h-full object-cover">
+<!-- Amazon-style Main Banner -->
+<div class="bg-[#232F3E] pb-6">
+  <!-- Search Bar -->
+  <div class="px-4 pt-4">
+    <div class="relative max-w-4xl mx-auto">
+      <input type="text" placeholder="Buscar produtos na Amazon..."
+             class="w-full py-2 px-4 pr-10 rounded-md shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-[#FF9900]">
+      <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </button>
     </div>
-  </template>
-  <div class="absolute bottom-3 sm:bottom-4 left-0 right-0 flex justify-center gap-2">
-    <template x-for="(_, index) in banners" :key="index">
-      <button @click="current = index" class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-colors"
-              :class="{'bg-orange-500': current === index, 'bg-black/60': current !== index}"></button>
-    </template>
   </div>
-</header>
 
-<!-- Marketplaces Grid -->
-<section class="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
-  <h2 class="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 px-2">Navegue por Marketplace</h2>
-  <div class="grid grid-cols-4 gap-2 sm:gap-3">
-    {% set marketplaces = [
-      {'name': 'Amazon', 'icon': 'https://imgs.search.brave.com/jfNLzl5uDCsEohKmMFt4CSJhn8TQ-zYFWO9Vm3soVHQ/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi80LzRhL0Ft/YXpvbl9pY29uLnN2/Zy82NDBweC1BbWF6/b25faWNvbi5zdmcu/cG5n'},
-      {'name': 'AliExpress', 'icon': 'https://imgs.search.brave.com/wGr_YNITF4yhatl4Oh603hVIm_v-VzJrESxU55saZaM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi80LzQxL0Fs/aUV4cHJlc3NfMjAy/NC5zdmcvMjUwcHgt/QWxpRXhwcmVzc18y/MDI0LnN2Zy5wbmc'},
-      {'name': 'Mercado Livre', 'icon': '/static/img/icones/mercado-livre.png'},
-      {'name': 'Shopee', 'icon': 'https://imgs.search.brave.com/RD9MZd_cpB9zCnBbBVIzGt-7p5g04gxu8OGLMduhJmE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi8wLzBlL1No/b3BlZV9sb2dvLnN2/Zy8yNTBweC1TaG9w/ZWVfbG9nby5zdmcu/cG5n'}
+  <!-- Main Banner Image -->
+  <div class="mt-4 px-4">
+    <div class="max-w-4xl mx-auto rounded-md overflow-hidden shadow-lg">
+      <img src="https://m.media-amazon.com/images/G/32/kindle/journeys/ZTJlNzRkMjUt/ZTJlNzRkMjUt-MzVlMzkyODAt-w1500._CB654206473_.jpg"
+           alt="Banner Amazon"
+           class="w-full h-auto object-cover">
+    </div>
+  </div>
+</div>
+
+<!-- Amazon Categories -->
+<div class="bg-gray-800 py-4 px-4">
+  <div class="max-w-4xl mx-auto grid grid-cols-5 sm:grid-cols-10 gap-3 text-center">
+    {% for category in [
+      {'name': 'Celulares', 'icon': '📱'},
+      {'name': 'Notebooks', 'icon': '💻'},
+      {'name': 'Casa', 'icon': '🏠'},
+      {'name': 'Games', 'icon': '🎮'},
+      {'name': 'Moda', 'icon': '👗'},
+      {'name': 'Livros', 'icon': '📚'},
+      {'name': 'Beleza', 'icon': '💄'},
+      {'name': 'Bebês', 'icon': '🍼'},
+      {'name': 'TVs', 'icon': '📺'},
+      {'name': 'Mais', 'icon': '🛍️'}
     ] %}
-
-    {% for marketplace in marketplaces %}
-    <a href="/ofertas/{{ marketplace.name|lower|replace(' ', '_') }}"
-       class="group flex flex-col items-center p-2 sm:p-3 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
-      <div class="w-10 h-10 sm:w-12 sm:h-12 mb-1 flex items-center justify-center">
-        <img src="{{ marketplace.icon }}"
-             alt="{{ marketplace.name }}"
-             class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300">
-      </div>
-      <span class="text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 text-center">{{ marketplace.name }}</span>
+    <a href="#" class="flex flex-col items-center hover:text-[#FF9900]">
+      <div class="w-12 h-12 rounded-full bg-white shadow flex items-center justify-center text-2xl">{{ category.icon }}</div>
+      <span class="text-[11px] mt-1">{{ category.name }}</span>
     </a>
     {% endfor %}
   </div>
-</section>
+</div>
 
-<!-- Featured Products Carousel -->
-<section class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
-  <div class="flex items-center justify-between mb-3 sm:mb-5 px-2">
-    <h2 class="text-base sm:text-lg md:text-xl font-bold text-white">Ofertas em Destaque 🔥</h2>
-    <a href="#" class="text-xs sm:text-sm text-yellow-400 hover:text-yellow-300 flex items-center">
-      Ver todas
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
-    </a>
-  </div>
-
-  <div class="relative" x-data="carousel()">
-    <div class="overflow-hidden">
-      <div class="flex transition-transform duration-300 ease-out"
-           :style="`transform: translateX(-${currentSlide * 100}%)`">
-        {% for i in range(8) %}
-        <div class="w-full flex-shrink-0 px-2">
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 h-full flex flex-col">
-            <div class="relative pt-[100%] bg-gray-50 dark:bg-gray-700">
-              <img src="https://m.media-amazon.com/images/I/61NR1TjDpgL._AC_UF894,1000_QL80_FMwebp_.jpg"
-                   alt="Product"
-                   class="absolute top-0 left-0 w-full h-full object-contain p-3">
-            </div>
-            <div class="p-3 flex-grow">
-              <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-2">
-                {% if loop.index == 1 %}Smartphone Premium 128GB{% endif %}
-                {% if loop.index == 2 %}Notebook Ultrafino 15.6"{% endif %}
-                {% if loop.index == 3 %}Fone Bluetooth ANC{% endif %}
-                {% if loop.index == 4 %}Smart TV 4K 55"{% endif %}
-                {% if loop.index == 5 %}Console de Games{% endif %}
-                {% if loop.index == 6 %}Câmera DSLR 24MP{% endif %}
-                {% if loop.index == 7 %}Smartwatch Fitness{% endif %}
-                {% if loop.index == 8 %}Tablet 10.1" 64GB{% endif %}
-              </h3>
-              <div class="mt-2">
-                <span class="text-xs text-gray-500 dark:text-gray-400 line-through">R$ {{ [1299, 3499, 499, 2799, 2499, 1899, 799, 1299][loop.index0] }},99</span>
-                <div class="flex items-baseline">
-                  <span class="text-sm sm:text-base font-bold text-gray-900 dark:text-white">R$ {{ [999, 2999, 399, 2299, 1999, 1599, 599, 999][loop.index0] }},90</span>
-                </div>
-              </div>
-            </div>
-            <button class="mx-3 mb-3 py-2 bg-yellow-400 hover:bg-yellow-500 text-black text-xs sm:text-sm font-medium rounded transition-colors duration-300">
-              Comprar
-            </button>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
+<!-- Destaques Amazon -->
+<section class="bg-gray-800 py-5 px-4">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold text-white">Ofertas Relâmpago</h2>
+      <a href="#" class="text-sm text-[#FF9900] hover:underline">Ver tudo</a>
     </div>
+    <div class="flex overflow-x-auto gap-3">
+      {% for i in range(8) %}
+      <div class="flex-shrink-0 w-32 bg-white rounded-md border shadow-sm">
+        <div class="relative pt-[100%] bg-gray-100">
+          <img src="https://m.media-amazon.com/images/G/32/Cohorts/2025/CustomerMostLoved/19313_mostloved_visualnav_beleza_306x176._CB546816678_UC432,290_.jpg"
 
-    <button @click="prev()" :disabled="currentSlide === 0"
-            class="absolute left-0 top-1/2 -translate-y-1/2 -ml-1 sm:-ml-2 bg-white/80 hover:bg-white text-gray-800 p-1 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-    </button>
-
-    <button @click="next()" :disabled="currentSlide === 7"
-            class="absolute right-0 top-1/2 -translate-y-1/2 -mr-1 sm:-mr-2 bg-white/80 hover:bg-white text-gray-800 p-1 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
-    </button>
-  </div>
-</section>
-
-<!-- Product Categories -->
-<main class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
-  {% for grupo in produtos %}
-  <section class="mb-6 sm:mb-8">
-    <div class="flex items-center justify-between mb-3 sm:mb-4">
-      <h2 class="text-base sm:text-lg font-bold text-white">{{ grupo.categoria }}</h2>
-      <a href="#" class="text-xs sm:text-sm text-yellow-400 hover:text-yellow-300 flex items-center">
-        Ver mais
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </a>
-    </div>
-
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-      {% for produto in grupo.produtos %}
-      <div class="group relative bg-white dark:bg-gray-800 rounded-md shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-col h-full">
-        <div class="absolute top-2 right-2 z-10 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-          -{{ produto.discount }}%
+               alt="Produto Amazon"
+               class="absolute top-0 left-0 w-full h-full object-contain p-2">
         </div>
-        <div class="relative pt-[100%] bg-gray-50 dark:bg-gray-700">
-          <img src="{{ produto.image }}" alt="{{ produto.name }}"
-               class="absolute top-0 left-0 w-full h-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
-               loading="lazy">
+        <div class="p-2">
+          <div class="text-xs font-bold text-[#FF9900]">R$ {{ [89, 129, 149, 79, 109, 59, 99, 139][loop.index0] }},90</div>
+          <p class="text-[10px] text-gray-700 mt-1 line-clamp-2">Oferta destaque {{ loop.index }}</p>
         </div>
-        <div class="p-3 flex-grow">
-          <h3 class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-2">
-            {{ produto.name }}
-          </h3>
-          <div class="flex items-center mb-1">
-            <div class="flex items-center mr-1">
-              <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-              <span class="text-[10px] text-gray-600 dark:text-gray-300 ml-0.5">{{ produto.rating|default(4.5) }}</span>
-            </div>
-            <span class="text-[10px] text-gray-500 dark:text-gray-400">• {{ produto.vendidos|default('1k+') }}</span>
-          </div>
-          <div class="mt-1">
-            <span class="text-[10px] text-gray-500 dark:text-gray-400 line-through">R$ {{ produto.originalPrice }}</span>
-            <div class="flex items-baseline">
-              <span class="text-sm sm:text-base font-bold text-gray-900 dark:text-white">R$ {{ produto.salePrice }}</span>
-              <span class="ml-1 text-[10px] text-green-600">à vista</span>
-            </div>
-          </div>
-        </div>
-        <a href="{{ produto.detailUrl }}" target="_blank"
-           class="block bg-yellow-400 hover:bg-yellow-500 text-black text-xs sm:text-sm font-medium py-2 text-center transition-colors duration-300">
-          Comprar
-        </a>
       </div>
       {% endfor %}
     </div>
-  </section>
-  {% endfor %}
-</main>
-
-<!-- Newsletter -->
-<section class="bg-gray-50 dark:bg-gray-800 py-6 sm:py-8">
-  <div class="max-w-2xl mx-auto px-4 text-center">
-    <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2">Ofertas no seu e-mail</h2>
-    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-4">
-      Receba promoções exclusivas e cupons direto na sua caixa de entrada
-    </p>
-    <form class="flex flex-col sm:flex-row gap-2">
-      <input type="email" placeholder="Digite seu e-mail"
-             class="flex-grow px-4 py-2 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 dark:bg-gray-700 dark:text-white">
-      <button type="submit"
-              class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-300">
-        Inscrever-se
-      </button>
-    </form>
   </div>
 </section>
 
-<script>
-function carousel() {
-  return {
-    currentSlide: 0,
-    prev() {
-      if (this.currentSlide > 0) {
-        this.currentSlide--;
-      }
-    },
-    next() {
-      if (this.currentSlide < 7) {
-        this.currentSlide++;
-      }
-    },
-    init() {
-      // Responsive slide calculation
-      const updateSlides = () => {
-        if (window.innerWidth < 640) {
-          this.slidesToShow = 1;
-        } else if (window.innerWidth < 1024) {
-          this.slidesToShow = 2;
-        } else {
-          this.slidesToShow = 1;
-        }
-      };
+<!-- Lojas Oficiais Amazon -->
+<section class="bg-gray-800 py-5 px-4">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-lg font-semibold text-white mb-3">Marcas Oficiais</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      {% for brand in ['Samsung', 'Apple', 'LG', 'Dell', 'Sony', 'Philips'] %}
+      <div class="bg-white border rounded-md shadow-sm p-3 flex flex-col items-center">
+        <span class="text-lg font-bold text-[#232F3E]">{{ brand }}</span>
+        <p class="text-sm text-[#FF9900] mt-1">Ofertas especiais</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
-      updateSlides();
-      window.addEventListener('resize', updateSlides);
-    }
-  }
-}
-</script>
+<!-- Recomendados -->
+<section class="bg-gray-800 py-5 px-4">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-lg font-semibold text-white mb-3">Recomendados para você</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {% for product in [
+        {'name': 'Echo Dot 5ª Geração', 'price': 'R$ 379,90', 'original': 'R$ 499,90', 'rating': 4.9},
+        {'name': 'Fire TV Stick', 'price': 'R$ 279,90', 'original': 'R$ 349,90', 'rating': 4.8},
+        {'name': 'Kindle 11ª Geração', 'price': 'R$ 499,90', 'original': 'R$ 599,90', 'rating': 4.7},
+        {'name': 'Alexa Echo Show', 'price': 'R$ 699,90', 'original': 'R$ 899,90', 'rating': 4.9}
+      ] %}
+      <div class="bg-gray-50 rounded-md overflow-hidden shadow-sm">
+        <div class="relative pt-[100%] bg-white">
+          <img src="https://m.media-amazon.com/images/I/61{{ loop.index }}5uNn1zL._AC_SY355_.jpg"
+               alt="{{ product.name }}"
+               class="absolute top-0 left-0 w-full h-full object-contain p-3">
+        </div>
+        <div class="p-2">
+          <h3 class="text-sm text-gray-800 mb-1">{{ product.name }}</h3>
+          <div class="text-xs text-[#FF9900] font-bold">{{ product.price }}</div>
+          <div class="text-[10px] line-through text-gray-400">{{ product.original }}</div>
+          <div class="text-[11px] text-yellow-500 mt-1">⭐ {{ product.rating }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Navegação inferior (mobile) -->
+<div class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+  <div class="flex justify-around py-2">
+    <a href="#" class="flex flex-col items-center text-[#FF9900]">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <span class="text-xs mt-0.5">Início</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-gray-600">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/>
+      </svg>
+      <span class="text-xs mt-0.5">Categorias</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-gray-600">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 8h14l1 12H4L5 8z"/>
+      </svg>
+      <span class="text-xs mt-0.5">Carrinho</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-gray-600">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+      </svg>
+      <span class="text-xs mt-0.5">Conta</span>
+    </a>
+  </div>
+</div>
 
 {% endblock %}
