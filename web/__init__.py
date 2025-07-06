@@ -7,6 +7,9 @@ import smtplib
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_login import LoginManager
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # = Instância global do banco =
 db = SQLAlchemy()
@@ -69,9 +72,9 @@ def create_app():
 # Função para envio de e-mails
 def enviar_email(destinatario, assunto, corpo):
     servidor_smtp = Config.SERVIDOR
-    porta_smtp = Config.PORTA_SMTP
+    porta_smtp = Config.PORTA_SMPT
     remetente = Config.REMETENTE
-    senha = Config.PASSWORD
+    senha = Config.PASWD
 
     msg = MIMEMultipart()
     msg['From'] = remetente

@@ -1,4 +1,6 @@
-from web import create_app, db
+from dotenv import load_dotenv
+load_dotenv()
+from web import create_app
 
 app = create_app()
 

@@ -9,6 +9,7 @@ from config import Config
 
 main_blueprint = Blueprint('main', __name__)
 
+
 # ================== Conteúdo Principal ==================
 
 @main_blueprint.route('/')
