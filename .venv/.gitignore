@@ -1,0 +1,17 @@
+# Arquivos de ambiente
+config.py
+.env
+ # Ambientes virtuais
+.venv/
+venv/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+
+
+# Configs do sistema
+.DS_Store
+
+# SQLite (se for usado localmente)
+*.sqlite3
