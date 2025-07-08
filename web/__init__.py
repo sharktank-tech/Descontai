@@ -71,10 +71,10 @@ def create_app():
 
 # Função para envio de e-mails
 def enviar_email(destinatario, assunto, corpo):
-    servidor_smtp = Config.SERVIDOR
-    porta_smtp = Config.PORTA_SMPT
-    remetente = Config.REMETENTE
-    senha = Config.PASWD
+    servidor_smtp = Config.EMAIL_SERVER
+    porta_smtp = Config.EMAIL_PORT
+    remetente = Config.EMAIL_SENDER
+    senha = Config.EMAIL_PASSWORD
 
     msg = MIMEMultipart()
     msg['From'] = remetente
