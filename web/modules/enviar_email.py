@@ -4,10 +4,10 @@ import smtplib
 from config import Config
 
 def enviar_email(destinatario, assunto, corpo):
-    servidor_smtp = Config.SERVIDOR
-    porta_smtp = Config.PORTA_SMPT
-    remetente = Config.REMEMTENTE
-    senha = Config.PASWD
+    servidor_smtp = Config.EMAIL_SERVER
+    porta_smtp = Config.EMAIL_PORT
+    remetente = Config.EMAIL_SENDER
+    senha = Config.EMAIL_PASSWORD
 
     msg = MIMEMultipart()
     msg['From'] = remetente
