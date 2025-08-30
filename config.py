@@ -1,14 +1,26 @@
-# config.py
 import os
 from dotenv import load_dotenv
+from urllib.parse import quote_plus
+
 
 # Carrega variáveis do arquivo .env (apenas em desenvolvimento)
 load_dotenv()
 
 class Config:
     # Banco de dados
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
-    SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS", "False") == "True"
+    user = os.getenv("DB_USER")
+    raw_password = os.getenv("DB_PASSWORD")
+    if raw_password is None:
+        raise RuntimeError("Variável de ambiente DB_PASSWORD não está definida.")
+    password = quote_plus(raw_password)
+    host = os.getenv("DB_HOST")
+    port = os.getenv("DB_PORT")
+    database = os.getenv("DB_NAME")
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{user}:{password}@{host}:{port}/{database}"
+    SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", "False") == "True"
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    FLASK_APP = os.getenv("FLASK_APP", "run")
+    UPLOAD_FOLDER=os.getenv('UPLOAD_FOLDER')
 
     # Segurança
     SECRET_KEY = os.environ.get("SECRET_KEY")

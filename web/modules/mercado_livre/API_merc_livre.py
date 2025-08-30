@@ -2,7 +2,7 @@ import requests
 import json
 
 # Carrega o token de acesso atualizado
-with open('web/modules/mercado_livre/tokens/tokens.json') as f:
+with open('tokens/tokens.json') as f:
     tokens = json.load(f)
 
 headers = {
