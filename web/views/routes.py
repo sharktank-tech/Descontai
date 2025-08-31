@@ -63,26 +63,22 @@ def ofertas(marketplace=None):
         print(f"Erro ao carregar ofertas: {str(e)}")
         abort(500)
 
-# ============= Páginas de login e registro =====================
+# ================== Login local ==================
 
-# ========== Página de login local ========== #
 @main_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-
         if not email or not password:
             flash("Por favor, preencha todos os campos.", "danger")
             return redirect(url_for('main.login'))
 
         user = Users.query.filter_by(email=email).first()
-
         if not user or not check_password_hash(user.password_hash, password):
             flash("Credenciais inválidas. Tente novamente.", "danger")
             return redirect(url_for('main.login'))
 
-        # Autenticar com opção de lembrar login
         remember = 'remember' in request.form
         login_user(user, remember=remember)
         flash("Login realizado com sucesso!", "success")
@@ -90,14 +86,14 @@ def login():
 
     return render_template('conta/login.html')
 
-# ========== Login com Google (Redirecionamento) ========== #
+# ================== Login com Google ==================
+
 @main_blueprint.route("/login/google")
 def login_google():
     if not google.authorized:
         return redirect(url_for("google.login"))
     return redirect(url_for("main.login_google_finish"))
 
-# ========== Finalização do login com Google ========== #
 @main_blueprint.route("/login/google/finish")
 def login_google_finish():
     if not google.authorized:
@@ -112,10 +108,8 @@ def login_google_finish():
     user_info = resp.json()
     email = user_info.get("email")
     username = user_info.get("name", email.split('@')[0])
-    picture = user_info.get("picture")
 
     user = Users.query.filter_by(email=email).first()
-
     if not user:
         user = Users(username=username, email=email, is_admin=False)
         db.session.add(user)
@@ -130,7 +124,8 @@ def login_google_finish():
     flash(f"Bem-vindo, {username}!", "success")
     return redirect(url_for("main.ofertas", marketplace='amazon'))
 
-# ========== Logout ========== #
+# ================== Logout ==================
+
 @main_blueprint.route("/logout")
 @login_required
 def logout():
@@ -138,45 +133,34 @@ def logout():
     flash("Logout realizado com sucesso.", "success")
     return redirect(url_for('main.login'))
 
+# ================== Registro ==================
 
-# Rota para a página de cadastro
 @main_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')  # Nome do usuário
-        email = request.form.get('email')   # E-mail do usuário
-        password = request.form.get('password')  # Senha do usuário
-
-        # Verifica se todos os campos foram preenchidos
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
         if not username or not email or not password:
             flash("Todos os campos são obrigatórios.", "danger")
             return redirect(url_for('main.register'))
 
-        # Verifica se o usuário ou e-mail já existem no banco
-        existing_user = Users.query.filter(
-            (Users.username == username) | (Users.email == email)
-        ).first()
-
+        existing_user = Users.query.filter((Users.username==username)|(Users.email==email)).first()
         if existing_user:
             flash("Usuário ou e-mail já existe.", "danger")
             return redirect(url_for('main.register'))
 
-        # Tenta salvar o novo usuário no banco de dados
         try:
             new_user = Users(username=username, email=email, is_admin=False)
-            new_user.set_password(password)  # Configura a senha com hash
+            new_user.set_password(password)
             db.session.add(new_user)
             db.session.commit()
-
             flash("Cadastro realizado com sucesso! Faça login para continuar.", "success")
             return redirect(url_for('main.login'))
-        except IntegrityError as e:
-            db.session.rollback()
-            flash("Erro ao salvar usuário. Por favor, tente novamente.", "danger")
         except Exception as e:
-            flash(f"Erro inesperado: {str(e)}", "danger")
+            db.session.rollback()
+            flash(f"Erro ao salvar usuário: {str(e)}", "danger")
 
-    # Exibe a página de cadastro
     return render_template('conta/register.html')
 
 
