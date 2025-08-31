@@ -9,111 +9,106 @@
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-<!-- Mensagens flash -->
-{% with messages = get_flashed_messages(with_categories=True) %}
-  {% if messages %}
-    <div id="flash-messages" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-      {% for category, message in messages %}
-        <div class="px-4 py-2 rounded shadow-md text-white
-                    {% if category == 'success' %}bg-green-500
-                    {% elif category == 'error' or category == 'danger' %}bg-red-500
-                    {% else %}bg-blue-500{% endif %}
-                    mb-2 flash-message">
-          {{ message }}
-        </div>
-      {% endfor %}
+  <!-- Mensagens flash -->
+  {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      <div id="flash-messages" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+        {% for category, message in messages %}
+          <div class="px-4 py-2 rounded shadow-md text-white
+                      {% if category == 'success' %}bg-green-500
+                      {% elif category == 'error' or category == 'danger' %}bg-red-500
+                      {% else %}bg-blue-500{% endif %}
+                      mb-2 flash-message">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+      <script>
+        setTimeout(() => {
+          document.querySelectorAll('.flash-message').forEach(el => {
+            el.classList.add('opacity-0', 'transition-opacity', 'duration-200');
+            setTimeout(() => el.remove(), 500);
+          });
+        }, 5000);
+      </script>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Card de Login -->
+  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 tracking-tight mb-2">
+      Descont<span class="text-gray-900">Aí.com</span>
+    </h1>
+    <p class="text-gray-600 text-center mb-4">Entre para continuar</p>
+
+    <!-- Formulário de login local -->
+    <form action="{{ url_for('main.login') }}" method="POST" class="space-y-4">
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="seuemail@email.com"
+          required>
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Digite sua senha"
+          required>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label class="flex items-center">
+          <input type="checkbox" name="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+          <span class="ml-2 text-sm text-gray-600">Lembrar-me</span>
+        </label>
+        <a href="#" class="text-sm text-blue-600 hover:underline">Esqueceu a senha?</a>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium text-lg hover:bg-blue-700 transition">
+        Entrar
+      </button>
+    </form>
+
+    <!-- Separador -->
+    <div class="flex items-center my-6">
+      <div class="border-t border-gray-300 flex-grow"></div>
+      <span class="text-gray-500 mx-4">ou</span>
+      <div class="border-t border-gray-300 flex-grow"></div>
     </div>
-    <script>
-      setTimeout(() => {
-        document.querySelectorAll('.flash-message').forEach(el => {
-          el.classList.add('opacity-0', 'transition-opacity', 'duration-200');
-          setTimeout(() => el.remove(), 500);
-        });
-      }, 5000);
-    </script>
-  {% endif %}
-{% endwith %}
 
-<!-- Card de Login -->
-<div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-  <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 tracking-tight mb-2">
-    Descont<span class="text-gray-900">Aí.com</span>
-  </h1>
-  <p class="text-gray-600 text-center mb-4">Entre para continuar</p>
+    <!-- Login com Google -->
+    <div class="flex flex-col space-y-4">
+      <a href="{{ url_for('main.login_google') }}"
+         class="w-full flex items-center justify-center bg-gray-100 py-2 px-4 rounded-lg shadow hover:bg-gray-200 transition">
+        <img src="https://imgs.search.brave.com/bEoj9oydlm4QEA8KUuZr6L0akwRrZS994IzB_SoAdpw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dmVjdG9yc3RvY2su/Y29tL2kvcHJldmll/dy0xeC83NS81NC9n/b29nbGUtbG9nby12/ZWN0b3ItMjgzODc1/NTQuanBn"
+             alt="Google" class="w-5 h-5 mr-2">
+        Entrar com Google
+      </a>
 
-  <!-- Formulário de login -->
-  <form action="/login" method="POST" class="space-y-4">
-    <!-- Email -->
-    <div>
-      <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-        placeholder="seuemail@email.com"
-        required>
+      <!-- Facebook desativado -->
+      <button disabled class="w-full flex items-center justify-center bg-gray-100 py-2 px-4 rounded-lg shadow text-gray-400 cursor-not-allowed">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+             alt="Facebook" class="w-5 h-5 mr-2">
+        Em breve com Facebook
+      </button>
     </div>
 
-    <!-- Senha -->
-    <div>
-      <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-        placeholder="Digite sua senha"
-        required>
-    </div>
-
-    <!-- Lembrar-me -->
-    <div class="flex items-center justify-between">
-      <label class="flex items-center">
-        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-        <span class="ml-2 text-sm text-gray-600">Lembrar-me</span>
-      </label>
-      <a href="#" class="text-sm text-blue-600 hover:underline">Esqueceu a senha?</a>
-    </div>
-
-    <!-- Botão de Login -->
-    <button
-      type="submit"
-      class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium text-lg hover:bg-blue-700 transition">
-      Entrar
-    </button>
-  </form>
-
-  <!-- Separador -->
-  <div class="flex items-center my-6">
-    <div class="border-t border-gray-300 flex-grow"></div>
-    <span class="text-gray-500 mx-4">ou</span>
-    <div class="border-t border-gray-300 flex-grow"></div>
+    <!-- Rodapé -->
+    <p class="text-gray-600 text-sm text-center mt-6">
+      Não tem uma conta? <a href="{{ url_for('main.register') }}" class="text-blue-600 hover:underline">Cadastre-se</a>
+    </p>
   </div>
-
-  <!-- Login com redes sociais -->
-  <div class="flex flex-col space-y-4">
-    <!-- Login com Google funcional -->
-    <a href="{{ url_for('main.login_google') }}"
-       class="w-full flex items-center justify-center bg-gray-100 py-2 px-4 rounded-lg shadow hover:bg-gray-200 transition">
-      <img src="https://imgs.search.brave.com/bEoj9oydlm4QEA8KUuZr6L0akwRrZS994IzB_SoAdpw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dmVjdG9yc3RvY2su/Y29tL2kvcHJldmll/dy0xeC83NS81NC9n/b29nbGUtbG9nby12/ZWN0b3ItMjgzODc1/NTQuanBn"
-           alt="Google" class="w-5 h-5 mr-2">
-      Entrar com Google
-    </a>
-
-    <!-- Facebook desativado por enquanto -->
-    <button disabled class="w-full flex items-center justify-center bg-gray-100 py-2 px-4 rounded-lg shadow text-gray-400 cursor-not-allowed">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
-           alt="Facebook" class="w-5 h-5 mr-2">
-      Em breve com Facebook
-    </button>
-  </div>
-
-  <!-- Rodapé -->
-  <p class="text-gray-600 text-sm text-center mt-6">
-    Não tem uma conta? <a href="/register" class="text-blue-600 hover:underline">Cadastre-se</a>
-  </p>
-</div>
 
 </body>
 </html>
