@@ -197,7 +197,7 @@ def termos():
 
 # Enviar email de contato
 @main_blueprint.route('/contato', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def contato():
     try:
         if request.method == 'POST':
