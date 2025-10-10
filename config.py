@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from urllib.parse import quote_plus
 
 
-# Carrega variáveis do arquivo .env (apenas em desenvolvimento)
 load_dotenv()
 
 class Config:
