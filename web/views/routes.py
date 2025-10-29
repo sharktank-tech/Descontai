@@ -3,7 +3,7 @@ from flask_dance.contrib.google import  google
 from web.modules.enviar_email import enviar_email
 from web.modules.models import Produto, Users, db
 from sqlalchemy.exc import IntegrityError
-from flask_login import  login_user, logout_user, login_required
+from flask_login import  login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from config import Config
 
@@ -63,6 +63,21 @@ def ofertas(marketplace=None):
         print(f"Erro ao carregar ofertas: {str(e)}")
         abort(500)
 
+# ============== Área de Conta ==================
+@main_blueprint.route('/conta')
+@login_required
+def conta():
+    """
+    Rota principal da conta - Exibe dashboard com informações do usuário
+    """
+    try:
+
+        return render_template('conta/conta.html')
+
+    except Exception as e:
+        flash(f"Erro ao carregar sua conta. Por favor, tente novamente.\nErro {e}", "danger")
+        return redirect(url_for('main.home'))
+
 # ================== Login local ==================
 
 @main_blueprint.route('/login', methods=['GET', 'POST'])
@@ -82,7 +97,7 @@ def login():
         remember = 'remember' in request.form
         login_user(user, remember=remember)
         flash("Login realizado com sucesso!", "success")
-        return redirect(url_for('main.ofertas', marketplace='amazon'))
+        return redirect(url_for('main.conta', marketplace='amazon'))
 
     return render_template('conta/login.html')
 

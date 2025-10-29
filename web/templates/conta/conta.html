@@ -1,127 +1,18 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Minha Conta</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="favicon.ico">
-  <script>
-    function mostrarSecao(secao) {
-      document.querySelectorAll('.conteudo').forEach(el => el.classList.add('hidden'));
-      document.getElementById(secao).classList.remove('hidden');
-    }
-  </script>
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-  <!-- Navbar -->
-  <nav class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="/" class="text-2xl font-bold text-gray-800">E-Commerce</a>
-      <ul class="flex space-x-6 text-gray-600">
-        <li><a href="/" class="hover:text-gray-900">Home</a></li>
-        <li><a href="/logout" class="hover:text-gray-900">Sair</a></li>
-      </ul>
-    </div>
-  </nav>
+{% extends "base.html" %}
 
-  <!-- Conteúdo da Conta -->
-  <section class="container mx-auto flex flex-col md:flex-row py-10 px-4">
-    <!-- Menu Lateral -->
-    <aside class="w-full md:w-1/4 bg-white shadow-md rounded-lg p-6">
-      <h3 class="text-lg font-bold mb-4">Minha Conta</h3>
-      <ul class="space-y-3">
-        <li><a href="#" onclick="mostrarSecao('perfil')" class="text-gray-700 hover:text-blue-600">Perfil</a></li>
-        <li><a href="#" onclick="mostrarSecao('cartoes')" class="text-gray-700 hover:text-blue-600">Cartões / Contas Bancárias</a></li>
-        <li><a href="#" onclick="mostrarSecao('enderecos')" class="text-gray-700 hover:text-blue-600">Endereços</a></li>
-        <li><a href="#" onclick="mostrarSecao('compras')" class="text-gray-700 hover:text-blue-600">Compras</a></li>
-        <li><a href="#" onclick="mostrarSecao('cookies')" class="text-gray-700 hover:text-blue-600">Preferências de Cookies</a></li>
-        <li><a href="#" onclick="mostrarSecao('privacidade')" class="text-gray-700 hover:text-blue-600">Configurações de Privacidade</a></li>
-      </ul>
-    </aside>
+{% block title %}Minha Conta{% endblock %}
 
-    <!-- Área Principal -->
-    <div class="w-full md:w-3/4 bg-white shadow-md rounded-lg p-6 ml-0 md:ml-6 mt-6 md:mt-0">
-      <!-- Seções -->
-      <div id="perfil" class="conteudo">
-        <h2 class="text-2xl font-bold mb-4">Meu Perfil</h2>
-        <p class="text-gray-600">Gerencie suas informações pessoais.</p>
-        <form class="space-y-4">
-          <input type="text" placeholder="Nome Completo" class="w-full p-2 border rounded" />
-          <input type="email" placeholder="E-mail" class="w-full p-2 border rounded" />
-          <input type="tel" placeholder="Telefone" class="w-full p-2 border rounded" />
-          <button class="bg-blue-600 text-white px-4 py-2 rounded">Salvar</button>
-        </form>
-      </div>
+{% block content %}
+<div class="container mx-auto py-10 text-left">
+    <h1 class="text-3xl font-bold text-gray-500 mb-4">Minha Conta</h1>
 
-      <div id="cartoes" class="conteudo hidden">
-        <h2 class="text-2xl font-bold mb-4">Cartões e Contas Bancárias</h2>
-        <p class="text-gray-600">Gerencie seus métodos de pagamento.</p>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded">Adicionar Novo Método</button>
-        <div class="mt-4">
-          <h3 class="text-xl font-semibold">Métodos de pagamento</h3>
-          <ul class="space-y-2">
-            <li>Cartão Visa - **** 1234</li>
-            <li>Conta Bancária - Banco XYZ</li>
-          </ul>
-        </div>
-      </div>
+    <p class="text-lg text-gray-600">
+        Olá, <span class="font-semibold">{{ current_user.username }}</span>! 👋
+    </p>
 
-      <div id="enderecos" class="conteudo hidden">
-        <h2 class="text-2xl font-bold mb-4">Endereços</h2>
-        <p class="text-gray-600">Gerencie seus endereços de entrega.</p>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded">Adicionar Novo Endereço</button>
-        <div class="mt-4">
-          <h3 class="text-xl font-semibold">Endereços Cadastrados</h3>
-          <ul class="space-y-2">
-            <li>Rua Exemplo, 123, São Paulo - SP</li>
-            <li>Avenida ABC, 456, Rio de Janeiro - RJ</li>
-          </ul>
-        </div>
-      </div>
-
-      <div id="compras" class="conteudo hidden">
-        <h2 class="text-2xl font-bold mb-4">Minhas Compras</h2>
-        <p class="text-gray-600">Acompanhe seus pedidos e histórico de compras.</p>
-        <div class="border p-4 rounded shadow-md">
-          <p class="text-gray-800 font-bold">Pedido #12345</p>
-          <p class="text-gray-600">Status: Enviado</p>
-          <button class="bg-blue-600 text-white px-4 py-2 rounded mt-4">Ver Detalhes</button>
-        </div>
-        <div class="mt-4 border p-4 rounded shadow-md">
-          <p class="text-gray-800 font-bold">Pedido #12346</p>
-          <p class="text-gray-600">Status: Em Preparação</p>
-          <button class="bg-blue-600 text-white px-4 py-2 rounded mt-4">Ver Detalhes</button>
-        </div>
-      </div>
-
-      <div id="cookies" class="conteudo hidden">
-        <h2 class="text-2xl font-bold mb-4">Preferências de Cookies</h2>
-        <p class="text-gray-600">Gerencie suas preferências de privacidade.</p>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded">Configurar Cookies</button>
-      </div>
-
-      <div id="privacidade" class="conteudo hidden">
-        <h2 class="text-2xl font-bold mb-4">Configurações de Privacidade</h2>
-        <p class="text-gray-600">Controle sua privacidade e segurança.</p>
-        <form class="space-y-4">
-          <label>
-            <input type="checkbox" /> Aceitar compartilhamento de dados
-          </label>
-          <label>
-            <input type="checkbox" /> Ativar autenticação de dois fatores
-          </label>
-          <button class="bg-blue-600 text-white px-4 py-2 rounded">Salvar Configurações</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-6 text-center mt-auto">
-    <div class="container mx-auto px-6">
-      <p class="text-sm">&copy; 2024 E-Commerce. Todos os direitos reservados.</p>
-    </div>
-  </footer>
-</body>
-</html>
+    <a href="{{ url_for('main.logout') }}"
+       class="mt-6 inline-block bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+        Sair
+    </a>
+</div>
+{% endblock %}
