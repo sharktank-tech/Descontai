@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, session
+from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, Response
 from flask_dance.contrib.google import  google
 from web.modules.enviar_email import enviar_email
 from web.modules.models import Produto, Users, db
@@ -248,6 +248,17 @@ def contato():
         print(f"Erro ao enviar e-mail: {e}")
         return redirect(url_for('main.sobre'))
 
+@main_blueprint.route('/robots.txt')
+def robots():
+    content = """User-agent: *
+Disallow: /termos/
+Disallow: /privacidade/
+Disallow: /password/redefine
+Disallow: /contato/
+Disallow: /conta/
+    
+    """
+    return Response(content, mimetype='text/plain')
 
 
 # ================== Tratamento de Erros ==================
