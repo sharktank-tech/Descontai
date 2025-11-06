@@ -8,7 +8,7 @@ ENDPOINT = "https://open-api.affiliate.shopee.com.br/graphql"
 payload_dict = {
     "query": """
       query {
-        productOfferV2(listType:0, sortType:5, page:0, limit:10) {
+        productOfferV2(listType:0, sortType:5, page:0, limit:15) {
           nodes {
             productName
             imageUrl
