@@ -1,11 +1,13 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, Response
 from flask_dance.contrib.google import  google
 from web.modules.enviar_email import enviar_email
-from web.modules.models import Produto, Users, db
+from web.modules.models import  Users, db
 from sqlalchemy.exc import IntegrityError
 from flask_login import  login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from config import Config
+from web.modules.shopee.v3 import info_produtos
+import json
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -18,49 +20,68 @@ def home():
 
 @main_blueprint.route("/ofertas")
 @main_blueprint.route("/ofertas/<string:marketplace>")
-@login_required
+#@login_required
 #@admin_required
 def ofertas(marketplace=None):
     try:
-        # Filtra produtos por marketplace se especificado
-        query = Produto.query
-        if marketplace:
-            query = query.filter_by(origem=marketplace)
+        resposta = info_produtos()  # retorna string JSON (ou dict)
+        print("DEBUG: tipo de 'resposta' ->", type(resposta))
 
-        # Busca produtos do banco
-        produtos = query.all()
+        # parse seguro para dict
+        parsed = {}
+        if isinstance(resposta, str):
+            try:
+                parsed = json.loads(resposta)
+            except Exception as e:
+                print("DEBUG: erro ao fazer json.loads(resposta):", e)
+                parsed = {}
+        elif isinstance(resposta, dict):
+            parsed = resposta
+        else:
+            # tenta converter genérico para string/json
+            try:
+                parsed = json.loads(str(resposta))
+            except Exception:
+                parsed = {}
 
-        # Se não houver produtos, retorna 404
-        if not produtos:
-            abort(404)
+        # extrai nodes (fórmula padrão)
+        nodes = parsed.get("data", {}).get("productOfferV2", {}).get("nodes", []) or []
+        print("DEBUG: nodes tipo/len ->", type(nodes), len(nodes) if hasattr(nodes, "__len__") else "NA")
 
-        # Formata os dados para o template
-        produtos_formatados = []
-        for produto in produtos:
-            produtos_formatados.append({
-                'id': produto.id,
-                'name': produto.name,
-                'image': produto.image,
-                'originalPrice': f"R$ {produto.originalprice:.2f}".replace('.', ','),
-                'salePrice': f"R$ {produto.saleprice:.2f}".replace('.', ','),
-                'discount': int(produto.discount),
-                'detailUrl': produto.detailurl,
-                'rating': produto.rating,
-                'vendidos': produto.vendidos,
-                'categoria': produto.categoria,
-                'origem': produto.origem  # Adicionado o campo origem
+        # normaliza cada produto para facilitar o template
+        produtos = []
+        for n in nodes:
+            # n pode ser dict; usar .get com fallback
+            try:
+                price_val = float(n.get("price", 0) or 0)
+            except Exception:
+                # se price vier em formato estranho
+                try:
+                    price_val = float(str(n.get("price", "0")).replace(",", "."))
+                except Exception:
+                    price_val = 0.0
+
+            produtos.append({
+                "productName": n.get("productName") or n.get("name") or "Produto sem nome",
+                "imageUrl": n.get("imageUrl") or n.get("image") or "https://via.placeholder.com/400x400?text=Sem+imagem",
+                "price": price_val,
+                "productLink": n.get("productLink") or "#",
+                "offerLink": n.get("offerLink") or n.get("affiliateLink") or "#",
+                "shopName": n.get("shopName") or n.get("shopId") or "",
+                "ratingStar": n.get("ratingStar") or 0,
+                "sales": n.get("sales") or 0
             })
 
-        # Agrupa por categoria
-        grupos = [{
-            'categoria': f"Ofertas {'em ' + marketplace.capitalize() if marketplace else 'em Destaque'}",
-            'produtos': produtos_formatados
-        }]
+        print(f"DEBUG: total de produtos normalizados: {len(produtos)}")
 
-        return render_template('main/ofertas.html', produtos=grupos, marketplace_selecionado=marketplace)
+        return render_template(
+            "main/ofertas2.html",
+            produtos=produtos,
+            marketplace_selecionado=marketplace
+        )
 
     except Exception as e:
-        print(f"Erro ao carregar ofertas: {str(e)}")
+        print(f"Erro ao carregar ofertas: {e}")
         abort(500)
 
 # ============== Área de Conta ==================
