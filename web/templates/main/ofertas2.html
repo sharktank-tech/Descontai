@@ -11,7 +11,7 @@ Ofertas Amazon 🛒 | {{ super() }}
 {% block content %}
 
 <!-- Amazon-style Main Banner -->
-<div class="bg-[#232F3E] pb-6">
+<div class="bg-[#F75131] pb-6">
   <div class="px-4 pt-4">
     <div class="relative max-w-4xl mx-auto">
       <form action="{{ url_for('main.ofertas') }}" method="get">
@@ -29,9 +29,9 @@ Ofertas Amazon 🛒 | {{ super() }}
 
   <div class="mt-4 px-4">
     <div class="max-w-4xl mx-auto rounded-md overflow-hidden shadow-lg">
-      <img src="https://m.media-amazon.com/images/G/32/kindle/journeys/ZTJlNzRkMjUt/ZTJlNzRkMjUt-MzVlMzkyODAt-w1500._CB654206473_.jpg"
+      <img src="https://imgs.search.brave.com/qdwabRl2bIQKrsoiZlx-U8uSD7yIVhFv-8hzpnd-2g4/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9jcy5k/ZW8uc2hvcGVlbW9i/aWxlLmNvbS9zaG9w/ZWUvc2hvcGVlLWNz/LWxpdmUtYnIvc3Rh/dGljL2hlbHBjZW50/ZXJmZS9zaG9wZWVf/bG9nby5wbmc"
            alt="Banner Shopee"
-           class="w-full h-auto object-cover">
+           class="w-15 h-auto object-cover">
     </div>
   </div>
 </div>
@@ -64,7 +64,6 @@ Ofertas Amazon 🛒 | {{ super() }}
   <div class="max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-3">
       <h2 class="text-lg font-semibold text-white">Ofertas Relâmpago</h2>
-      <a href="#" class="text-sm text-[#FF9900] hover:underline">Ver tudo</a>
     </div>
 
     {% if produtos and produtos|length > 0 %}
