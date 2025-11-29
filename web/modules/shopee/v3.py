@@ -29,7 +29,7 @@ payload_dict = {
 
 
 def info_produtos():
-    # converte para JSON *compacto* (sem espaços desnecessários)
+   
     payload = json.dumps(payload_dict, separators=(',', ':'))
 
     timestamp = str(int(time.time()))  # em segundos
