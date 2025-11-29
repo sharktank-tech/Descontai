@@ -4,7 +4,7 @@ APPID = "18391030753"
 SECRET = "EKGCXKTULYROOEV54Z55UHNDADFZMWZ3"
 ENDPOINT = "https://open-api.affiliate.shopee.com.br/graphql"
 
-# montando a query / payload (string JSON)
+# montando a query
 payload_dict = {
     "query": """
       query {
