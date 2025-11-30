@@ -10,6 +10,7 @@ import os
 from dotenv import load_dotenv
 from flask_migrate import Migrate
 
+
 load_dotenv()
 
 # ================== Instâncias globais ==================
@@ -23,6 +24,9 @@ def create_app():
 
     # Carregar configurações
     app.config.from_object(Config)
+
+    # 🔥 FIX CRÍTICO — GARANTES QUE A URI DO BANCO VEM DO .env
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 
     # Permitir OAuth inseguro em dev (HTTP) - remover em produção
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"

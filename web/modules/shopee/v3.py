@@ -1,8 +1,9 @@
 import time, hashlib, requests, json
+from config import Config
 
-APPID = "18391030753"
-SECRET = "EKGCXKTULYROOEV54Z55UHNDADFZMWZ3"
-ENDPOINT = "https://open-api.affiliate.shopee.com.br/graphql"
+APPID = Config.APPID
+SECRET = Config.SECRET
+ENDPOINT = Config.ENDPOINT
 
 # montando a query
 payload_dict = {
@@ -32,7 +33,7 @@ def info_produtos():
    
     payload = json.dumps(payload_dict, separators=(',', ':'))
 
-    timestamp = str(int(time.time()))  # em segundos
+    timestamp = str(int(time.time()))
 
     string_to_sign = f"{APPID}{timestamp}{payload}{SECRET}"
     signature = hashlib.sha256(string_to_sign.encode('utf-8')).hexdigest()
