@@ -36,7 +36,7 @@ Ofertas Amazon 🛒 | {{ super() }}
   </div>
 </div>
 
-<!-- Amazon Categories (mantive igual) -->
+<!-- Amazon Categories -->
 <div class="bg-gray-800 py-4 px-4">
   <div class="max-w-4xl mx-auto grid grid-cols-5 sm:grid-cols-10 gap-3 text-center">
     {% for category in [
@@ -52,43 +52,53 @@ Ofertas Amazon 🛒 | {{ super() }}
       {'name': 'Mais', 'icon': '🛍️'}
     ] %}
     <a href="#" class="flex flex-col items-center hover:text-[#FF9900]">
-      <div class="w-12 h-12 rounded-full bg-white shadow flex items-center justify-center text-2xl">{{ category.icon }}</div>
+      <div class="w-12 h-12 rounded-full bg-white shadow flex items-center justify-center text-2xl">
+        {{ category.icon }}
+      </div>
       <span class="text-[11px] mt-1">{{ category.name }}</span>
     </a>
     {% endfor %}
   </div>
 </div>
 
-<!-- Destaques (Ofertas Relâmpago) -->
+<!-- Ofertas Relâmpago -->
 <section class="bg-gray-800 py-5 px-4">
   <div class="max-w-4xl mx-auto">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-lg font-semibold text-white">Ofertas Relâmpago</h2>
-    </div>
+    <h2 class="text-lg font-semibold text-white mb-3">Ofertas Relâmpago</h2>
 
     {% if produtos and produtos|length > 0 %}
     <div class="flex overflow-x-auto gap-3">
       {% for p in produtos[:12] %}
       <div class="flex-shrink-0 w-36 bg-white rounded-md border shadow-sm">
         <div class="relative pt-[100%] bg-gray-100">
-          <img src="{{ p.imageUrl }}" alt="{{ p.productName }}" class="absolute top-0 left-0 w-full h-full object-contain p-2">
+          <img src="{{ p.imageUrl }}" alt="{{ p.productName }}"
+               class="absolute top-0 left-0 w-full h-full object-contain p-2">
         </div>
         <div class="p-2">
-          <div class="text-xs font-bold text-[#FF9900]">R$ {{ '%.2f' % p.price }}</div>
-          <p class="text-[10px] text-gray-700 mt-1 line-clamp-2">{{ p.productName }}</p>
-          <div class="text-[11px] text-gray-500">Loja: {{ p.shopName }}</div>
-          <div class="mt-2 flex gap-2">
-            {% if p.offerLink and p.offerLink != '#' %}
-              <a class="text-[11px] px-2 py-1 rounded bg-[#FF9900] text-white inline-block" href="{{ p.offerLink }}" target="_blank" rel="noopener">Ir para oferta</a>
-            {% endif %}
-
+          <div class="text-xs font-bold text-[#FF9900]">
+            R$ {{ '%.2f' % p.price }}
           </div>
+          <p class="text-[10px] text-gray-700 mt-1 line-clamp-2">
+            {{ p.productName }}
+          </p>
+          <div class="text-[11px] text-gray-500">
+            Loja: {{ p.shopName }}
+          </div>
+
+          {% if p.offerLink and p.offerLink != '#' %}
+          <a class="mt-2 block text-[11px] px-2 py-1 rounded bg-[#FF9900] text-white text-center"
+             href="{{ p.offerLink }}" target="_blank" rel="noopener">
+            Ir para oferta
+          </a>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
     </div>
     {% else %}
-      <div class="text-center text-gray-300 py-6">Nenhuma oferta encontrada no momento.</div>
+      <div class="text-center text-gray-300 py-6">
+        Nenhuma oferta encontrada no momento.
+      </div>
     {% endif %}
   </div>
 </section>
@@ -108,71 +118,49 @@ Ofertas Amazon 🛒 | {{ super() }}
   </div>
 </section>
 
-<!-- Recomendados (usar produtos da API) -->
+<!-- Recomendados -->
 <section class="bg-gray-800 py-5 px-4">
   <div class="max-w-4xl mx-auto">
     <h2 class="text-lg font-semibold text-white mb-3">Recomendados para você</h2>
+
     {% if produtos and produtos|length > 0 %}
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {% for p in produtos %}
       <div class="bg-gray-50 rounded-md overflow-hidden shadow-sm">
         <div class="relative pt-[100%] bg-white">
-          <img src="{{ p.imageUrl }}" alt="{{ p.productName }}" class="absolute top-0 left-0 w-full h-full object-contain p-3">
+          <img src="{{ p.imageUrl }}" alt="{{ p.productName }}"
+               class="absolute top-0 left-0 w-full h-full object-contain p-3">
         </div>
         <div class="p-2">
-          <h3 class="text-sm text-gray-800 mb-1">{{ p.productName }}</h3>
-          <div class="text-xs text-[#FF9900] font-bold">R$ {{ '%.2f' % p.price }}</div>
-          <div class="text-[10px] line-through text-gray-400">R$ {{ '%.2f' % (p.price * 1.2) }}</div>
-          <div class="text-[11px] text-yellow-500 mt-1">⭐ {{ p.ratingStar }} • {{ p.sales }} vendidos</div>
-
-          <div class="mt-2 flex gap-2">
-            {% if p.offerLink and p.offerLink != '#' %}
-              <a class="px-2 py-1 rounded bg-[#FF9900] text-white text-xs" href="{{ p.offerLink }}" target="_blank" rel="noopener">Ir para oferta</a>
-            {% endif %}
-
+          <h3 class="text-sm text-gray-800 mb-1">
+            {{ p.productName }}
+          </h3>
+          <div class="text-xs text-[#FF9900] font-bold">
+            R$ {{ '%.2f' % p.price }}
           </div>
+          <div class="text-[10px] line-through text-gray-400">
+            R$ {{ '%.2f' % (p.price * 1.2) }}
+          </div>
+          <div class="text-[11px] text-yellow-500 mt-1">
+            ⭐ {{ p.ratingStar }} • {{ p.sales }} vendidos
+          </div>
+
+          {% if p.offerLink and p.offerLink != '#' %}
+          <a class="mt-2 inline-block px-2 py-1 rounded bg-[#FF9900] text-white text-xs"
+             href="{{ p.offerLink }}" target="_blank" rel="noopener">
+            Ir para oferta
+          </a>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
     </div>
     {% else %}
-      <div class="text-center text-gray-300 py-6">Nenhum produto recomendado no momento.</div>
+      <div class="text-center text-gray-300 py-6">
+        Nenhum produto recomendado no momento.
+      </div>
     {% endif %}
   </div>
 </section>
-
-<!-- Navegação inferior (mobile) -->
-<div class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-  <div class="flex justify-around py-2">
-    <a href="#" class="flex flex-col items-center text-[#FF9900]">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-      </svg>
-      <span class="text-xs mt-0.5">Início</span>
-    </a>
-    <a href="#" class="flex flex-col items-center text-gray-600">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/>
-      </svg>
-      <span class="text-xs mt-0.5">Categorias</span>
-    </a>
-    <a href="#" class="flex flex-col items-center text-gray-600">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M5 8h14l1 12H4L5 8z"/>
-      </svg>
-      <span class="text-xs mt-0.5">Carrinho</span>
-    </a>
-    <a href="#" class="flex flex-col items-center text-gray-600">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-      </svg>
-      <span class="text-xs mt-0.5">Conta</span>
-    </a>
-  </div>
-</div>
 
 {% endblock %}
