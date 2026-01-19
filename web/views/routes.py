@@ -1,78 +1,60 @@
-from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, Response
-from flask_dance.contrib.google import  google
-from web.modules.enviar_email import enviar_email
-from web.modules.models import  Users, db
-from sqlalchemy.exc import IntegrityError
-from flask_login import  login_user, logout_user, login_required, current_user
+from flask import (
+    render_template, Blueprint, flash, redirect, url_for, request, abort, Response )
+from werkzeug.security import generate_password_hash
+from flask_dance.contrib.google import google
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from config import Config
+from web.modules.enviar_email import enviar_email
+from web.modules.models import User
 from web.modules.shopee.v3 import info_produtos
+import requests
 import json
 
-main_blueprint = Blueprint('main', __name__)
+main_blueprint = Blueprint("main", __name__)
+
+SUPABASE_HEADERS = {
+    "apikey": Config.SUPABASE_KEY,
+    "Authorization": f"Bearer {Config.SUPABASE_SERVICE_ROLE_KEY}",
+    "Content-Type": "application/json",
+}
+
+SUPABASE_USERS_URL = f"{Config.SUPABASE_URL}/rest/v1/users"
 
 
 # ================== Conteúdo Principal ==================
 
-@main_blueprint.route('/')
+@main_blueprint.route("/")
 def home():
-    return render_template('main/index.html')
+    return render_template("main/index.html")
+
 
 @main_blueprint.route("/ofertas")
 @main_blueprint.route("/ofertas/<string:marketplace>")
-#@login_required
-#@admin_required
 def ofertas(marketplace=None):
     try:
-        resposta = info_produtos()  # retorna string JSON (ou dict)
-        print("DEBUG: tipo de 'resposta' ->", type(resposta))
+        resposta = info_produtos()
 
-        # parse seguro para dict
-        parsed = {}
-        if isinstance(resposta, str):
-            try:
-                parsed = json.loads(resposta)
-            except Exception as e:
-                print("DEBUG: erro ao fazer json.loads(resposta):", e)
-                parsed = {}
-        elif isinstance(resposta, dict):
-            parsed = resposta
-        else:
-            # tenta converter genérico para string/json
-            try:
-                parsed = json.loads(str(resposta))
-            except Exception:
-                parsed = {}
-
-        # extrai nodes (fórmula padrão)
+        parsed = json.loads(resposta) if isinstance(resposta, str) else resposta
         nodes = parsed.get("data", {}).get("productOfferV2", {}).get("nodes", []) or []
-        print("DEBUG: nodes tipo/len ->", type(nodes), len(nodes) if hasattr(nodes, "__len__") else "NA")
 
-        # normaliza cada produto para facilitar o template
         produtos = []
         for n in nodes:
-            # n pode ser dict; usar .get com fallback
             try:
-                price_val = float(n.get("price", 0) or 0)
+                price = float(n.get("price", 0) or 0)
             except Exception:
-                # se price vier em formato estranho
-                try:
-                    price_val = float(str(n.get("price", "0")).replace(",", "."))
-                except Exception:
-                    price_val = 0.0
+                price = 0.0
 
             produtos.append({
-                "productName": n.get("productName") or n.get("name") or "Produto sem nome",
-                "imageUrl": n.get("imageUrl") or n.get("image") or "https://via.placeholder.com/400x400?text=Sem+imagem",
-                "price": price_val,
+                "productName": n.get("productName") or "Produto",
+                "imageUrl": n.get("imageUrl") or "https://via.placeholder.com/400",
+                "price": price,
                 "productLink": n.get("productLink") or "#",
-                "offerLink": n.get("offerLink") or n.get("affiliateLink") or "#",
-                "shopName": n.get("shopName") or n.get("shopId") or "",
+                "offerLink": n.get("offerLink") or "#",
+                "shopName": n.get("shopName") or "",
                 "ratingStar": n.get("ratingStar") or 0,
                 "sales": n.get("sales") or 0
             })
-
-        print(f"DEBUG: total de produtos normalizados: {len(produtos)}")
 
         return render_template(
             "main/ofertas2.html",
@@ -81,48 +63,99 @@ def ofertas(marketplace=None):
         )
 
     except Exception as e:
-        print(f"Erro ao carregar ofertas: {e}")
+        print("Erro ofertas:", e)
         abort(500)
 
-# ============== Área de Conta ==================
-@main_blueprint.route('/conta')
+
+# ================== Conta ==================
+
+@main_blueprint.route("/conta")
 @login_required
 def conta():
-    """
-    Rota principal da conta - Exibe dashboard com informações do usuário
-    """
-    try:
+    return render_template("conta/conta.html")
 
-        return render_template('conta/conta.html')
 
-    except Exception as e:
-        flash(f"Erro ao carregar sua conta. Por favor, tente novamente.\nErro {e}", "danger")
-        return redirect(url_for('main.home'))
+# ================== Login Local ==================
 
-# ================== Login local ==================
-
-@main_blueprint.route('/login', methods=['GET', 'POST'])
+@main_blueprint.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
         if not email or not password:
-            flash("Por favor, preencha todos os campos.", "danger")
-            return redirect(url_for('main.login'))
+            flash("Preencha todos os campos.", "danger")
+            return redirect(url_for("main.login"))
 
-        user = Users.query.filter_by(email=email).first()
-        if not user or not check_password_hash(user.password_hash, password):
-            flash("Credenciais inválidas. Tente novamente.", "danger")
-            return redirect(url_for('main.login'))
+        r = requests.get(
+            SUPABASE_USERS_URL,
+            headers=SUPABASE_HEADERS,
+            params={"email": f"eq.{email}", "select": "*"}
+        )
 
-        remember = 'remember' in request.form
-        login_user(user, remember=remember)
+        if r.status_code != 200 or not r.json():
+            flash("Credenciais inválidas.", "danger")
+            print(f"status{r.status_code}")
+            return redirect(url_for("main.login"))
+
+        data = r.json()[0]
+        user = User.from_dict(data)
+
+        if not user.check_password(password):
+            flash("Credenciais inválidas.", "danger")
+            return redirect(url_for("main.login"))
+
+        login_user(user, remember="remember" in request.form)
         flash("Login realizado com sucesso!", "success")
-        return redirect(url_for('main.conta', marketplace='amazon'))
+        return redirect(url_for("main.conta"))
 
-    return render_template('conta/login.html')
+    return render_template("conta/login.html")
 
-# ================== Login com Google ==================
+
+# ================== Registro ==================
+
+@main_blueprint.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password")
+
+        if not username or not email or not password:
+            flash("Todos os campos são obrigatórios.", "danger")
+            return redirect(url_for("main.register"))
+
+        password_hash = generate_password_hash(password)
+
+        payload = {
+            "username": username,
+            "email": email,
+            "password_hash": password_hash,
+            "is_admin": False
+        }
+
+        r = requests.post(
+            SUPABASE_USERS_URL,
+            headers=SUPABASE_HEADERS,
+            json=payload
+        )
+
+        if r.status_code == 409:
+            flash("Usuário ou e-mail já cadastrado.", "danger")
+            print(f"Erro: {r.status_code}", "\nUsuário ou e-mail já cadastrado.", "danger")
+            return redirect(url_for("main.register"))
+
+        if r.status_code not in (200, 201):
+            flash("Erro inesperado ao criar usuário.", "danger")
+            print(f"Erro: {r.status_code}", "\nErro inesperado ao criar usuário.", "danger")
+            return redirect(url_for("main.register"))
+
+        flash("Cadastro realizado com sucesso!", "success")
+        print("Cadastro realizado com sucesso")
+        return redirect(url_for("main.login"))
+
+    return render_template("conta/register.html")
+# ================== Google Login ==================
 
 @main_blueprint.route("/login/google")
 def login_google():
@@ -130,35 +163,43 @@ def login_google():
         return redirect(url_for("google.login"))
     return redirect(url_for("main.login_google_finish"))
 
+
 @main_blueprint.route("/login/google/finish")
 def login_google_finish():
-    if not google.authorized:
-        flash("Erro ao autenticar com Google", "danger")
-        return redirect(url_for("main.login"))
-
     resp = google.get("/oauth2/v2/userinfo")
     if not resp.ok:
-        flash("Erro ao obter dados do Google", "danger")
+        flash("Erro ao autenticar com Google.", "danger")
         return redirect(url_for("main.login"))
 
-    user_info = resp.json()
-    email = user_info.get("email")
-    username = user_info.get("name", email.split('@')[0])
+    info = resp.json()
+    email = info.get("email")
+    username = info.get("name", email.split("@")[0])
 
-    user = Users.query.filter_by(email=email).first()
-    if not user:
-        user = Users(username=username, email=email, is_admin=False)
-        db.session.add(user)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            flash("Erro ao criar conta com Google.", "danger")
-            return redirect(url_for("main.login"))
+    r = requests.get(
+        SUPABASE_USERS_URL,
+        headers=SUPABASE_HEADERS,
+        params={"email": f"eq.{email}", "select": "*"}
+    )
+
+    if r.json():
+        user = User.from_dict(r.json()[0])
+    else:
+        payload = {
+            "username": username,
+            "email": email,
+            "is_admin": False
+        }
+        created = requests.post(
+            SUPABASE_USERS_URL,
+            headers=SUPABASE_HEADERS,
+            json=payload
+        )
+        user = User.from_dict(created.json()[0])
 
     login_user(user)
     flash(f"Bem-vindo, {username}!", "success")
-    return redirect(url_for("main.ofertas", marketplace='amazon'))
+    return redirect(url_for("main.conta"))
+
 
 # ================== Logout ==================
 
@@ -167,127 +208,57 @@ def login_google_finish():
 def logout():
     logout_user()
     flash("Logout realizado com sucesso.", "success")
-    return redirect(url_for('main.login'))
-
-# ================== Registro ==================
-
-@main_blueprint.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        if not username or not email or not password:
-            flash("Todos os campos são obrigatórios.", "danger")
-            return redirect(url_for('main.register'))
-
-        existing_user = Users.query.filter((Users.username==username)|(Users.email==email)).first()
-        if existing_user:
-            flash("Usuário ou e-mail já existe.", "danger")
-            return redirect(url_for('main.register'))
-
-        try:
-            new_user = Users(username=username, email=email, is_admin=False)
-            new_user.set_password(password)
-            db.session.add(new_user)
-            db.session.commit()
-            flash("Cadastro realizado com sucesso! Faça login para continuar.", "success")
-            return redirect(url_for('main.login'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Erro ao salvar usuário: {str(e)}", "danger")
-
-    return render_template('conta/register.html')
+    return redirect(url_for("main.login"))
 
 
-# ============= Páginas Institucionais ==============
+# ================== Institucional ==================
 
 @main_blueprint.route("/sobre")
 def sobre():
-    return render_template('institucional/sobre.html')
+    return render_template("institucional/sobre.html")
+
 
 @main_blueprint.route("/privacidade")
 def privacidade():
     return render_template("institucional/privacidade.html")
 
-# Página dos termos de uso
+
 @main_blueprint.route("/termos")
 def termos():
     return render_template("institucional/termos.html")
 
-# Enviar email de contato
-@main_blueprint.route('/contato', methods=['GET', 'POST'])
+
+# ================== Contato ==================
+
+@main_blueprint.route("/contato", methods=["GET", "POST"])
 @login_required
 def contato():
-    try:
-        if request.method == 'POST':
-            nome = request.form.get('nome')
-            email_usuario = request.form.get('email')
-            assunto = request.form.get('assunto')
-            mensagem = request.form.get('mensagem')
+    if request.method == "POST":
+        nome = request.form.get("nome")
+        email = request.form.get("email")
+        assunto = request.form.get("assunto")
+        mensagem = request.form.get("mensagem")
 
-            if not all([nome, email_usuario, assunto, mensagem]):
-                flash("Por favor, preencha todos os campos.", "warning")
-                return redirect(url_for('main.contato'))
+        if not all([nome, email, assunto, mensagem]):
+            flash("Preencha todos os campos.", "warning.ensure")
+            return redirect(url_for("main.contato"))
 
-            destinatario = Config.EMAIL_DESTINE
-            if not destinatario:
-                flash("E-mail do usuário não encontrado.", "danger")
-                return redirect(url_for('main.home'))
+        enviar_email(
+            Config.EMAIL_DESTINE,
+            f"Contato: {assunto}",
+            mensagem
+        )
 
-            assunto_email = f"Contato de {nome}: {assunto}"
+        flash("Mensagem enviada com sucesso!", "success")
+        return redirect(url_for("main.sobre"))
 
-            corpo_email = f"""
-            <html>
-                <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
-                    <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-                        <h2 style="color: #333333; text-align: center; margin-bottom: 20px;">📩 Nova Mensagem de Contato</h2>
+    return render_template("institucional/contato.html")
 
-                        <p><strong style="color: #555;">Nome:</strong> {nome}</p>
-                        <p><strong style="color: #555;">E-mail:</strong> {email_usuario}</p>
-                        <p><strong style="color: #555;">Assunto:</strong> {assunto}</p>
-                        <p><strong style="color: #555;">Mensagem:</strong></p>
-                        <p style="background-color: #f1f1f1; padding: 15px; border-radius: 5px;">{mensagem}</p>
 
-                        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-                        <p style="font-size: 12px; color: #999999; text-align: center;">Esta mensagem foi enviada através do formulário de contato do site.</p>
-                    </div>
-                </body>
-            </html>
-            """
+# ================== Robots ==================
 
-            # Enviar o e-mail
-            enviar_email(destinatario, assunto_email, corpo_email)
-            flash("Mensagem enviada com sucesso!", "success")
-            return redirect(url_for('main.sobre'))
-
-        # Se for GET, apenas renderiza a página normalmente
-        return render_template('institucional/contato.html')
-
-    except Exception as e:
-        flash(f"Erro ao enviar mensagem: {str(e)}", "danger")
-        print(f"Erro ao enviar e-mail: {e}")
-        return redirect(url_for('main.sobre'))
-
-@main_blueprint.route('/robots.txt')
+@main_blueprint.route("/robots.txt")
 def robots():
-    content = """User-agent: *
-Disallow: /termos/
-Disallow: /privacidade/
-Disallow: /password/redefine
-Disallow: /contato/
-Disallow: /conta/
-    
-    """
-    return Response(content, mimetype='text/plain')
-
-
-# ================== Tratamento de Erros ==================
-
-@main_blueprint.errorhandler(404)
-def pagina_nao_encontrada(e):
-    return render_template('erros/404.html'), 404
-
-@main_blueprint.errorhandler(500)
-def erro_interno(e):
-    return render_template('erros/500.html'), 500
+    return Response(
+        "User-agent: *\nDisallow: /conta/\n",
+        mimetype="text/plain")

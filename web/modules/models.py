@@ -1,98 +1,182 @@
-from web import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import relationship
+from datetime import datetime
 
-
-# ---------------------
+# =====================
 # Usuários
-# ---------------------
-class Users(db.Model, UserMixin):
-    __tablename__ = 'users'
+# =====================
+class User(UserMixin):
+    def __init__(
+        self,
+        id: int,
+        username: str,
+        email: str,
+        password_hash: str = None,
+        is_admin: bool = False,
+        created_at: str = None,
+        updated_at: str = None,
+    ):
+        self.id = id
+        self.username = username
+        self.email = email
+        self.password_hash = password_hash
+        self.is_admin = is_admin
+        self.created_at = self._parse_date(created_at)
+        self.updated_at = self._parse_date(updated_at)
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), nullable=False, unique=True)  # Evita duplicidade
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
-
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
-
+    # -------- Password --------
     def set_password(self, password: str):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password: str) -> bool:
+        if not self.password_hash:
+            return False
         return check_password_hash(self.password_hash, password)
 
-    def __repr__(self):
-        return f"<User(id={self.id}, username='{self.username}', email='{self.email}', admin={self.is_admin})>"
+    # -------- Helpers --------
+    @staticmethod
+    def _parse_date(value):
+        if not value:
+            return None
+        try:
+            return datetime.fromisoformat(value.replace("Z", ""))
+        except Exception:
+            return None
 
-
-# ---------------------
-# Categorias
-# ---------------------
-class Categoria(db.Model):
-    __tablename__ = 'categorias'
-
-    id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(50), unique=True, nullable=False)
-    descricao = db.Column(db.String(255))
-    ativa = db.Column(db.Boolean, default=True)
-
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
-
-    # Relacionamento
-    produtos = relationship('Produto', back_populates='categoria_rel', cascade="all, delete-orphan")
-
-    def __repr__(self):
-        return f"<Categoria(id={self.id}, nome='{self.nome}', ativa={self.ativa})>"
-
-
-# ---------------------
-# Produtos
-# ---------------------
-class Produto(db.Model):
-    __tablename__ = 'produtos'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), nullable=False)
-    image = db.Column(db.String(512), nullable=False)
-    originalprice = db.Column(db.Numeric(10, 2), nullable=False)  # Melhor precisão que Float
-    saleprice = db.Column(db.Numeric(10, 2), nullable=False)
-    discount = db.Column(db.Integer, nullable=False)  # Percentual inteiro
-    detailurl = db.Column(db.String(512), nullable=False)
-
-    rating = db.Column(db.Float, default=4.5)
-    vendidos = db.Column(db.Integer, default=0)  # Número real, exibição formatada depois
-    origem = db.Column(db.String(50), nullable=False)
-
-    categoria_id = db.Column(db.Integer, db.ForeignKey('categorias.id'))
-    categoria_rel = relationship('Categoria', back_populates='produtos')
-
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
-
-    @property
-    def categoria(self):
-        return self.categoria_rel.nome if self.categoria_rel else 'Ofertas'
-
-    def __repr__(self):
-        return f"<Produto(id={self.id}, name='{self.name}', saleprice={self.saleprice}, origem='{self.origem}')>"
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            id=data.get("id"),
+            username=data.get("username"),
+            email=data.get("email"),
+            password_hash=data.get("password_hash"),
+            is_admin=data.get("is_admin", False),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at"),
+        )
 
     def to_dict(self):
-        """Converte para dicionário com formatação amigável"""
         return {
-            'id': self.id,
-            'name': self.name,
-            'image': self.image,
-            'originalPrice': f"R$ {self.originalprice:.2f}".replace('.', ','),
-            'salePrice': f"R$ {self.saleprice:.2f}".replace('.', ','),
-            'discount': f"{self.discount}%",
-            'detailUrl': self.detailurl,
-            'rating': round(self.rating, 1),
-            'vendidos': f"{self.vendidos:,}".replace(",", ".") if self.vendidos else "0",
-            'origem': self.origem,
-            'categoria': self.categoria
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "is_admin": self.is_admin,
         }
+
+    def __repr__(self):
+        return f"<User id={self.id} username={self.username} admin={self.is_admin}>"
+
+
+
+# =====================
+# Categorias
+# =====================
+class Categoria:
+    def __init__(
+        self,
+        id: int,
+        nome: str,
+        descricao: str = None,
+        ativa: bool = True,
+        created_at: str = None,
+        updated_at: str = None,
+    ):
+        self.id = id
+        self.nome = nome
+        self.descricao = descricao
+        self.ativa = ativa
+        self.created_at = created_at
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            id=data.get("id"),
+            nome=data.get("nome"),
+            descricao=data.get("descricao"),
+            ativa=data.get("ativa", True),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at"),
+        )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "descricao": self.descricao,
+            "ativa": self.ativa,
+        }
+
+    def __repr__(self):
+        return f"<Categoria id={self.id} nome={self.nome} ativa={self.ativa}>"
+
+
+# =====================
+# Produtos
+# =====================
+class Produto:
+    def __init__(
+        self,
+        id: int,
+        name: str,
+        image: str,
+        originalprice: float,
+        saleprice: float,
+        discount: int,
+        detailurl: str,
+        rating: float = 4.5,
+        vendidos: int = 0,
+        origem: str = None,
+        categoria: str = "Ofertas",
+        created_at: str = None,
+        updated_at: str = None,
+    ):
+        self.id = id
+        self.name = name
+        self.image = image
+        self.originalprice = float(originalprice)
+        self.saleprice = float(saleprice)
+        self.discount = discount
+        self.detailurl = detailurl
+        self.rating = rating
+        self.vendidos = vendidos
+        self.origem = origem
+        self.categoria = categoria
+        self.created_at = created_at
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            id=data.get("id"),
+            name=data.get("name"),
+            image=data.get("image"),
+            originalprice=data.get("originalprice"),
+            saleprice=data.get("saleprice"),
+            discount=data.get("discount"),
+            detailurl=data.get("detailurl"),
+            rating=data.get("rating", 4.5),
+            vendidos=data.get("vendidos", 0),
+            origem=data.get("origem"),
+            categoria=data.get("categoria", "Ofertas"),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at"),
+        )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "image": self.image,
+            "originalPrice": f"R$ {self.originalprice:.2f}".replace(".", ","),
+            "salePrice": f"R$ {self.saleprice:.2f}".replace(".", ","),
+            "discount": f"{self.discount}%",
+            "detailUrl": self.detailurl,
+            "rating": round(self.rating, 1),
+            "vendidos": f"{self.vendidos:,}".replace(",", "."),
+            "origem": self.origem,
+            "categoria": self.categoria,
+        }
+
+    def __repr__(self):
+        return f"<Produto id={self.id} name={self.name} saleprice={self.saleprice}>"

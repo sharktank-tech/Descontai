@@ -1,83 +1,81 @@
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
-from config import Config
+from flask_login import LoginManager
+from flask_dance.contrib.google import make_google_blueprint
+from dotenv import load_dotenv
+import os
+
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-from flask_dance.contrib.google import make_google_blueprint, google
-from flask_login import LoginManager
-import os
-from dotenv import load_dotenv
-from flask_migrate import Migrate
 
+from config import Config
 
+# ========== Carregar variáveis de ambiente ==================
 load_dotenv()
 
-# ================== Instâncias globais ==================
-db = SQLAlchemy()
+# ========== Instâncias globais ============
 login_manager = LoginManager()
-migrate = Migrate()
 
-# ================== Função de criação do app ==================
+# =========== Função de criação do app =============
 def create_app():
-    app = Flask(__name__, static_folder='static', template_folder='templates')
+    app = Flask(
+        __name__,
+        static_folder="static",
+        template_folder="templates"
+    )
 
     # Carregar configurações
     app.config.from_object(Config)
 
-    # 🔥 FIX CRÍTICO — GARANTES QUE A URI DO BANCO VEM DO .env
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-
-    # Permitir OAuth inseguro em dev (HTTP) - remover em produção
+    # Permitir OAuth inseguro em dev (HTTP)
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-    # ========== Configuração do Google OAuth ==========
+    # ======== Configuração do Google OAuth ==========
     google_bp = make_google_blueprint(
         client_id=Config.GOOGLE_CLIENT_ID,
         client_secret=Config.GOOGLE_CLIENT_SECRET,
         scope=["profile", "email"],
-        redirect_to="main.login_google_finish"  # redireciona para a rota de finalização do login
+        redirect_to="main.login_google_finish"
     )
 
     # ========== Inicializar extensões ==========
-    db.init_app(app)
-    migrate.init_app(app, db)
     login_manager.init_app(app)
+    login_manager.login_view = "main.login"
+    login_manager.login_message = "Por favor, faça login para acessar esta página."
+    login_manager.login_message_category = "info"
 
-    login_manager.login_view = 'main.login'
-    login_manager.login_message = 'Por favor, faça login para acessar esta página.'
-    login_manager.login_message_category = 'info'
-
-    # ========== Registrar blueprints ==========
+    # ======== Registrar blueprints ==========
     from web.views.routes import main_blueprint
     from web.views.admin_routes import admin_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(admin_blueprint)
-    app.register_blueprint(google_bp, url_prefix="/login")  # login/google
+    app.register_blueprint(google_bp, url_prefix="/login")
 
-    # ========== Loader de usuário ==========
-    from web.modules.models import Users
+    # ======== Loader de usuário ==========
+    # ⚠️ Agora o usuário deve vir da API do Supabase
+    from web.modules.supabase_auth import get_user_by_id
 
     @login_manager.user_loader
     def load_user(user_id):
         try:
-            return Users.query.get(int(user_id))
-        except (ValueError, TypeError):
+            return get_user_by_id(user_id)
+        except Exception:
             return None
 
-    # ========== Tratamento de erros ==========
+    # ======== Tratamento de erros ==========
     @app.errorhandler(404)
     def not_found_error(error):
-        return render_template('erros/404.html'), 404
+        return render_template("erros/404.html"), 404
 
     @app.errorhandler(500)
     def internal_error(error):
-        return render_template('erros/500.html'), 500
+        return render_template("erros/500.html"), 500
 
     return app
 
-# ================== Função para envio de e-mails ==================
+
+# =========== Função para envio de e-mails ===============
 def enviar_email(destinatario, assunto, corpo):
     servidor_smtp = Config.EMAIL_SERVER
     porta_smtp = Config.EMAIL_PORT
@@ -85,10 +83,10 @@ def enviar_email(destinatario, assunto, corpo):
     senha = Config.EMAIL_PASSWORD
 
     msg = MIMEMultipart()
-    msg['From'] = remetente
-    msg['To'] = destinatario
-    msg['Subject'] = assunto
-    msg.attach(MIMEText(corpo, 'html'))
+    msg["From"] = remetente
+    msg["To"] = destinatario
+    msg["Subject"] = assunto
+    msg.attach(MIMEText(corpo, "html"))
 
     try:
         with smtplib.SMTP(servidor_smtp, porta_smtp) as server:
