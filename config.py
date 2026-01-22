@@ -21,7 +21,11 @@ class Config:
 
     SUPABASE_REST_URL = (
         f"{SUPABASE_URL}/rest/v1" if SUPABASE_URL else None
+
     )
+
+    print(f"SUBPABASE_URL = {SUPABASE_URL}")
+
 
     if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
         raise RuntimeError(

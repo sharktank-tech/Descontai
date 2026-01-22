@@ -146,8 +146,31 @@ def register():
             return redirect(url_for("main.register"))
 
         if r.status_code not in (200, 201):
-            flash("Erro inesperado ao criar usuário.", "danger")
-            print(f"Erro: {r.status_code}", "\nErro inesperado ao criar usuário.", "danger")
+            error_message = "Erro inesperado ao criar usuário."
+
+            # Tenta extrair erro detalhado da API
+            try:
+                error_data = r.json()
+                api_error = (
+                        error_data.get("message")
+                        or error_data.get("error")
+                        or error_data.get("details")
+                        or str(error_data)
+                )
+            except ValueError:
+                api_error = r.text  # Resposta não é JSON
+
+            # Mensagem para o usuário
+            flash(error_message, "danger")
+
+            # Log detalhado para debug
+            print("❌ ERRO AO CRIAR USUÁRIO")
+            print(f"Status Code: {r.status_code}")
+            print(f"URL: {r.url}")
+            print(f"Payload enviado: {payload}")
+            print(f"Resposta da API: {api_error}")
+            print("-" * 50)
+
             return redirect(url_for("main.register"))
 
         flash("Cadastro realizado com sucesso!", "success")
