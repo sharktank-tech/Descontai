@@ -140,11 +140,13 @@ def register():
             json=payload
         )
 
+        # Verifica de o usuário está cadastrado
         if r.status_code == 409:
             flash("Usuário ou e-mail já cadastrado.", "danger")
             print(f"Erro: {r.status_code}", "\nUsuário ou e-mail já cadastrado.", "danger")
             return redirect(url_for("main.register"))
 
+        # Tratamento de erro genérico
         if r.status_code not in (200, 201):
             error_message = "Erro inesperado ao criar usuário."
 
@@ -254,7 +256,7 @@ def termos():
 # ================== Contato ==================
 
 @main_blueprint.route("/contato", methods=["GET", "POST"])
-@login_required
+#@login_required
 def contato():
     if request.method == "POST":
         nome = request.form.get("nome")
