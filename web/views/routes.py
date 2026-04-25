@@ -1,5 +1,4 @@
-from flask import (
-    render_template, Blueprint, flash, redirect, url_for, request, abort, Response )
+from flask import (render_template, Blueprint, flash, redirect, url_for, request, abort, Response )
 from werkzeug.security import generate_password_hash
 from flask_dance.contrib.google import google
 from flask_login import login_user, logout_user, login_required, current_user
