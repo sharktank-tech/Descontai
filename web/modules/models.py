@@ -68,7 +68,7 @@ class User(UserMixin):
 
 
 
-# =====================
+##=====================
 # Categorias
 # =====================
 class Categoria:
@@ -180,3 +180,4 @@ class Produto:
 
     def __repr__(self):
         return f"<Produto id={self.id} name={self.name} saleprice={self.saleprice}>"
+""'"'

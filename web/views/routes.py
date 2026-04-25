@@ -90,12 +90,14 @@ def login():
         r = requests.get(
             SUPABASE_USERS_URL,
             headers=SUPABASE_HEADERS,
-            params={"email": f"eq.{email}", "select": "*"}
+            params={
+                "email": f"eq.{email}",
+                "select": "id,username,email,password_hash,is_admin"}
         )
 
-        if r.status_code != 200 or not r.json():
-            flash("Credenciais inválidas.", "danger")
-            print(f"status{r.status_code}")
+        if r.status_code != 200:
+            flash("Erro no servidor. Tente novamente.", "danger")
+            print(r.text)
             return redirect(url_for("main.login"))
 
         data = r.json()[0]
@@ -146,9 +148,10 @@ def register():
             print(f"Erro: {r.status_code}", "\nUsuário ou e-mail já cadastrado.", "danger")
             return redirect(url_for("main.register"))
 
-        # Tratamento de erro genérico
-        if r.status_code not in (200, 201):
-            error_message = "Erro inesperado ao criar usuário."
+
+        # Tratamento de erro de indisponibidade
+        if r.status_code == 503:
+            flash("Servidor indisponível. Tente novamente.", "warning")
 
             # Tenta extrair erro detalhado da API
             try:
@@ -163,7 +166,7 @@ def register():
                 api_error = r.text  # Resposta não é JSON
 
             # Mensagem para o usuário
-            flash(error_message, "danger")
+            flash(error_data, "danger")
 
             # Log detalhado para debug
             print("❌ ERRO AO CRIAR USUÁRIO")
