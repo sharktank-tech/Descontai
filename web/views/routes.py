@@ -6,7 +6,6 @@ from sqlalchemy.exc import (IntegrityError,SQLAlchemyError,)
 from sqlalchemy import or_
 from werkzeug.security import (generate_password_hash,)
 from web.modules.models import User
-import locale
 from web import db
 import re
 import logging
@@ -24,10 +23,7 @@ main_blueprint = Blueprint("main", __name__)
 logger = logging.getLogger(__name__)
 
 # === Define a localidade do Brasil
-try:
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-except locale.Error:
-    locale.setlocale(locale.LC_ALL, '')
+
 
 # === Helpers
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
