@@ -141,15 +141,12 @@ Ofertas Shopee 🛒 | {{ super() }}
         <span class="text-[11px] text-gray-300 mt-2 group-hover:text-[#FF9900]">
 
           {{ category.nome }}
-
         </span>
-
       </a>
 
       {% endfor %}
 
     </div>
-
   </div>
 
 </section>
@@ -188,9 +185,7 @@ Ofertas Shopee 🛒 | {{ super() }}
             d="M9 5l7 7-7 7"/>
 
         </svg>
-
       </a>
-
     </div>
 
     {% if produtos and produtos|length > 0 %}
@@ -208,11 +203,8 @@ Ofertas Shopee 🛒 | {{ super() }}
             Smartphones
           </h3>
 
-
             </svg>
-
           </a>
-
         </div>
 
         <!-- Produtos -->
@@ -224,8 +216,7 @@ Ofertas Shopee 🛒 | {{ super() }}
             href="{{ p.offerLink }}"
             target="_blank"
             rel="noopener"
-            class="group bg-[#0F172A] border border-white/5 rounded-2xl overflow-hidden hover:border-[#FF9900]/40 transition-all duration-300"
-          >
+            class="group bg-[#0F172A] border border-white/5 rounded-2xl overflow-hidden hover:border-[#FF9900]/40 transition-all duration-300">
 
             <!-- Imagem -->
             <div class="bg-white aspect-square flex items-center justify-center p-3 overflow-hidden">
@@ -234,14 +225,11 @@ Ofertas Shopee 🛒 | {{ super() }}
                 src="{{ p.imageUrl }}"
                 alt="{{ p.productName }}"
                 loading="lazy"
-                class="w-full h-full object-contain group-hover:scale-105 transition duration-300"
-              >
-
+                class="w-full h-full object-contain group-hover:scale-105 transition duration-300">
             </div>
 
             <!-- Conteúdo -->
             <div class="p-3">
-
               <h4 class="text-xs text-gray-300 line-clamp-2 min-h-[34px]">
 
                 {{ p.productName }}
@@ -249,24 +237,18 @@ Ofertas Shopee 🛒 | {{ super() }}
               </h4>
 
               <div class="mt-3">
-
                 <div class="text-[#FFB84D] font-bold text-2xl leading-none">
 
                   R$ {{ "%.2f"|format(p.price)|replace('.', ',') }}
 
-
                 </div>
-
                 <div class="text-xs text-gray-500 mt-1 line-through">
 
                   R$ {{ '%.2f' % (p.price * 1.15) }}
 
                 </div>
-
               </div>
-
             </div>
-
           </a>
 
           {% endfor %}

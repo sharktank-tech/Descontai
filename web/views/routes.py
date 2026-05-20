@@ -314,11 +314,15 @@ def contato():
             flash("Preencha todos os campos.", "warning.ensure")
             return redirect(url_for("main.contato"))
 
+        conteudo_assunto = f"""
+        Nome: {nome}
+        - Assunto: {assunto}
+        """.strip()
+
         enviar_email(
             Config.EMAIL_DESTINE,
-            f"Assunto: {assunto},"
-            f"\nNome: {nome}", # assunto e nome no mesmo campo para fácilitar, talvez eu mude
-            mensagem
+            conteudo_assunto,
+            mensagem.strip()
         )
 
         flash("Mensagem enviada com sucesso!", "success")
