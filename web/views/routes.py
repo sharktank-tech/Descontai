@@ -24,7 +24,10 @@ main_blueprint = Blueprint("main", __name__)
 logger = logging.getLogger(__name__)
 
 # === Define a localidade do Brasil
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+try:
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+except locale.Error:
+    locale.setlocale(locale.LC_ALL, '')
 
 # === Helpers
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
