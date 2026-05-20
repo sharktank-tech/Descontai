@@ -1,5 +1,6 @@
 import time, hashlib, requests, json
 from config import Config
+from web import cache
 
 APPID = Config.APPID
 SECRET = Config.SECRET
@@ -28,7 +29,7 @@ payload_dict = {
     "variables": {}
 }
 
-
+@cache.memoize(timeout=300) # Cache para produtos
 def info_produtos():
    
     payload = json.dumps(payload_dict, separators=(',', ':'))
@@ -46,5 +47,5 @@ def info_produtos():
     resp = requests.post(ENDPOINT, headers=headers, data=payload)
     print(f"======= status code: {resp.status_code} ========")
     ps = resp.text
-    print(ps)
+    # print(ps)
     return ps

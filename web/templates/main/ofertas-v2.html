@@ -1,0 +1,852 @@
+{% extends "base.html" %}
+
+{% block title %}
+Ofertas Shopee 🛒 | {{ super() }}
+{% endblock %}
+
+{% block meta %}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta
+  name="description"
+  content="Encontre ofertas, descontos e compare preços na Shopee e outros marketplaces.">
+
+<meta property="og:title" content="Ofertas Shopee">
+<meta property="og:description" content="As melhores promoções atualizadas automaticamente.">
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="bg-gradient-to-b from-[#F75131] to-[#ff6b4a] pb-8">
+
+  <!-- Busca -->
+  <div class="px-4 pt-5">
+
+    <div class="max-w-6xl mx-auto">
+
+      <form
+        action="{{ url_for('main.ofertas') }}"
+        method="get"
+        class="relative">
+
+        <!-- Implementar barra de pesquisa futuramente
+        <input
+          name="q"
+          type="text"
+          placeholder="Buscar produtos, marcas e promoções..."
+          class="w-full py-3 px-5 pr-12 rounded-xl shadow-xl text-sm border-2 border-transparent focus:outline-none focus:border-[#FF9900]">
+
+        <button
+          type="submit"
+          class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-700">
+        -->
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+
+          </svg>
+
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  <!-- Banner -->
+  <div class="mt-5 px-4">
+
+    <div class="max-w-6xl mx-auto bg-white/5 backdrop-blur rounded-2xl overflow-hidden shadow-2xl border border-white/5">
+
+      <div class="grid md:grid-cols-2 items-center">
+
+        <!-- Texto -->
+        <div class="p-6 sm:p-10">
+
+          <div class="inline-flex items-center gap-2 bg-[#FF9900] text-white px-3 py-1 rounded-full text-xs font-semibold mb-4">
+            🔥 Ofertas atualizadas em tempo real
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl font-bold text-white leading-tight">
+            Compare preços e encontre as melhores promoções
+          </h1>
+
+          <p class="text-white/80 mt-4 text-sm sm:text-base">
+            Produtos da Shopee, Amazon, Mercado Livre e muito mais.
+          </p>
+
+          <!-- Stats -->
+          <div class="flex flex-wrap gap-3 mt-6">
+
+            <div class="bg-white/10 px-4 py-2 rounded-xl text-white-100 text-sm">
+              🛒 {{ produtos|length }} ofertas
+            </div>
+
+            <div class="bg-white/10 px-4 py-2 rounded-xl text-white text-sm">
+              ⚡ Atualização automática
+            </div>
+
+            <div class="bg-white/10 px-4 py-2 rounded-xl text-white text-sm">
+              💸 Menores preços
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Imagem -->
+        <div class="hidden md:flex justify-center p-6 h-full w-full">
+            <img src="/static/img/banners/shopee.webp"
+              alt="Shopee"
+              class="w-full h-full object-cover drop-shadow-2xl">
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CATEGORIAS -->
+<section class="bg-gray-900 py-5 px-4 border-b border-gray-800">
+
+  <div class="max-w-6xl mx-auto">
+
+    <div class="flex overflow-x-auto gap-4 scrollbar-hide pb-2">
+
+      {% for category in categorias %}
+
+      <a
+        href="{{ url_for('main.categoria', slug=category.slug) }}"
+        class="flex-shrink-0 flex flex-col items-center group"
+      >
+
+        <div class="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center text-2xl group-hover:bg-[#FF9900] group-hover:text-white transition-all duration-300">
+
+          {{ category.icon or '🛍️' }}
+
+        </div>
+
+        <span class="text-[11px] text-gray-300 mt-2 group-hover:text-[#FF9900]">
+
+          {{ category.nome }}
+
+        </span>
+
+      </a>
+
+      {% endfor %}
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- COMPARADOR DE PREÇOS -->
+<section class="bg-[#0B111B] py-8 px-4 border-y border-white/5">
+
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+
+      <div>
+
+        <h2 class="text-3xl font-bold text-white tracking-tight">
+          Comparador de preços
+        </h2>
+
+        <p class="text-sm text-gray-400 mt-1">
+          Compare ofertas entre marketplaces e encontre o menor preço.
+        </p>
+
+      </div>
+
+
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"/>
+
+        </svg>
+
+      </a>
+
+    </div>
+
+    {% if produtos and produtos|length > 0 %}
+
+    <!-- GRID HORIZONTAL -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <!-- BLOCO -->
+      <div class="bg-[#111827] rounded-3xl border border-white/5 overflow-hidden shadow-xl">
+
+        <!-- Topo -->
+        <div class="flex items-center justify-between px-5 pt-5 pb-4">
+
+          <h3 class="text-white font-bold text-2xl">
+            Smartphones
+          </h3>
+
+
+            </svg>
+
+          </a>
+
+        </div>
+
+        <!-- Produtos -->
+        <div class="grid grid-cols-2 gap-3 p-3">
+
+          {% for p in produtos[:4] %}
+
+          <a
+            href="{{ p.offerLink }}"
+            target="_blank"
+            rel="noopener"
+            class="group bg-[#0F172A] border border-white/5 rounded-2xl overflow-hidden hover:border-[#FF9900]/40 transition-all duration-300"
+          >
+
+            <!-- Imagem -->
+            <div class="bg-white aspect-square flex items-center justify-center p-3 overflow-hidden">
+
+              <img
+                src="{{ p.imageUrl }}"
+                alt="{{ p.productName }}"
+                loading="lazy"
+                class="w-full h-full object-contain group-hover:scale-105 transition duration-300"
+              >
+
+            </div>
+
+            <!-- Conteúdo -->
+            <div class="p-3">
+
+              <h4 class="text-xs text-gray-300 line-clamp-2 min-h-[34px]">
+
+                {{ p.productName }}
+
+              </h4>
+
+              <div class="mt-3">
+
+                <div class="text-[#FFB84D] font-bold text-2xl leading-none">
+
+                  R$ {{ "%.2f"|format(p.price)|replace('.', ',') }}
+
+
+                </div>
+
+                <div class="text-xs text-gray-500 mt-1 line-through">
+
+                  R$ {{ '%.2f' % (p.price * 1.15) }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </a>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+      <!-- BLOCO 2 -->
+      <div class="bg-[#111827] rounded-3xl border border-white/5 overflow-hidden shadow-xl">
+
+        <div class="flex items-center justify-between px-5 pt-5 pb-4">
+
+          <h3 class="text-white font-bold text-2xl">
+            TVs mais procuradas
+          </h3>
+
+
+            </svg>
+
+          </a>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 p-3">
+
+          {% for p in produtos[4:8] %}
+
+          <a
+            href="{{ p.offerLink }}"
+            target="_blank"
+            rel="noopener"
+            class="group bg-[#0F172A] border border-white/5 rounded-2xl overflow-hidden hover:border-[#FF9900]/40 transition-all duration-300"
+          >
+
+            <div class="bg-white aspect-square flex items-center justify-center p-3 overflow-hidden">
+
+              <img
+                src="{{ p.imageUrl }}"
+                alt="{{ p.productName }}"
+                loading="lazy"
+                class="w-full h-full object-contain group-hover:scale-105 transition duration-300"
+              >
+
+            </div>
+
+            <div class="p-3">
+
+              <h4 class="text-xs text-gray-300 line-clamp-2 min-h-[34px]">
+
+                {{ p.productName }}
+
+              </h4>
+
+              <div class="mt-3">
+
+                <div class="text-[#FFB84D] font-bold text-2xl leading-none">
+
+                  R$ {{ "%.2f"|format(p.price)|replace('.', ',') }}
+
+                </div>
+
+                <div class="text-xs text-gray-500 mt-1 line-through">
+
+                  R$ {{ '%.2f' % (p.price * 1.15) }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </a>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+      <!-- BLOCO 3 -->
+      <div class="bg-[#111827] rounded-3xl border border-white/5 overflow-hidden shadow-xl">
+
+        <div class="flex items-center justify-between px-5 pt-5 pb-4">
+
+          <h3 class="text-white font-bold text-2xl">
+            Eletrodomésticos
+          </h3>
+
+
+
+            </svg>
+
+          </a>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 p-3">
+
+          {% for p in produtos[8:12] %}
+
+          <a
+            href="{{ p.offerLink }}"
+            target="_blank"
+            rel="noopener"
+            class="group bg-[#0F172A] border border-white/5 rounded-2xl overflow-hidden hover:border-[#FF9900]/40 transition-all duration-300"
+          >
+
+            <div class="bg-white aspect-square flex items-center justify-center p-3 overflow-hidden">
+
+              <img
+                src="{{ p.imageUrl }}"
+                alt="{{ p.productName }}"
+                loading="lazy"
+                class="w-full h-full object-contain group-hover:scale-105 transition duration-300"
+              >
+
+            </div>
+
+            <div class="p-3">
+
+              <h4 class="text-xs text-gray-300 line-clamp-2 min-h-[34px]">
+
+                {{ p.productName }}
+
+              </h4>
+
+              <div class="mt-3">
+
+                <div class="text-[#FFB84D] font-bold text-2xl leading-none">
+
+                  R$ {{ "%.2f"|format(p.price)|replace('.', ',') }}
+
+                </div>
+
+                <div class="text-xs text-gray-500 mt-1 line-through">
+
+                  R$ {{ '%.2f' % (p.price * 1.15) }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </a>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+      <!-- BLOCO 4 -->
+      <div class="bg-[#111827] rounded-3xl border border-white/5 overflow-hidden shadow-xl">
+
+        <div class="flex items-center justify-between px-5 pt-5 pb-4">
+
+          <h3 class="text-white font-bold text-2xl">
+            Ar-condicionado
+          </h3>
+
+
+          </a>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 p-3">
+
+          {% for p in produtos[12:16] %}
+
+          <a
+            href="{{ p.offerLink }}"
+            target="_blank"
+            rel="noopener"
+            class="group bg-[#0F172A] border border-white/5 rounded-2xl overflow-hidden hover:border-[#FF9900]/40 transition-all duration-300">
+
+            <div class="bg-white aspect-square flex items-center justify-center p-3 overflow-hidden">
+
+              <img
+                src="{{ p.imageUrl }}"
+                alt="{{ p.productName }}"
+                loading="lazy"
+                class="w-full h-full object-contain group-hover:scale-105 transition duration-300">
+
+            </div>
+
+            <div class="p-3">
+
+              <h4 class="text-xs text-gray-300 line-clamp-2 min-h-[34px]">
+
+                {{ p.productName }}
+
+              </h4>
+
+              <div class="mt-3">
+
+                <div class="text-[#FFB84D] font-bold text-2xl leading-none">
+
+                  R$ {{ "%.2f"|format(p.price)|replace('.', ',') }}
+
+                </div>
+
+                <div class="text-xs text-gray-500 mt-1 line-through">
+
+                  R$ {{ '%.2f' % (p.price * 1.15) }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </a>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+
+
+</section>
+
+<!-- OFERTAS RELÂMPAGO -->
+<section class="bg-gray-800 py-6 px-4">
+
+  <div class="max-w-6xl mx-auto">
+
+    <div class="flex items-center justify-between mb-4">
+
+      <div>
+
+        <h2 class="text-2xl font-bold text-white">
+          ⚡ Ofertas relâmpago
+        </h2>
+
+        <p class="text-sm text-gray-400 mt-1">
+          Promoções com grandes descontos
+        </p>
+
+      </div>
+
+    </div>
+
+    {% if produtos and produtos|length > 0 %}
+
+    <div class="flex overflow-x-auto gap-4 pb-2 scrollbar-hide">
+
+      {% for p in produtos[:20] %}
+
+      <div class="flex-shrink-0 w-44 bg-white rounded-2xl overflow-hidden shadow hover:shadow-2xl transition-all duration-300 group">
+
+        <!-- Imagem -->
+        <div class="relative pt-[100%] bg-white overflow-hidden">
+
+          <div class="absolute top-2 left-2 z-10">
+
+            <span class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full shadow">
+              🔥 Oferta
+            </span>
+
+          </div>
+
+          <img
+            src="{{ p.imageUrl }}"
+            alt="{{ p.productName }}"
+            loading="lazy"
+            class="absolute top-0 left-0 w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+          >
+
+        </div>
+
+        <!-- Conteúdo -->
+        <div class="p-3">
+
+          <div class="text-[10px] uppercase font-bold text-[#FF9900]">
+
+            {{ p.shopName }}
+
+          </div>
+
+          <h3 class="text-sm text-gray-800 line-clamp-2 mt-1 min-h-[42px]">
+
+            {{ p.productName }}
+
+          </h3>
+
+          <div class="mt-3">
+
+            <div class="text-lg font-bold text-[#FF9900]">
+              R$ {{ "%.2f"|format(p.price)|replace('.', ',') }}
+            </div>
+
+            <!-- Preço Antigo -->
+            <span class="text-xs line-through text-gray-400">
+              R$ {{ "%.2f"|format(p.price * 1.2)|replace('.', ',') }}
+            </span>
+
+          </div>
+
+          <div class="text-[11px] text-yellow-500 mt-2">
+            ⭐ {{ p.ratingStar }} • {{ p.sales }} vendidos
+          </div>
+
+          <a
+            href="{{ p.offerLink }}"
+            target="_blank"
+            rel="noopener"
+            class="mt-4 flex items-center justify-center w-full bg-[#FF9900] hover:bg-[#e68a00] text-white text-xs font-semibold py-2 rounded-xl transition"
+          >
+
+            Ver oferta
+
+          </a>
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="text-center py-10 text-gray-400">
+      Nenhuma oferta encontrada.
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+<!-- GRID PRINCIPAL -->
+<section class="bg-gray-900 py-8 px-4">
+
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+      <div>
+
+        <h2 class="text-2xl font-bold text-white">
+          Recomendados para você
+        </h2>
+
+        <p class="text-sm text-gray-400 mt-1">
+          Produtos populares e bem avaliados
+        </p>
+
+      </div>
+
+      <!-- Filtros -->
+      <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+
+        <button class="px-4 py-2 rounded-lg bg-[#FF9900] text-white text-xs font-semibold whitespace-nowrap">
+          Mais vendidos
+        </button>
+
+        <button class="px-4 py-2 rounded-lg bg-gray-800 text-gray-300 text-xs whitespace-nowrap hover:bg-gray-700">
+          Menor preço
+        </button>
+
+        <button class="px-4 py-2 rounded-lg bg-gray-800 text-gray-300 text-xs whitespace-nowrap hover:bg-gray-700">
+          Maior desconto
+        </button>
+
+      </div>
+
+    </div>
+
+    {% if produtos and produtos|length > 0 %}
+
+    <!-- Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+
+      {% for p in produtos %}
+
+      <div class="group bg-white rounded-2xl overflow-hidden shadow hover:shadow-2xl transition-all duration-300">
+
+        <!-- Imagem -->
+        <div class="relative pt-[100%] bg-white overflow-hidden">
+
+          <div class="absolute top-2 left-2 z-10">
+
+            <span class="bg-green-500 text-white text-[10px] px-2 py-1 rounded-full shadow">
+              Melhor preço
+            </span>
+
+          </div>
+
+          <img
+            src="{{ p.imageUrl }}"
+            alt="{{ p.productName }}"
+            loading="lazy"
+            class="absolute top-0 left-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          >
+
+        </div>
+
+        <!-- Conteúdo -->
+        <div class="p-4">
+
+          <div class="text-[10px] uppercase font-bold text-[#FF9900] tracking-wide">
+
+            {{ p.shopName }}
+
+          </div>
+
+          <h3 class="text-sm text-gray-800 mt-2 line-clamp-2 min-h-[44px]">
+
+            {{ p.productName }}
+
+          </h3>
+
+          <!-- Rating -->
+          <div class="flex items-center justify-between mt-3 text-[11px]">
+
+            <div class="text-yellow-500">
+              ⭐ {{ p.ratingStar }}
+            </div>
+
+            <div class="text-gray-500">
+              {{ p.sales }} vendidos
+            </div>
+
+          </div>
+
+          <!-- Preço -->
+          <div class="mt-4">
+
+            <div class="flex items-center gap-2">
+
+              <!-- Preço Atual -->
+              <span class="text-xl font-bold text-[#FF9900]">
+                R$ {{ "%.2f"|format(p.price)|replace('.', ',') }}
+              </span>
+
+              <!-- Preço Antigo (com 20% de acréscimo) -->
+              <span class="text-xs line-through text-gray-400">
+                R$ {{ "%.2f"|format(p.price * 1.2)|replace('.', ',') }}
+              </span>
+
+            </div>
+
+            <!-- Valor Economizado -->
+            <div class="text-xs text-green-600 font-semibold mt-1">
+              Economize R$ {{ "%.2f"|format((p.price * 1.2) - p.price)|replace('.', ',') }}
+            </div>
+
+          </div>
+
+          <!-- CTA -->
+          <a
+            href="{{ p.offerLink }}"
+            target="_blank"
+            rel="noopener"
+            class="mt-5 flex items-center justify-center gap-2 w-full bg-[#FF9900] hover:bg-[#e68a00] text-white text-sm font-semibold py-3 rounded-xl transition"
+          >
+
+            Ir para oferta
+
+          </a>
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="bg-gray-800 rounded-2xl p-10 text-center">
+
+      <div class="text-5xl mb-4">
+        🛍️
+      </div>
+
+      <h3 class="text-2xl font-bold text-white">
+        Nenhum produto encontrado
+      </h3>
+
+      <p class="text-gray-400 mt-2">
+        Tente novamente mais tarde.
+      </p>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+<!-- BENEFÍCIOS -->
+<section class="bg-black py-10 px-4 border-t border-gray-800">
+
+  <div class="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+    <div class="bg-gray-900 rounded-2xl p-5 border border-gray-800">
+
+      <div class="text-3xl">
+        🚚
+      </div>
+
+      <h3 class="text-white font-semibold mt-4">
+        Frete grátis
+      </h3>
+
+      <p class="text-gray-400 text-sm mt-2">
+        Produtos com entrega gratuita.
+      </p>
+
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-5 border border-gray-800">
+
+      <div class="text-3xl">
+        💸
+      </div>
+
+      <h3 class="text-white font-semibold mt-4">
+        Comparador de preços
+      </h3>
+
+      <p class="text-gray-400 text-sm mt-2">
+        Encontre o menor valor disponível.
+      </p>
+
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-5 border border-gray-800">
+
+      <div class="text-3xl">
+        ⚡
+      </div>
+
+      <h3 class="text-white font-semibold mt-4">
+        Atualização automática
+      </h3>
+
+      <p class="text-gray-400 text-sm mt-2">
+        Ofertas monitoradas em tempo real.
+      </p>
+
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-5 border border-gray-800">
+
+      <div class="text-3xl">
+        ⭐
+      </div>
+
+      <h3 class="text-white font-semibold mt-4">
+        Produtos populares
+      </h3>
+
+      <p class="text-gray-400 text-sm mt-2">
+        Itens bem avaliados e mais vendidos.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock %}

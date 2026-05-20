@@ -1,17 +1,16 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
-from flask_dance.contrib.google import make_google_blueprint
 from dotenv import load_dotenv
-import os
-
+from flask_caching import Cache
+from web.database import db
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-
 from config import Config
 
 # ========== Carregar variáveis de ambiente ==================
 load_dotenv()
+cache = Cache()
 
 # ========== Instâncias globais ============
 login_manager = LoginManager()
@@ -27,16 +26,15 @@ def create_app():
     # Carregar configurações
     app.config.from_object(Config)
 
-    # Permitir OAuth inseguro em dev (HTTP)
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+    # Carregar o objeto de banco de dados
+    db.init_app(app)
 
-    # ======== Configuração do Google OAuth ==========
-    google_bp = make_google_blueprint(
-        client_id=Config.GOOGLE_CLIENT_ID,
-        client_secret=Config.GOOGLE_CLIENT_SECRET,
-        scope=["profile", "email"],
-        redirect_to="main.login_google_finish"
-    )
+    # ======== Iniciar Cache =============
+    cache.init_app(app, config={
+        "CACHE_TYPE": "SimpleCache",
+        "CACHE_DEFAULT_TIMEOUT": 300
+    })
+
 
     # ========== Inicializar extensões ==========
     login_manager.init_app(app)
@@ -50,16 +48,16 @@ def create_app():
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(admin_blueprint)
-    app.register_blueprint(google_bp, url_prefix="/login")
+
 
     # ======== Loader de usuário ==========
-    # ⚠️ Agora o usuário deve vir da API do Supabase
-    from web.modules.supabase_auth import get_user_by_id
+    from web.modules.models import User
 
     @login_manager.user_loader
     def load_user(user_id):
         try:
-            return get_user_by_id(user_id)
+            return User.query.get(
+                int(user_id))
         except Exception:
             return None
 

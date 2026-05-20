@@ -9,7 +9,7 @@ Acesse: [www.descontai.com](https://bot-precos.vercel.app/)
 ## Funcionalidades:
 - **Busca de descontos da Amazon por meio da [API de divulgação de Produtos](https://associados.amazon.com.br/assoc_credentials/home)**
 - **Busca de descontos na Amazon por meio de um filtro especializados**
-- **Busca e organização de descontos e ofertas de sites de compra onlines tais como:**
+- **Busca e organização de descontos e ofertas de sites de compra onlines:**
   - [Shoppe](https://shopee.com/)
   - [AliExpress](https://best.aliexpress.com/?browser_redirect=true)
   - [Mercado Livre](https://www.mercadolivre.com.br/)

@@ -1,0 +1,576 @@
+{% extends "base.html" %}
+
+{% block title %}Ofertas 🛒 | {{ super() }}{% endblock %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #ff8522;
+    --brand-dark: #E64A19;
+    --gold: #FFA000;
+    --surface: #0F0F0F;
+    --surface-2: #1A1A1A;
+    --surface-3: #242424;
+    --border: rgb(92 72 72 / 0.07);
+    --text: #F5F5F5;
+    --text-muted: #888888;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--text); }
+  h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
+
+  /* HEADER */
+  .o-header {
+    background: #100800;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .o-header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .o-logo { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 20px; color: var(--brand); letter-spacing: -0.5px; white-space: nowrap; text-decoration: none; }
+  .o-logo span { color: var(--gold); }
+  .o-search { flex: 1; position: relative; }
+  .o-search input {
+    width: 100%; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50px; padding: 9px 44px 9px 16px;
+    font-size: 14px; color: var(--text); outline: none; transition: border-color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .o-search input:focus { border-color: var(--brand); }
+  .o-search input::placeholder { color: var(--text-muted); }
+  .o-search-btn {
+    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+    background: var(--brand); border: none; border-radius: 50px;
+    width: 34px; height: 34px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .o-search-btn svg { width: 16px; height: 16px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+
+  /* CATEGORIES */
+  .o-cats { background: var(--surface-2); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+  .o-cats::-webkit-scrollbar { display: none; }
+  .o-cats-inner { display: flex; gap: 6px; padding: 10px 16px; width: max-content; }
+  .o-cat {
+    display: flex; align-items: center; gap: 6px; padding: 7px 14px;
+    border-radius: 50px; background: var(--surface-3); border: 1px solid var(--border);
+    font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
+    color: var(--text-muted); text-decoration: none; font-family: 'DM Sans', sans-serif;
+  }
+  .o-cat:hover, .o-cat.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+  /* HERO */
+  .o-hero { background: linear-gradient(135deg, #1a0800 0%, #2d1200 60%, #1a0800 100%); padding: 28px 16px 32px; }
+  .o-hero-inner { max-width: 1100px; margin: 0 auto; }
+  .o-live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--brand); color: #fff; font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 50px; letter-spacing: 0.5px;
+    font-family: 'Sora', sans-serif; margin-bottom: 12px;
+  }
+  .o-live-dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: o-blink 1s infinite; }
+  @keyframes o-blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .o-hero-title { font-size: clamp(24px, 5vw, 40px); font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+  .o-hero-title span { color: var(--brand); }
+  .o-hero-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+  .o-countdown { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .o-cd-label { font-size: 13px; color: var(--text-muted); }
+  .o-cd-box { background: var(--surface-3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; min-width: 52px; text-align: center; }
+  .o-cd-num { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; line-height: 1; display: block; }
+  .o-cd-unit { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-top: 2px; }
+  .o-cd-sep { font-size: 22px; font-weight: 700; color: var(--brand); line-height: 1; }
+
+  /* SECTION */
+  .o-section { padding: 24px 16px; }
+  .o-section-inner { max-width: 1100px; margin: 0 auto; }
+  .o-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .o-section-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .o-see-all { font-size: 13px; color: var(--brand); text-decoration: none; }
+  .o-see-all:hover { text-decoration: underline; }
+
+  /* FLASH CARDS */
+  .o-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+  .o-scroll::-webkit-scrollbar { display: none; }
+  .o-card-sm {
+    flex-shrink: 0; width: 150px; background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; transition: transform 0.15s, border-color 0.15s; position: relative;
+  }
+  .o-card-sm:hover { transform: translateY(-3px); border-color: rgba(255,87,34,0.5); }
+  .o-img { width: 100%; aspect-ratio: 1; background: #111; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .o-img img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+  .o-body { padding: 8px 10px 10px; }
+  .o-price { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--brand); }
+  .o-name { font-size: 11px; color: #aaa; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.45; }
+  .o-shop { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+  .o-stars { color: var(--gold); font-size: 10px; margin-top: 2px; }
+  .o-badge-disc {
+    position: absolute; top: 8px; left: 8px; background: var(--brand); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+    font-family: 'Sora', sans-serif;
+  }
+  .o-btn-offer {
+    display: block; margin-top: 8px; background: var(--brand); color: #fff;
+    text-align: center; font-size: 11px; font-weight: 600; padding: 6px 4px;
+    border-radius: 6px; text-decoration: none; transition: background 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .o-btn-offer:hover { background: var(--brand-dark); }
+
+  /* COMPARE BUTTON */
+  .o-btn-cmp {
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    background: rgba(255,255,255,0.04); color: var(--text-muted);
+    border: 1px solid var(--border); font-size: 11px; padding: 5px 4px;
+    border-radius: 6px; cursor: pointer; margin-top: 6px; width: 100%;
+    transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+  }
+  .o-btn-cmp:hover { background: rgba(255,87,34,0.12); color: var(--brand); border-color: rgba(255,87,34,0.4); }
+  .o-btn-cmp.added { background: rgba(255,87,34,0.15); color: var(--brand); border-color: rgba(255,87,34,0.5); }
+
+  /* GRID CARDS */
+  .o-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .o-card-lg {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; transition: transform 0.15s, border-color 0.15s; position: relative;
+  }
+  .o-card-lg:hover { transform: translateY(-3px); border-color: rgba(255,87,34,0.4); }
+  .o-card-lg .o-img { aspect-ratio: 1; }
+  .o-card-lg .o-img img { padding: 12px; }
+  .o-card-lg .o-body { padding: 10px 12px 12px; }
+  .o-card-lg .o-name { font-size: 13px; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; margin-bottom: 6px; }
+  .o-card-lg .o-price { font-size: 18px; }
+  .o-price-old { font-size: 11px; color: var(--text-muted); text-decoration: line-through; }
+  .o-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .o-sales { font-size: 11px; color: var(--text-muted); }
+  .o-card-lg .o-btn-offer {
+    background: transparent; color: var(--brand); border: 1px solid var(--brand);
+    margin-top: 10px; padding: 7px 4px; border-radius: 8px; font-size: 12px;
+  }
+  .o-card-lg .o-btn-offer:hover { background: var(--brand); color: #fff; }
+
+  /* BRANDS */
+  .o-brands { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media(min-width: 600px) { .o-brands { grid-template-columns: repeat(6, 1fr); } }
+  .o-brand {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 14px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; transition: all 0.15s; text-decoration: none;
+  }
+  .o-brand:hover { border-color: rgba(255,87,34,0.5); background: rgba(255,87,34,0.06); }
+  .o-brand-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
+  .o-brand-tag { font-size: 10px; color: var(--gold); }
+
+  /* EMPTY */
+  .o-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .o-empty .o-big { font-size: 36px; margin-bottom: 8px; }
+  .o-empty p { font-size: 14px; }
+
+  /* COMPARE BAR */
+  #o-cmp-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+    background: var(--surface-2); border-top: 1px solid rgba(255,87,34,0.4);
+    padding: 12px 16px; transform: translateY(100%); transition: transform 0.3s ease;
+  }
+  #o-cmp-bar.visible { transform: translateY(0); }
+  .o-cmp-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .o-cmp-slots { display: flex; gap: 8px; flex: 1; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+  .o-cmp-slots::-webkit-scrollbar { display: none; }
+  .o-cmp-slot {
+    flex-shrink: 0; width: 52px; height: 52px; border-radius: 8px;
+    border: 1.5px dashed rgba(255,255,255,0.2); display: flex; align-items: center;
+    justify-content: center; overflow: hidden; position: relative; background: var(--surface-3);
+  }
+  .o-cmp-slot img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  .o-cmp-slot .o-rm {
+    position: absolute; top: -5px; right: -5px; width: 18px; height: 18px;
+    background: var(--brand); border-radius: 50%; font-size: 11px; line-height: 18px;
+    text-align: center; cursor: pointer; color: #fff; display: none; font-weight: 700;
+  }
+  .o-cmp-slot:hover .o-rm { display: block; }
+  .o-cmp-slot.filled { border-style: solid; border-color: rgba(255,87,34,0.5); }
+  .o-cmp-empty-label { font-size: 9px; color: var(--text-muted); text-align: center; line-height: 1.4; padding: 2px; }
+  .o-cmp-count { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--text); }
+  .o-cmp-sep { color: var(--text-muted); font-size: 13px; }
+  .o-cmp-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .o-btn-clear {
+    background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 14px; font-size: 13px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .o-btn-go {
+    background: var(--brand); color: #fff; border: none; border-radius: 8px;
+    padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+    font-family: 'Sora', sans-serif; transition: background 0.15s; white-space: nowrap;
+  }
+  .o-btn-go:hover { background: var(--brand-dark); }
+  .o-btn-go:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* MODAL */
+  #o-cmp-modal {
+    position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.88);
+    display: none; align-items: flex-start; justify-content: center;
+    overflow-y: auto; padding: 20px 16px;
+  }
+  #o-cmp-modal.open { display: flex; }
+  .o-modal-box {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 16px; width: 100%; max-width: 920px; overflow: hidden;
+  }
+  .o-modal-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; border-bottom: 1px solid var(--border);
+  }
+  .o-modal-title { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); }
+  .o-modal-close {
+    background: var(--surface-3); border: 1px solid var(--border); color: var(--text);
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 20px;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .o-modal-body { padding: 24px; overflow-x: auto; }
+
+  /* COMPARE TABLE */
+  .o-cmp-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+  .o-cmp-table th { padding: 0 12px 16px; text-align: center; vertical-align: top; }
+  .o-cmp-table td { padding: 10px 12px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; vertical-align: middle; color: var(--text); }
+  .o-cmp-table td.o-row-label { text-align: left; color: var(--text-muted); font-size: 12px; font-weight: 500; background: var(--surface-3); border-right: 1px solid var(--border); }
+  .o-cmp-prod-img { width: 80px; height: 80px; object-fit: contain; background: #111; border-radius: 8px; padding: 6px; display: block; margin: 0 auto; }
+  .o-cmp-prod-name { font-size: 12px; font-weight: 600; color: var(--text); margin-top: 8px; line-height: 1.4; }
+  .o-cmp-prod-shop { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .o-cmp-prod-price { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; color: var(--brand); margin-top: 6px; }
+  .o-best { background: rgba(255,87,34,0.1) !important; color: var(--brand) !important; font-weight: 700; }
+  .o-badge-best { display: inline-block; background: var(--brand); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-top: 6px; font-family: 'Sora', sans-serif; }
+  .o-no-data { color: var(--text-muted); font-style: italic; }
+  .o-cmp-go { display: inline-block; background: var(--brand); color: #fff; font-size: 11px; padding: 6px 14px; border-radius: 6px; text-decoration: none; margin-top: 8px; font-weight: 600; }
+  .o-cmp-go:hover { background: var(--brand-dark); }
+
+  @media(max-width: 480px) {
+    .o-cmp-actions { width: 100%; justify-content: flex-end; }
+  }
+</style>
+
+
+
+<!-- CATEGORIES -->
+<nav class="o-cats" aria-label="Categorias">
+  <div class="o-cats-inner">
+    {% for cat in [('Todos','🔥'),('Celulares','📱'),('Notebooks','💻'),('Games','🎮'),('Casa','🏠'),('Moda','👗'),('Livros','📚'),('Beleza','💄'),('TVs','📺'),('Bebês','🍼'),('Ferramentas','🔧'),('Esportes','⚽')] %}
+    <a href="#" class="o-cat{% if loop.first %} active{% endif %}">{{ cat[1] }} {{ cat[0] }}</a>
+    {% endfor %}
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="o-hero">
+  <div class="o-hero-inner">
+    <div class="o-live-badge"><div class="o-live-dot"></div> AO VIVO</div>
+    <h1 class="o-hero-title">Ofertas <span>Relâmpago</span><br>de hoje</h1>
+    <p class="o-hero-sub">Os melhores preços, atualizados em tempo real</p>
+    <div class="o-countdown">
+      <span class="o-cd-label">Termina em</span>
+      <div class="o-cd-box"><span class="o-cd-num" id="cd-h">00</span><span class="o-cd-unit">hrs</span></div>
+      <span class="o-cd-sep">:</span>
+      <div class="o-cd-box"><span class="o-cd-num" id="cd-m">00</span><span class="o-cd-unit">min</span></div>
+      <span class="o-cd-sep">:</span>
+      <div class="o-cd-box"><span class="o-cd-num" id="cd-s">00</span><span class="o-cd-unit">seg</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FLASH DEALS -->
+<div class="o-section" style="background:var(--surface)">
+  <div class="o-section-inner">
+    <div class="o-section-header">
+      <h2 class="o-section-title">⚡ Ofertas do Dia</h2>
+      <a href="#" class="o-see-all">Ver todas →</a>
+    </div>
+    {% if produtos and produtos|length > 0 %}
+    <div class="o-scroll">
+      {% for p in produtos[:12] %}
+      <div class="o-card-sm">
+        <span class="o-badge-disc">-{{ (p.price * 0.2 / (p.price * 1.2) * 100)|int }}%</span>
+        <div class="o-img"><img src="{{ p.imageUrl }}" alt="{{ p.productName }}" loading="lazy"></div>
+        <div class="o-body">
+          <div class="o-price">R$ {{ '%.2f' % p.price }}</div>
+          <div class="o-stars">★★★★★</div>
+          <p class="o-name">{{ p.productName }}</p>
+          <div class="o-shop">{{ p.shopName }}</div>
+          {% if p.offerLink and p.offerLink != '#' %}
+          <a class="o-btn-offer" href="{{ p.offerLink }}" target="_blank" rel="noopener">Ver oferta</a>
+          {% endif %}
+          <button class="o-btn-cmp"
+            data-name="{{ p.productName | e }}"
+            data-price="{{ p.price }}"
+            data-img="{{ p.imageUrl | e }}"
+            data-shop="{{ p.shopName | e }}"
+            data-rating="{{ p.ratingStar if p.ratingStar else '' }}"
+            data-sales="{{ p.sales if p.sales else 0 }}"
+            data-link="{{ p.offerLink if p.offerLink and p.offerLink != '#' else '#' }}"
+            onclick="toggleCompare(this)">+ Comparar</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="o-empty"><div class="o-big">🔍</div><p>Nenhuma oferta encontrada.</p></div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- BRANDS -->
+<div class="o-section" style="background:var(--surface)">
+  <div class="o-section-inner">
+    <div class="o-section-header">
+      <h2 class="o-section-title">🏆 Marcas em Destaque</h2>
+    </div>
+    <div class="o-brands">
+      {% for b in [('Samsung','📱 Smartphones'),('Apple','💻 Notebooks'),('LG','📺 TVs'),('Dell','💻 Computadores'),('Sony','🎮 Games'),('Philips','🏠 Casa')] %}
+      <a href="#" class="o-brand">
+        <div class="o-brand-name">{{ b[0] }}</div>
+        <div class="o-brand-tag">{{ b[1] }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- RECOMMENDED -->
+<div class="o-section" style="background:var(--surface-2); padding-bottom:90px">
+  <div class="o-section-inner">
+    <div class="o-section-header">
+      <h2 class="o-section-title">✨ Recomendados para Você</h2>
+      <a href="#" class="o-see-all">Ver todos →</a>
+    </div>
+    {% if produtos and produtos|length > 0 %}
+    <div class="o-grid">
+      {% for p in produtos %}
+      <div class="o-card-lg">
+        <div class="o-img"><img src="{{ p.imageUrl }}" alt="{{ p.productName }}" loading="lazy"></div>
+        <div class="o-body">
+          <p class="o-name">{{ p.productName }}</p>
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+            <div class="o-price">R$ {{ '%.2f' % p.price }}</div>
+            <div class="o-price-old">R$ {{ '%.2f' % (p.price * 1.2) }}</div>
+          </div>
+          <div class="o-meta">
+            <div class="o-stars" style="font-size:11px">★ {{ p.ratingStar }}</div>
+            <div class="o-sales">{{ p.sales }} vendidos</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">{{ p.shopName }}</div>
+          {% if p.offerLink and p.offerLink != '#' %}
+          <a class="o-btn-offer" href="{{ p.offerLink }}" target="_blank" rel="noopener">Ir para oferta</a>
+          {% endif %}
+          <button class="o-btn-cmp"
+            data-name="{{ p.productName | e }}"
+            data-price="{{ p.price }}"
+            data-img="{{ p.imageUrl | e }}"
+            data-shop="{{ p.shopName | e }}"
+            data-rating="{{ p.ratingStar if p.ratingStar else '' }}"
+            data-sales="{{ p.sales if p.sales else 0 }}"
+            data-link="{{ p.offerLink if p.offerLink and p.offerLink != '#' else '#' }}"
+            onclick="toggleCompare(this)">+ Comparar</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="o-empty"><div class="o-big">📦</div><p>Nenhum produto recomendado.</p></div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- COMPARE BAR -->
+<div id="o-cmp-bar" role="region" aria-label="Comparador de preços">
+  <div class="o-cmp-bar-inner">
+    <span class="o-cmp-count" id="o-cmp-count">0/4</span>
+    <span class="o-cmp-sep">selecionados</span>
+    <div class="o-cmp-slots" id="o-cmp-slots"></div>
+    <div class="o-cmp-actions">
+      <button class="o-btn-clear" onclick="clearCompare()">Limpar</button>
+      <button class="o-btn-go" id="o-btn-go" onclick="openModal()" disabled>Comparar agora</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div id="o-cmp-modal" role="dialog" aria-modal="true" aria-labelledby="o-modal-title" onclick="if(event.target===this)closeModal()">
+  <div class="o-modal-box">
+    <div class="o-modal-head">
+      <h2 class="o-modal-title" id="o-modal-title">Comparador de Preços</h2>
+      <button class="o-modal-close" onclick="closeModal()" aria-label="Fechar">×</button>
+    </div>
+    <div class="o-modal-body">
+      <div id="o-cmp-table"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CMP_MAX = 4;
+let cmpList = [];
+
+function toggleCompare(btn) {
+  const d = btn.dataset;
+  const name = d.name;
+  const idx = cmpList.findIndex(function(p){ return p.name === name; });
+  if (idx > -1) {
+    cmpList.splice(idx, 1);
+    btn.classList.remove('added');
+    btn.textContent = '+ Comparar';
+  } else {
+    if (cmpList.length >= CMP_MAX) { alert('Máximo de ' + CMP_MAX + ' produtos para comparar.'); return; }
+    cmpList.push({
+      name: name,
+      price: parseFloat(d.price),
+      img: d.img,
+      shop: d.shop,
+      rating: d.rating ? parseFloat(d.rating) : null,
+      sales: parseInt(d.sales) || 0,
+      link: d.link
+    });
+    btn.classList.add('added');
+    btn.textContent = '✓ Adicionado';
+  }
+  renderBar();
+}
+
+function renderBar() {
+  document.getElementById('o-cmp-count').textContent = cmpList.length + '/' + CMP_MAX;
+  document.getElementById('o-btn-go').disabled = cmpList.length < 2;
+  const slots = document.getElementById('o-cmp-slots');
+  slots.innerHTML = '';
+  for (var i = 0; i < CMP_MAX; i++) {
+    var slot = document.createElement('div');
+    slot.className = 'o-cmp-slot' + (cmpList[i] ? ' filled' : '');
+    if (cmpList[i]) {
+      var p = cmpList[i];
+      var rm = document.createElement('div');
+      rm.className = 'o-rm';
+      rm.textContent = '×';
+      (function(n){ rm.onclick = function(){ removeItem(n); }; })(p.name);
+      var img = document.createElement('img');
+      img.src = p.img; img.alt = p.name;
+      slot.appendChild(img); slot.appendChild(rm);
+    } else {
+      slot.innerHTML = '<div class="o-cmp-empty-label">+ produto</div>';
+    }
+    slots.appendChild(slot);
+  }
+  document.getElementById('o-cmp-bar').classList.toggle('visible', cmpList.length > 0);
+}
+
+function removeItem(name) {
+  cmpList = cmpList.filter(function(p){ return p.name !== name; });
+  document.querySelectorAll('.o-btn-cmp[data-name]').forEach(function(b){
+    if (b.dataset.name === name) { b.classList.remove('added'); b.textContent = '+ Comparar'; }
+  });
+  renderBar();
+}
+
+function clearCompare() {
+  cmpList = [];
+  document.querySelectorAll('.o-btn-cmp.added').forEach(function(b){
+    b.classList.remove('added'); b.textContent = '+ Comparar';
+  });
+  renderBar();
+}
+
+function openModal() {
+  if (cmpList.length < 2) return;
+  buildTable();
+  document.getElementById('o-cmp-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('o-cmp-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildTable() {
+  var prods = cmpList;
+  var minPrice = Math.min.apply(null, prods.map(function(p){ return p.price; }));
+  var maxRating = Math.max.apply(null, prods.map(function(p){ return p.rating || 0; }));
+  var maxSales = Math.max.apply(null, prods.map(function(p){ return p.sales || 0; }));
+
+  var h = '<table class="o-cmp-table"><thead><tr><th style="width:130px;text-align:left"></th>';
+  prods.forEach(function(p){
+    h += '<th><img class="o-cmp-prod-img" src="'+esc(p.img)+'" alt="'+esc(p.name)+'">'
+      +'<div class="o-cmp-prod-name">'+esc(p.name)+'</div>'
+      +'<div class="o-cmp-prod-shop">'+esc(p.shop)+'</div></th>';
+  });
+  h += '</tr></thead><tbody>';
+
+  h += '<tr><td class="o-row-label">Preço</td>';
+  prods.forEach(function(p){
+    var best = p.price === minPrice;
+    h += '<td'+(best?' class="o-best"':'')+'>'
+      +'<div class="o-cmp-prod-price">R$ '+p.price.toFixed(2)+'</div>'
+      +(best?'<div class="o-badge-best">Menor preço ✓</div>':'')
+      +'</td>';
+  });
+  h += '</tr>';
+
+  h += '<tr><td class="o-row-label">Loja</td>';
+  prods.forEach(function(p){ h += '<td>'+esc(p.shop)+'</td>'; });
+  h += '</tr>';
+
+  h += '<tr><td class="o-row-label">Avaliação</td>';
+  prods.forEach(function(p){
+    var best = p.rating !== null && p.rating === maxRating;
+    h += '<td'+(best?' class="o-best"':'')+'>'
+      +(p.rating !== null ? '★ '+p.rating : '<span class="o-no-data">—</span>')
+      +'</td>';
+  });
+  h += '</tr>';
+
+  h += '<tr><td class="o-row-label">Vendidos</td>';
+  prods.forEach(function(p){
+    var best = (p.sales||0) === maxSales && maxSales > 0;
+    h += '<td'+(best?' class="o-best"':'')+'>'
+      +(p.sales ? p.sales.toLocaleString('pt-BR') : '<span class="o-no-data">—</span>')
+      +'</td>';
+  });
+  h += '</tr>';
+
+  h += '<tr><td class="o-row-label">Desconto est.</td>';
+  prods.forEach(function(p){
+    var disc = Math.round((p.price * 0.2 / (p.price * 1.2)) * 100);
+    h += '<td><span style="color:var(--brand);font-weight:600">'+disc+'%</span></td>';
+  });
+  h += '</tr>';
+
+  h += '<tr><td class="o-row-label">Comprar</td>';
+  prods.forEach(function(p){
+    h += '<td>'+(p.link !== '#'
+      ? '<a class="o-cmp-go" href="'+esc(p.link)+'" target="_blank" rel="noopener">Ver oferta</a>'
+      : '<span class="o-no-data">Indisponível</span>')+'</td>';
+  });
+  h += '</tr></tbody></table>';
+
+  document.getElementById('o-cmp-table').innerHTML = h;
+}
+
+(function(){
+  var end = new Date(); end.setHours(23,59,59,999);
+  function tick(){
+    var d = end - Date.now();
+    if(d <= 0) return;
+    document.getElementById('cd-h').textContent = String(Math.floor(d/3600000)).padStart(2,'0');
+    document.getElementById('cd-m').textContent = String(Math.floor((d%3600000)/60000)).padStart(2,'0');
+    document.getElementById('cd-s').textContent = String(Math.floor((d%60000)/1000)).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+})();
+</script>
+
+{% endblock %}

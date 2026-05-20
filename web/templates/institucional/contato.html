@@ -1,69 +1,226 @@
 {% extends "base.html" %}
 
-{% block title %}Contato - DescontAí.com{% endblock %}
+{% block title %}Contato | DescontAí.com{% endblock %}
 
 {% block content %}
-<div class="max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-  <h1 class="text-4xl font-extrabold text-yellow-500 mb-6 text-center">
-    Fale Conosco
-  </h1>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #ffea00;
+    --brand-dark: #FFC000;
+    --gold: #FFA000;
+    --surface: #0F0F0F;
+    --surface-2: #1A1A1A;
+    --surface-3: #242424;
+    --border: rgba(255,255,255,0.07);
+    --text: #F5F5F5;
+    --text-muted: #888;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--text); }
+  h1,h2,h3 { font-family: 'Sora', sans-serif; }
+
+  /* HERO */
+  .ct-hero {
+    background: linear-gradient(135deg, #1a0800 0%, #2d1200 60%, #1a0800 100%);
+    padding: 48px 16px 56px; text-align: center; position: relative; overflow: hidden;
+  }
+  .ct-hero::before {
+    content: ''; position: absolute;
+    width: 350px; height: 350px; background: var(--brand);
+    border-radius: 50%; opacity: 0.06; filter: blur(80px);
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+    pointer-events: none;
+  }
+  .ct-hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,87,34,0.12); border: 1px solid rgba(255,87,34,0.3);
+    color: var(--brand); font-size: 12px; font-weight: 600;
+    padding: 5px 14px; border-radius: 50px; letter-spacing: 0.5px;
+    font-family: 'Sora', sans-serif; margin-bottom: 16px;
+  }
+  .ct-hero-title { font-size: clamp(26px, 5vw, 42px); font-weight: 700; margin-bottom: 10px; }
+  .ct-hero-title span { color: var(--brand); }
+  .ct-hero-sub { color: var(--text-muted); font-size: 15px; max-width: 420px; margin: 0 auto; line-height: 1.6; }
+
+  /* WRAP */
+  .ct-wrap { max-width: 860px; margin: 0 auto; padding: 40px 16px 80px; }
+
+  /* LAYOUT */
+  .ct-layout { display: grid; grid-template-columns: 1fr 1.6fr; gap: 24px; align-items: start; }
+  @media(max-width: 640px) { .ct-layout { grid-template-columns: 1fr; } }
+
+  /* SIDEBAR */
+  .ct-sidebar { display: flex; flex-direction: column; gap: 12px; }
+  .ct-info-card {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .ct-info-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .ct-channel {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: var(--text); transition: color 0.15s;
+  }
+  .ct-channel:last-child { border-bottom: none; padding-bottom: 0; }
+  .ct-channel:hover .ct-ch-val { color: var(--brand); }
+  .ct-ch-icon { font-size: 18px; width: 20px; text-align: center; flex-shrink: 0; }
+  .ct-ch-label { font-size: 11px; color: var(--text-muted); }
+  .ct-ch-val { font-size: 13px; font-weight: 500; margin-top: 1px; transition: color 0.15s; }
+
+  .ct-resp-card {
+    background: rgba(255,87,34,0.06); border: 1px solid rgba(255,87,34,0.2);
+    border-radius: var(--radius); padding: 18px 20px;
+  }
+  .ct-resp-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--brand); }
+  .ct-resp-item { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid rgba(255,87,34,0.1); }
+  .ct-resp-item:last-child { border-bottom: none; }
+  .ct-resp-item span:first-child { color: var(--text-muted); }
+  .ct-resp-item span:last-child { font-weight: 600; color: var(--text); }
+
+  /* FORM CARD */
+  .ct-form-card {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 24px;
+  }
+  .ct-form-title { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 22px; }
+
+  /* FLASH MESSAGES */
+  .ct-flash { border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .ct-flash.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+  .ct-flash.warning { background: rgba(255,160,0,0.1); border: 1px solid rgba(255,160,0,0.3); color: var(--gold); }
+  .ct-flash.danger  { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: #fca5a5; }
+
+  /* FORM FIELDS */
+  .ct-field { margin-bottom: 16px; }
+  .ct-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media(max-width: 480px) { .ct-field-row { grid-template-columns: 1fr; } }
+  .ct-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 7px; font-family: 'Sora', sans-serif; }
+  .ct-input, .ct-textarea, .ct-select {
+    width: 100%; background: var(--surface-3);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 10px 14px; font-size: 14px; color: var(--text);
+    outline: none; transition: border-color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .ct-input::placeholder, .ct-textarea::placeholder { color: var(--text-muted); }
+  .ct-input:focus, .ct-textarea:focus, .ct-select:focus { border-color: var(--brand); }
+  .ct-textarea { resize: vertical; min-height: 130px; }
+  .ct-select { appearance: none; cursor: pointer; }
+  .ct-select option { background: var(--surface-3); }
+
+  /* SUBMIT */
+  .ct-submit-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+  .ct-submit-note { font-size: 12px; color: var(--text-muted); flex: 1; }
+  .ct-btn-submit {
+    background: var(--brand); color: #fff; border: none;
+    border-radius: var(--radius-sm); padding: 11px 28px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: 'Sora', sans-serif; transition: background 0.15s; white-space: nowrap;
+  }
+  .ct-btn-submit:hover { background: var(--brand-dark); }
+</style>
+
+<!-- HERO -->
+<div class="ct-hero">
+  <div class="ct-hero-tag">💬 Suporte</div>
+  <h1 class="ct-hero-title">Fale <span>Conosco</span></h1>
+  <p class="ct-hero-sub">Dúvidas, sugestões ou problemas? Responderemos o mais rápido possível.</p>
+</div>
+
+<div class="ct-wrap">
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="space-y-4 mb-6">
-        {% for category, message in messages %}
-          <div
-            class="p-4 rounded {{
-              'bg-green-100 text-green-800' if category == 'success' else
-              'bg-yellow-100 text-yellow-800' if category == 'warning' else
-              'bg-red-100 text-red-800' if category == 'danger' else ''
-            }}"
-            role="alert"
-          >
-            {{ message }}
-          </div>
-        {% endfor %}
-      </div>
+      {% for category, message in messages %}
+        <div class="ct-flash {{ 'success' if category == 'success' else 'warning' if category == 'warning' else 'danger' }}" role="alert">
+          {{ '✅' if category == 'success' else '⚠️' if category == 'warning' else '❌' }}
+          {{ message }}
+        </div>
+      {% endfor %}
     {% endif %}
   {% endwith %}
 
-  <form method="POST" action="{{ url_for('main.contato') }}" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
-    <div>
-      <label for="nome" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
-      <input type="text" id="nome" name="nome" required
-             placeholder="Seu nome completo"
-             value="{{ request.form.get('nome', '') }}"
-             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
+  <div class="ct-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="ct-sidebar">
+
+      <div class="ct-info-card">
+        <div class="ct-info-title">Outros canais</div>
+        <a href="mailto:contato@descontai.com" class="ct-channel">
+          <span class="ct-ch-icon">✉️</span>
+          <div><div class="ct-ch-label">E-mail</div><div class="ct-ch-val">contato@descontai.com</div></div>
+        </a>
+        <a href="https://instagram.com/descontai" target="_blank" rel="noopener" class="ct-channel">
+          <span class="ct-ch-icon">📸</span>
+          <div><div class="ct-ch-label">Instagram</div><div class="ct-ch-val">@descontai</div></div>
+        </a>
+        <a href="#" class="ct-channel">
+          <span class="ct-ch-icon">💬</span>
+          <div><div class="ct-ch-label">WhatsApp</div><div class="ct-ch-val">Grupo de ofertas</div></div>
+        </a>
+      </div>
+
+      <div class="ct-resp-card">
+        <div class="ct-resp-title">⏱ Tempo de resposta</div>
+        <div class="ct-resp-item"><span>E-mail</span><span>até 24h</span></div>
+        <div class="ct-resp-item"><span>Instagram</span><span>até 48h</span></div>
+        <div class="ct-resp-item"><span>Formulário</span><span>até 24h</span></div>
+      </div>
+
+    </aside>
+
+    <!-- FORM -->
+    <div class="ct-form-card">
+      <div class="ct-form-title">Enviar mensagem</div>
+
+      <form method="POST" action="{{ url_for('main.contato') }}" novalidate>
+
+        <div class="ct-field-row">
+          <div>
+            <label class="ct-label" for="nome">Nome</label>
+            <input class="ct-input" type="text" id="nome" name="nome" required
+                   placeholder="Seu nome"
+                   value="{{ request.form.get('nome', '') }}">
+          </div>
+          <div>
+            <label class="ct-label" for="email">E-mail</label>
+            <input class="ct-input" type="email" id="email" name="email" required
+                   placeholder="seuemail@exemplo.com"
+                   value="{{ request.form.get('email', '') }}">
+          </div>
+        </div>
+
+        <div class="ct-field">
+          <label class="ct-label" for="assunto">Assunto</label>
+          <select class="ct-select" id="assunto" name="assunto" required>
+            <option value="" disabled {% if not request.form.get('assunto') %}selected{% endif %}>Selecione um assunto</option>
+            <option value="duvida"     {% if request.form.get('assunto')=='duvida' %}selected{% endif %}>❓ Dúvida geral</option>
+            <option value="oferta"     {% if request.form.get('assunto')=='oferta' %}selected{% endif %}>🔥 Problema com oferta</option>
+            <option value="sugestao"   {% if request.form.get('assunto')=='sugestao' %}selected{% endif %}>💡 Sugestão</option>
+            <option value="parceria"   {% if request.form.get('assunto')=='parceria' %}selected{% endif %}>🤝 Parceria / afiliados</option>
+            <option value="outro"      {% if request.form.get('assunto')=='outro' %}selected{% endif %}>📋 Outro</option>
+          </select>
+        </div>
+
+        <div class="ct-field">
+          <label class="ct-label" for="mensagem">Mensagem</label>
+          <textarea class="ct-textarea" id="mensagem" name="mensagem" required
+                    placeholder="Descreva sua dúvida ou sugestão com detalhes…">{{ request.form.get('mensagem', '') }}</textarea>
+        </div>
+
+        <div class="ct-submit-row">
+          <span class="ct-submit-note">Respondemos em até 24h nos dias úteis.</span>
+          <button type="submit" class="ct-btn-submit">Enviar mensagem →</button>
+        </div>
+
+      </form>
     </div>
 
-    <div>
-      <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-      <input type="email" id="email" name="email" required
-             placeholder="seuemail@exemplo.com"
-             value="{{ request.form.get('email', '') }}"
-             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
-    </div>
-
-    <div>
-      <label for="assunto" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Assunto</label>
-      <input type="text" id="assunto" name="assunto" required
-             placeholder="Motivo do contato"
-             value="{{ request.form.get('assunto', '') }}"
-             class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm" />
-    </div>
-
-    <div>
-      <label for="mensagem" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mensagem</label>
-      <textarea id="mensagem" name="mensagem" rows="5" required
-                placeholder="Escreva sua mensagem aqui..."
-                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">{{ request.form.get('mensagem', '') }}</textarea>
-    </div>
-
-    <div class="text-center">
-      <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded">
-        Enviar Mensagem
-      </button>
-    </div>
-  </form>
+  </div>
 </div>
 {% endblock %}

@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function buildAmazonUrl(params) {
     const baseUrl = "https://www.amazon.com.br/s?k=";
     const searchTerm = encodeURIComponent(params.palavrasChave);
-    const tagAfiliado = "&tag=descontai-20";
+    const tagAfiliado = "&tag=descontai0c5-20";
 
     const departamentosMap = {
       "Eletrônicos": "electronics",

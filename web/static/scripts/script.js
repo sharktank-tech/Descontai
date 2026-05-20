@@ -116,4 +116,5 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.link-afiliado').forEach(link => {
     link.addEventListener('click', handleAffiliateLinkClick);
   });
+
 });

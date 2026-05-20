@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ categoria.nome }} 🛒 | {{ super() }}
+{% endblock %}
+
+{% block meta %}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta
+  name="description"
+  content="{{ categoria.descricao }}"
+>
+
+<meta
+  property="og:title"
+  content="{{ categoria.nome }}"
+>
+
+<meta
+  property="og:description"
+  content="{{ categoria.descricao }}"
+>
+
+<meta
+  property="og:image"
+  content="{{ categoria.banner }}"
+>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="bg-[#F75131] pb-6">
+
+  <!-- Busca -->
+  <div class="px-4 pt-4">
+    <div class="relative max-w-5xl mx-auto">
+
+      <form
+        action="{{ url_for('main.ofertas') }}"
+        method="get"
+      >
+
+        <input
+          name="q"
+          type="text"
+          placeholder="Buscar em {{ categoria.nome }}..."
+          class="w-full py-3 px-4 pr-12 rounded-md shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-[#FF9900]"
+        >
+
+        <button
+          type="submit"
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700"
+        >
+
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+
+          </svg>
+
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Banner -->
+  <div class="mt-4 px-4">
+
+    <div class="max-w-5xl mx-auto relative rounded-xl overflow-hidden shadow-xl">
+
+      <img
+        src="{{ categoria.banner }}"
+        alt="{{ categoria.nome }}"
+        class="w-full h-52 sm:h-72 object-cover"
+      >
+
+      <!-- Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
+
+        <div class="absolute bottom-0 left-0 p-5 sm:p-7">
+
+          <!-- Badge -->
+          <div class="inline-flex items-center gap-2 bg-[#FF9900] text-white text-xs px-3 py-1 rounded-full shadow mb-3">
+
+            🔥 Categoria em destaque
+
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl font-bold text-white drop-shadow">
+
+            {{ categoria.nome }}
+
+          </h1>
+
+          <p class="text-sm sm:text-base text-gray-200 mt-2 max-w-2xl">
+
+            {{ categoria.descricao }}
+
+          </p>
+
+          <!-- Estatísticas -->
+          <div class="flex flex-wrap gap-3 mt-4">
+
+            <div class="bg-white/10 backdrop-blur px-3 py-2 rounded-lg text-white text-xs">
+              🛒 {{ produtos|length }} ofertas
+            </div>
+
+            <div class="bg-white/10 backdrop-blur px-3 py-2 rounded-lg text-white text-xs">
+              ⚡ Atualizado hoje
+            </div>
+
+            <div class="bg-white/10 backdrop-blur px-3 py-2 rounded-lg text-white text-xs">
+              💸 Menores preços
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- SUBCATEGORIAS -->
+{% if categoria.subcategorias %}
+
+<section class="bg-gray-800 py-4 px-4 border-b border-gray-700">
+
+  <div class="max-w-5xl mx-auto">
+
+    <div class="flex overflow-x-auto gap-3 scrollbar-hide pb-2">
+
+      {% for sub in categoria.subcategorias %}
+
+      <a
+        href="{{ url_for('main.categoria', slug=sub.slug) }}"
+        class="flex-shrink-0 px-4 py-2 bg-white rounded-full text-sm shadow hover:bg-[#FF9900] hover:text-white transition-all duration-200"
+      >
+
+        {{ sub.nome }}
+
+      </a>
+
+      {% endfor %}
+
+    </div>
+
+  </div>
+
+</section>
+
+{% endif %}
+
+<!-- OFERTAS -->
+<section class="bg-gray-800 py-6 px-4 min-h-screen">
+
+  <div class="max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+
+      <div>
+
+        <h2 class="text-2xl font-bold text-white">
+          Ofertas em {{ categoria.nome }}
+        </h2>
+
+        <p class="text-sm text-gray-400 mt-1">
+          Produtos atualizados automaticamente
+        </p>
+
+      </div>
+
+      <!-- Filtros -->
+      <div class="flex gap-2 overflow-x-auto">
+
+        <button class="px-3 py-2 bg-[#FF9900] text-white rounded-md text-xs font-semibold whitespace-nowrap">
+          Mais vendidos
+        </button>
+
+        <button class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md text-xs whitespace-nowrap hover:bg-gray-600">
+          Menor preço
+        </button>
+
+        <button class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md text-xs whitespace-nowrap hover:bg-gray-600">
+          Maior desconto
+        </button>
+
+      </div>
+
+    </div>
+
+    {% if produtos and produtos|length > 0 %}
+
+    <!-- Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+
+      {% for p in produtos %}
+
+      <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+
+        <!-- Imagem -->
+        <div class="relative pt-[100%] bg-white overflow-hidden">
+
+          <!-- Badge -->
+          <div class="absolute top-2 left-2 z-10">
+
+            <span class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full shadow">
+              -20%
+            </span>
+
+          </div>
+
+          <img
+            src="{{ p.imageUrl }}"
+            alt="{{ p.productName }}"
+            loading="lazy"
+            class="absolute top-0 left-0 w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+          >
+
+        </div>
+
+        <!-- Conteúdo -->
+        <div class="p-3">
+
+          <!-- Loja -->
+          <div class="text-[10px] text-[#FF9900] font-bold uppercase tracking-wide">
+
+            {{ p.shopName }}
+
+          </div>
+
+          <!-- Nome -->
+          <h3 class="text-sm text-gray-800 mt-1 line-clamp-2 min-h-[42px]">
+
+            {{ p.productName }}
+
+          </h3>
+
+          <!-- Rating -->
+          <div class="flex items-center justify-between mt-2 text-[11px]">
+
+            <div class="text-yellow-500">
+              ⭐ {{ p.ratingStar }}
+            </div>
+
+            <div class="text-gray-500">
+              {{ p.sales }} vendidos
+            </div>
+
+          </div>
+
+          <!-- Preço -->
+          <div class="mt-3">
+
+            <div class="flex items-center gap-2">
+
+              <span class="text-lg font-bold text-[#FF9900]">
+                R$ {{ '%.2f' % p.price }}
+              </span>
+
+              <span class="text-xs text-gray-400 line-through">
+                R$ {{ '%.2f' % (p.price * 1.2) }}
+              </span>
+
+            </div>
+
+            <!-- Economia -->
+            <div class="text-[11px] text-green-600 font-medium mt-1">
+              Economize R$ {{ '%.2f' % ((p.price * 1.2) - p.price) }}
+            </div>
+
+          </div>
+
+          <!-- CTA -->
+          {% if p.offerLink and p.offerLink != '#' %}
+
+          <a
+            href="{{ p.offerLink }}"
+            target="_blank"
+            rel="noopener"
+            class="mt-4 flex items-center justify-center gap-2 w-full bg-[#FF9900] hover:bg-[#e68a00] text-white text-xs font-semibold py-2.5 rounded-lg transition-all duration-200"
+          >
+
+            🛒 Ver Oferta
+
+          </a>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <!-- Empty -->
+    <div class="bg-gray-700 rounded-xl p-10 text-center">
+
+      <div class="text-5xl mb-4">
+        🛍️
+      </div>
+
+      <h3 class="text-xl font-semibold text-white">
+        Nenhuma oferta encontrada
+      </h3>
+
+      <p class="text-gray-400 mt-2">
+        Ainda não há produtos disponíveis nesta categoria.
+      </p>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+<!-- BENEFÍCIOS -->
+<section class="bg-gray-900 py-8 px-4 border-t border-gray-700">
+
+  <div class="max-w-5xl mx-auto">
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div class="bg-gray-800 rounded-xl p-5 text-center border border-gray-700">
+
+        <div class="text-3xl">
+          🚚
+        </div>
+
+        <p class="text-sm font-semibold text-white mt-3">
+          Frete grátis
+        </p>
+
+        <p class="text-xs text-gray-400 mt-1">
+          Em milhares de produtos
+        </p>
+
+      </div>
+
+      <div class="bg-gray-800 rounded-xl p-5 text-center border border-gray-700">
+
+        <div class="text-3xl">
+          💸
+        </div>
+
+        <p class="text-sm font-semibold text-white mt-3">
+          Menor preço
+        </p>
+
+        <p class="text-xs text-gray-400 mt-1">
+          Ofertas monitoradas
+        </p>
+
+      </div>
+
+      <div class="bg-gray-800 rounded-xl p-5 text-center border border-gray-700">
+
+        <div class="text-3xl">
+          🔥
+        </div>
+
+        <p class="text-sm font-semibold text-white mt-3">
+          Promoções diárias
+        </p>
+
+        <p class="text-xs text-gray-400 mt-1">
+          Atualização automática
+        </p>
+
+      </div>
+
+      <div class="bg-gray-800 rounded-xl p-5 text-center border border-gray-700">
+
+        <div class="text-3xl">
+          ⭐
+        </div>
+
+        <p class="text-sm font-semibold text-white mt-3">
+          Produtos avaliados
+        </p>
+
+        <p class="text-xs text-gray-400 mt-1">
+          Mais vendidos da plataforma
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock %}

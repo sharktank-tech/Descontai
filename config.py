@@ -3,51 +3,44 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 class Config:
-    # ===============================
-    # Flask
-    # ===============================
+
+    # ============== Flask =================
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
     FLASK_APP = os.getenv("FLASK_APP", "run")
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
 
-    # ===============================
-    # Supabase
-    # ===============================
-    SUPABASE_URL = os.getenv("SUPABASE_URL")
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-    SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    # ============== Database =================
+    DATABASE_URL = os.getenv("DATABASE_URL") or '//postgres:NDsfA3kxD5guZOLa@db.zbhornbobznuzollgovo.supabase.co:5432/postgres'
+    DATABASE_KEY = os.getenv("DATABASE_KEY")
+    DATABASE_SERVICE_ROLE_KEY = os.getenv("DATABASE_SERVICE_ROLE_KEY")
 
-    if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
-        raise RuntimeError("Configuração do Supabase incompleta.")
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL não configurada.")
 
-    SUPABASE_REST_URL = f"{SUPABASE_URL.rstrip('/')}/rest/v1"
+    # ============= SQLAlchemy ==================
+    SQLALCHEMY_DATABASE_URI = (
+        DATABASE_URL
+    )
 
-    SUPABASE_HEADERS = {
-        "apikey": SUPABASE_SERVICE_ROLE_KEY,
-        "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
-        "Content-Type": "application/json",
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
     }
 
-    # ===============================
-    # Email
-    # ===============================
+    # ============= Email ==================
     EMAIL_DESTINE = os.getenv("EMAIL_DESTINE")
     EMAIL_SERVER = os.getenv("EMAIL_SERVER")
     EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
     EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
     EMAIL_SENDER = os.getenv("EMAIL_SENDER")
 
-    # ===============================
-    # OAuth
-    # ===============================
+    # ============= OAuth ==================
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
-    # ===============================
-    # Shopee
-    # ===============================
+    # ============ Shopee ===================
     APPID = os.getenv("APPID")
     SECRET = os.getenv("SECRET")
     ENDPOINT = os.getenv("ENDPOINT")

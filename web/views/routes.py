@@ -1,25 +1,34 @@
+from locale import currency
+
+from flask import (render_template,request,redirect,url_for,flash,)
+from flask_login import (login_user,current_user,)
+from sqlalchemy.exc import (IntegrityError,SQLAlchemyError,)
+from sqlalchemy import or_
+from werkzeug.security import (generate_password_hash,)
+from web.modules.models import User
+import locale
+from web import db
+import re
+import logging
 from flask import (render_template, Blueprint, flash, redirect, url_for, request, abort, Response )
-from werkzeug.security import generate_password_hash
-from flask_dance.contrib.google import google
-from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import check_password_hash
+from flask_login import login_user, logout_user, login_required
 from config import Config
 from web.modules.enviar_email import enviar_email
-from web.modules.models import User
+from web.modules.models import User, Categoria
 from web.modules.shopee.v3 import info_produtos
-import requests
 import json
 
 main_blueprint = Blueprint("main", __name__)
 
-SUPABASE_HEADERS = {
-    "apikey": Config.SUPABASE_KEY,
-    "Authorization": f"Bearer {Config.SUPABASE_SERVICE_ROLE_KEY}",
-    "Content-Type": "application/json",
-}
+# === Logge
+logger = logging.getLogger(__name__)
 
-SUPABASE_USERS_URL = f"{Config.SUPABASE_URL}/rest/v1/users"
+# === Define a localidade do Brasil
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
+# === Helpers
+EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+def is_valid_email(email: str) -> bool:return bool(EMAIL_REGEX.match(email))
 
 # ================== Conteúdo Principal ==================
 
@@ -41,6 +50,7 @@ def ofertas(marketplace=None):
         for n in nodes:
             try:
                 price = float(n.get("price", 0) or 0)
+
             except Exception:
                 price = 0.0
 
@@ -56,15 +66,34 @@ def ofertas(marketplace=None):
             })
 
         return render_template(
-            "main/ofertas2.html",
-            produtos=produtos,
-            marketplace_selecionado=marketplace
+            "main/ofertas-v2.html",
+            produtos=produtos
         )
 
     except Exception as e:
         print("Erro ofertas:", e)
         abort(500)
 
+
+# ================== Categorias =============
+@main_blueprint.route("/categoria/<slug>")
+def categoria(slug):
+
+    categoria = Categoria.query.filter_by(
+        slug=slug
+    ).first()
+
+    if not categoria:
+        flash("Categoria não encontrada.", "warning")
+        return redirect(url_for("main.ofertas"))
+
+    produtos = info_produtos(slug)
+
+    return render_template(
+        "categoria.html",
+        categoria=categoria,
+        produtos=produtos
+    )
 
 # ================== Conta ==================
 
@@ -74,158 +103,174 @@ def conta():
     return render_template("conta/conta.html")
 
 
-# ================== Login Local ==================
-
 @main_blueprint.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
 
-        if not email or not password:
-            flash("Preencha todos os campos.", "danger")
-            return redirect(url_for("main.login"))
-
-        r = requests.get(
-            SUPABASE_USERS_URL,
-            headers=SUPABASE_HEADERS,
-            params={
-                "email": f"eq.{email}",
-                "select": "id,username,email,password_hash,is_admin"}
+        email = (
+            request.form.get("email", "")
+            .strip()
+            .lower()
         )
 
-        if r.status_code != 200:
-            flash("Erro no servidor. Tente novamente.", "danger")
-            print(r.text)
-            return redirect(url_for("main.login"))
+        password = (
+            request.form.get("password", "")
+            .strip()
+        )
 
-        data = r.json()[0]
-        user = User.from_dict(data)
+        if not email or not password:
+            flash(
+                "Preencha todos os campos.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("main.login")
+            )
+
+        try:
+
+            user = User.query.filter_by(
+                email=email
+            ).first()
+
+        except Exception as e:
+
+            print("Erro ao buscar usuário:")
+            print(e)
+
+            flash(
+                "Erro interno no servidor.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("main.login")
+            )
+
+        if not user:
+
+            flash(
+                "Credenciais inválidas.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("main.login")
+            )
 
         if not user.check_password(password):
-            flash("Credenciais inválidas.", "danger")
-            return redirect(url_for("main.login"))
 
-        login_user(user, remember="remember" in request.form)
-        flash("Login realizado com sucesso!", "success")
-        return redirect(url_for("main.conta"))
+            flash(
+                "Credenciais inválidas.",
+                "danger"
+            )
 
-    return render_template("conta/login.html")
+            return redirect(
+                url_for("main.login")
+            )
+
+        login_user(
+            user,
+            remember="remember" in request.form
+        )
+
+        flash(
+            "Login realizado com sucesso!",
+            "success"
+        )
+
+        return redirect(
+            url_for("main.conta")
+        )
+
+    return render_template(
+        "conta/login.html"
+    )
 
 
 # ================== Registro ==================
 
-@main_blueprint.route("/register", methods=["GET", "POST"])
+@main_blueprint.route("/register",methods=["GET", "POST"])
+
 def register():
     if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password")
+        username = (request.form.get("username", "").strip())
+        email = (request.form.get("email", "").strip().lower())
+        password = request.form.get("password","")
 
+        # Validação
         if not username or not email or not password:
-            flash("Todos os campos são obrigatórios.", "danger")
-            return redirect(url_for("main.register"))
+            flash("Todos os campos são obrigatórios.","danger"
+            )
+            return redirect(
+                url_for("main.register")
+            )
+        try:
+            # Verifica usuário existente
+            existing_user = User.query.filter((User.email == email) | (User.username == username)).first()
 
-        password_hash = generate_password_hash(password)
-
-        payload = {
-            "username": username,
-            "email": email,
-            "password_hash": password_hash,
-            "is_admin": False
-        }
-
-        r = requests.post(
-            SUPABASE_USERS_URL,
-            headers=SUPABASE_HEADERS,
-            json=payload
-        )
-
-        # Verifica de o usuário está cadastrado
-        if r.status_code == 409:
-            flash("Usuário ou e-mail já cadastrado.", "danger")
-            print(f"Erro: {r.status_code}", "\nUsuário ou e-mail já cadastrado.", "danger")
-            return redirect(url_for("main.register"))
-
-
-        # Tratamento de erro de indisponibidade
-        if r.status_code == 503:
-            flash("Servidor indisponível. Tente novamente.", "warning")
-
-            # Tenta extrair erro detalhado da API
-            try:
-                error_data = r.json()
-                api_error = (
-                        error_data.get("message")
-                        or error_data.get("error")
-                        or error_data.get("details")
-                        or str(error_data)
+            if existing_user:
+                flash(
+                    "Usuário ou e-mail já cadastrado.",
+                    "danger"
                 )
-            except ValueError:
-                api_error = r.text  # Resposta não é JSON
+                return redirect(url_for("main.register")
+                )
 
-            # Mensagem para o usuário
-            flash(error_data, "danger")
+            # Cria usuário
+            new_user = User(
+                username=username,
+                email=email,
+                is_admin=False
+            )
 
-            # Log detalhado para debug
+            new_user.set_password(password)
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash("Cadastro realizado com sucesso!","success")
+            print("Cadastro realizado com sucesso")
+
+            return redirect(url_for("main.login"))
+
+        except IntegrityError as e:
+
+            db.session.rollback()
+
+            print("Erro IntegrityError:")
+
+            print(e)
+
+            flash(
+                "Usuário ou e-mail já cadastrado.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("main.register")
+            )
+
+        except Exception as e:
+            db.session.rollback()
             print("❌ ERRO AO CRIAR USUÁRIO")
-            print(f"Status Code: {r.status_code}")
-            print(f"URL: {r.url}")
-            print(f"Payload enviado: {payload}")
-            print(f"Resposta da API: {api_error}")
-            print("-" * 50)
-
+            print(e)
+            flash(
+                "Erro interno no servidor.",
+                "danger"
+            )
             return redirect(url_for("main.register"))
 
-        flash("Cadastro realizado com sucesso!", "success")
-        print("Cadastro realizado com sucesso")
-        return redirect(url_for("main.login"))
-
-    return render_template("conta/register.html")
-# ================== Google Login ==================
-
-@main_blueprint.route("/login/google")
-def login_google():
-    if not google.authorized:
-        return redirect(url_for("google.login"))
-    return redirect(url_for("main.login_google_finish"))
-
-
-@main_blueprint.route("/login/google/finish")
-def login_google_finish():
-    resp = google.get("/oauth2/v2/userinfo")
-    if not resp.ok:
-        flash("Erro ao autenticar com Google.", "danger")
-        return redirect(url_for("main.login"))
-
-    info = resp.json()
-    email = info.get("email")
-    username = info.get("name", email.split("@")[0])
-
-    r = requests.get(
-        SUPABASE_USERS_URL,
-        headers=SUPABASE_HEADERS,
-        params={"email": f"eq.{email}", "select": "*"}
+    return render_template(
+        "conta/register.html"
     )
 
-    if r.json():
-        user = User.from_dict(r.json()[0])
-    else:
-        payload = {
-            "username": username,
-            "email": email,
-            "is_admin": False
-        }
-        created = requests.post(
-            SUPABASE_USERS_URL,
-            headers=SUPABASE_HEADERS,
-            json=payload
-        )
-        user = User.from_dict(created.json()[0])
+# ================== Google Login ==================
 
-    login_user(user)
-    flash(f"Bem-vindo, {username}!", "success")
-    return redirect(url_for("main.conta"))
+
+
 
 
 # ================== Logout ==================
@@ -272,7 +317,8 @@ def contato():
 
         enviar_email(
             Config.EMAIL_DESTINE,
-            f"Contato: {assunto}",
+            f"Assunto: {assunto},"
+            f"\nNome: {nome}", # assunto e nome no mesmo campo para fácilitar, talvez eu mude
             mensagem
         )
 
@@ -287,5 +333,14 @@ def contato():
 @main_blueprint.route("/robots.txt")
 def robots():
     return Response(
-        "User-agent: *\nDisallow: /conta/\n",
+        """User-agent: *\nDisallow: 
+        /conta/\n
+        /admin_dashboard/\n
+        /admin_products/\n
+        /admin/products/add/\n
+        /admin/products/edit/<int:id>\n
+        /admin/products/delete/<int:id>\n
+        /admin/categorias/add/\n
+        /admin/users/delete/<int:id>/""",
         mimetype="text/plain")
+

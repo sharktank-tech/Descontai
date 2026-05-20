@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Painel Administrativo - DescontAí.com{% endblock %}
+{% block title %}Painel Administrativo - DescontAí{% endblock %}
 
 {% block content %}
   <header class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
@@ -13,7 +13,7 @@
   </header>
 
   <!-- Cards de Ações -->
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
 
     <!-- Categorias -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
@@ -33,14 +33,6 @@
       </a>
     </div>
 
-    <!-- Produtos -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
-      <h2 class="text-xl font-semibold text-yellow-500 mb-2">Produtos</h2>
-      <p class="text-gray-600 dark:text-gray-300 mb-4">Adicione, edite ou remova produtos do sistema.</p>
-      <a href="/admin_product" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
-        Gerenciar Produtos
-      </a>
-    </div>
 
     <!-- Configurações -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">

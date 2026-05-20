@@ -1,34 +1,283 @@
 {% extends 'base.html' %}
 
-{% block title %}Sobre Nós - DescontAí.com{% endblock %}
+{% block title %}Sobre Nós | DescontAí.com{% endblock %}
 
 {% block content %}
-<section class="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-  <h1 class="text-4xl sm:text-5xl font-extrabold text-yellow-400 mb-6 text-center">Sobre Nós</h1>
-  <p class="text-lg text-gray-200 dark:text-gray-300 mb-6 leading-relaxed text-center">
-    O <strong>DescontAí.com</strong> nasceu com a missão de ajudar você a economizar nas suas compras online.
-    Reunimos as melhores ofertas e promoções de vários sites em um só lugar, atualizadas diariamente.
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #FF5722;
+    --brand-dark: #E64A19;
+    --gold: #FFA000;
+    --surface: #0F0F0F;
+    --surface-2: #1A1A1A;
+    --surface-3: #242424;
+    --border: rgba(255,255,255,0.07);
+    --text: #F5F5F5;
+    --text-muted: #888888;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--text); }
+  h1,h2,h3 { font-family: 'Sora', sans-serif; }
+
+  /* HERO */
+  .ab-hero {
+    background: linear-gradient(135deg, #1a0800 0%, #2d1200 60%, #1a0800 100%);
+    padding: 60px 16px 70px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .ab-hero::before {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: var(--brand);
+    border-radius: 50%;
+    opacity: 0.06;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .ab-hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,87,34,0.12); border: 1px solid rgba(255,87,34,0.3);
+    color: var(--brand); font-size: 12px; font-weight: 600;
+    padding: 5px 14px; border-radius: 50px; letter-spacing: 0.5px;
+    font-family: 'Sora', sans-serif; margin-bottom: 18px;
+  }
+  .ab-hero-title {
+    font-size: clamp(28px, 6vw, 48px);
+    font-weight: 700; line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .ab-hero-title span { color: var(--brand); }
+  .ab-hero-desc {
+    color: var(--text-muted); font-size: 16px; line-height: 1.7;
+    max-width: 560px; margin: 0 auto 28px;
+  }
+  .ab-hero-desc strong { color: var(--text); }
+  .ab-hero-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--brand); color: #fff;
+    padding: 12px 28px; border-radius: 50px;
+    font-size: 14px; font-weight: 600; text-decoration: none;
+    font-family: 'Sora', sans-serif; transition: background 0.15s;
+  }
+  .ab-hero-cta:hover { background: var(--brand-dark); }
+
+  /* WRAP */
+  .ab-wrap { max-width: 900px; margin: 0 auto; padding: 48px 16px 80px; }
+
+  /* CARDS 2-col */
+  .ab-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+  @media(max-width: 580px) { .ab-grid-2 { grid-template-columns: 1fr; } }
+
+  .ab-card {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px 22px;
+    transition: border-color 0.2s;
+  }
+  .ab-card:hover { border-color: rgba(255,87,34,0.3); }
+  .ab-card-icon { font-size: 28px; margin-bottom: 12px; }
+  .ab-card-title { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .ab-card-text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* STEPS */
+  .ab-steps-title {
+    font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  }
+  .ab-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 40px; }
+  .ab-step { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .ab-step:last-child { border-bottom: none; }
+  .ab-step-num {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,87,34,0.12); border: 1px solid rgba(255,87,34,0.3);
+    color: var(--brand); font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ab-step-body { flex: 1; }
+  .ab-step-label { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .ab-step-desc { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+  /* STATS */
+  .ab-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 40px; }
+  @media(max-width: 480px) { .ab-stats { grid-template-columns: 1fr 1fr; } }
+  .ab-stat {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 16px; text-align: center;
+  }
+  .ab-stat-num { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; color: var(--brand); }
+  .ab-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* CONTACT */
+  .ab-contact {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 24px; margin-bottom: 40px;
+  }
+  .ab-contact-title { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .ab-contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width: 480px) { .ab-contact-grid { grid-template-columns: 1fr; } }
+  .ab-contact-item {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface-3); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    text-decoration: none; color: var(--text); transition: border-color 0.15s;
+  }
+  .ab-contact-item:hover { border-color: rgba(255,87,34,0.4); }
+  .ab-contact-item .ab-ci-icon { font-size: 20px; flex-shrink: 0; }
+  .ab-contact-item .ab-ci-label { font-size: 12px; color: var(--text-muted); }
+  .ab-contact-item .ab-ci-val { font-size: 14px; font-weight: 500; margin-top: 1px; }
+
+  /* AFFILIATE NOTICE */
+  .ab-notice {
+    background: rgba(255,160,0,0.06); border: 1px solid rgba(255,160,0,0.2);
+    border-radius: var(--radius); padding: 16px 20px;
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 13px; color: var(--text-muted); line-height: 1.6;
+  }
+  .ab-notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .ab-notice strong { color: var(--gold); }
+</style>
+
+<!-- HERO -->
+<div class="ab-hero">
+  <div class="ab-hero-tag">✦ Conheça o projeto</div>
+  <h1 class="ab-hero-title"><span>DescontAí</span></h1>
+  <p class="ab-hero-desc">
+    Nascemos para ajudar você a <strong>economizar de verdade</strong> nas compras online.
+    Reunimos as melhores promoções de vários sites em um só lugar, atualizadas diariamente.
   </p>
+  <a href="{{ url_for('main.ofertas') }}" class="ab-hero-cta">🔥 Ver ofertas agora</a>
+</div>
 
-  <div class="mt-10 grid gap-8 md:grid-cols-2">
-    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-      <h2 class="text-2xl font-bold mb-2 text-yellow-400">Nossa Missão</h2>
-      <p class="text-gray-600 dark:text-gray-300">
-        Tornar o acesso a descontos confiáveis mais fácil para todos, economizando tempo e dinheiro dos nossos usuários.
+<div class="ab-wrap">
+
+  <!-- MISSÃO + COMO FUNCIONA -->
+  <div class="ab-grid-2">
+    <div class="ab-card">
+      <div class="ab-card-icon">🎯</div>
+      <div class="ab-card-title">Nossa Missão</div>
+      <p class="ab-card-text">
+        Tornar o acesso a descontos confiáveis mais fácil para todos, economizando tempo e dinheiro sem abrir mão da segurança.
       </p>
     </div>
-    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-      <h2 class="text-2xl font-bold mb-2 text-yellow-400">Como Funciona</h2>
-      <p class="text-gray-600 dark:text-gray-300">
-        Monitoramos automaticamente produtos dos principais sites de compras e exibimos apenas as maiores ofertas com base em critérios de desconto.
+    <div class="ab-card">
+      <div class="ab-card-icon">⚡</div>
+      <div class="ab-card-title">Atualização em Tempo Real</div>
+      <p class="ab-card-text">
+        Monitoramos automaticamente os principais sites de compras e exibimos apenas as maiores ofertas com base em critérios de desconto.
+      </p>
+    </div>
+    <div class="ab-card">
+      <div class="ab-card-icon">🔒</div>
+      <div class="ab-card-title">Segurança Primeiro</div>
+      <p class="ab-card-text">
+        Todos os links levam diretamente às lojas oficiais. Nunca armazenamos dados de pagamento ou redirecionamos para sites suspeitos.
+      </p>
+    </div>
+    <div class="ab-card">
+      <div class="ab-card-icon">💰</div>
+      <div class="ab-card-title">100% Gratuito</div>
+      <p class="ab-card-text">
+        O DescontAí é totalmente gratuito para os usuários. Nos sustentamos através de comissões de afiliados, sem custo extra para você.
       </p>
     </div>
   </div>
 
-  <div class="mt-16 text-center">
-    <p class="text-sm text-gray-500 dark:text-gray-400">
-      Este site utiliza links afiliados. Ao comprar por aqui, você ajuda a manter o projeto ativo — sem pagar nada a mais por isso! ❤️
-    </p>
+  <!-- STATS -->
+  <div class="ab-stats">
+    <div class="ab-stat">
+      <div class="ab-stat-num">10k+</div>
+      <div class="ab-stat-label">Ofertas monitoradas</div>
+    </div>
+    <div class="ab-stat">
+      <div class="ab-stat-num">5+</div>
+      <div class="ab-stat-label">Lojas parceiras</div>
+    </div>
+    <div class="ab-stat">
+      <div class="ab-stat-num">24h</div>
+      <div class="ab-stat-label">Atualização contínua</div>
+    </div>
   </div>
-</section>
+
+  <!-- COMO FUNCIONA -->
+  <div class="ab-steps-title">🛠️ Como funciona</div>
+  <div class="ab-steps">
+    <div class="ab-step">
+      <div class="ab-step-num">1</div>
+      <div class="ab-step-body">
+        <div class="ab-step-label">Monitoramos as lojas</div>
+        <div class="ab-step-desc">Nosso sistema varre automaticamente os principais marketplaces em busca das melhores promoções disponíveis.</div>
+      </div>
+    </div>
+    <div class="ab-step">
+      <div class="ab-step-num">2</div>
+      <div class="ab-step-body">
+        <div class="ab-step-label">Filtramos as melhores</div>
+        <div class="ab-step-desc">Apenas ofertas com descontos relevantes são selecionadas e exibidas, evitando falsas promoções.</div>
+      </div>
+    </div>
+    <div class="ab-step">
+      <div class="ab-step-num">3</div>
+      <div class="ab-step-body">
+        <div class="ab-step-label">Você economiza</div>
+        <div class="ab-step-desc">Clique na oferta, vá direto para a loja oficial e compre com segurança pagando menos.</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- CONTATO -->
+  <!-- RECONDICIONAR APÓS CRIAÇÃO DAS REDES SOCIAIS
+  <div class="ab-contact">
+    <div class="ab-contact-title">Fale conosco</div>
+    <div class="ab-contact-grid">
+      <a href="mailto:contato@descontai.com" class="ab-contact-item">
+        <span class="ab-ci-icon">✉️</span>
+        <div>
+          <div class="ab-ci-label">E-mail</div>
+          <div class="ab-ci-val">contato@descontai.com</div>
+        </div>
+      </a>
+      <a href="https://instagram.com/descontai" target="_blank" rel="noopener" class="ab-contact-item">
+        <span class="ab-ci-icon">📸</span>
+        <div>
+          <div class="ab-ci-label">Instagram</div>
+          <div class="ab-ci-val">@descontai</div>
+        </div>
+      </a>
+      <a href="#" class="ab-contact-item">
+        <span class="ab-ci-icon">💬</span>
+        <div>
+          <div class="ab-ci-label">WhatsApp</div>
+          <div class="ab-ci-val">Grupo de ofertas</div>
+        </div>
+      </a>
+      <a href="#" class="ab-contact-item">
+        <span class="ab-ci-icon">🐦</span>
+        <div>
+          <div class="ab-ci-label">Twitter / X</div>
+          <div class="ab-ci-val">@descontai</div>
+        </div>
+      </a>
+    </div>
+  </div>
+  -->
+
+  <!-- AVISO AFILIADO -->
+  <div class="ab-notice">
+    <span class="ab-notice-icon">ℹ️</span>
+    <span>
+      <strong>Links afiliados:</strong> este site utiliza links de afiliados. Ao comprar por aqui,
+      você ajuda a manter o projeto ativo — sem pagar absolutamente nada a mais por isso. Obrigado pelo apoio! ❤️
+    </span>
+  </div>
+
+</div>
 {% endblock %}

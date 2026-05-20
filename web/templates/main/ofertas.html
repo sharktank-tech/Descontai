@@ -11,32 +11,32 @@ Ofertas Amazon 🛒 | {{ super() }}
 {% block content %}
 
 <!-- Amazon-style Main Banner -->
-<div class="bg-[#232F3E] pb-6">
-  <!-- Search Bar -->
+<div class="bg-[#F75131] pb-6">
   <div class="px-4 pt-4">
     <div class="relative max-w-4xl mx-auto">
-      <input type="text" placeholder="Buscar produtos na Amazon..."
-             class="w-full py-2 px-4 pr-10 rounded-md shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-[#FF9900]">
-      <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-      </button>
+      <form action="{{ url_for('main.ofertas') }}" method="get">
+        <input name="q" type="text" placeholder="Buscar produtos na Shopee..."
+               class="w-full py-2 px-4 pr-10 rounded-md shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-[#FF9900]">
+        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+      </form>
     </div>
   </div>
 
-  <!-- Main Banner Image -->
   <div class="mt-4 px-4">
     <div class="max-w-4xl mx-auto rounded-md overflow-hidden shadow-lg">
-      <img src="https://m.media-amazon.com/images/G/32/kindle/journeys/ZTJlNzRkMjUt/ZTJlNzRkMjUt-MzVlMzkyODAt-w1500._CB654206473_.jpg"
-           alt="Banner Amazon"
-           class="w-full h-auto object-cover">
+      <img src="https://imgs.search.brave.com/qdwabRl2bIQKrsoiZlx-U8uSD7yIVhFv-8hzpnd-2g4/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9jcy5k/ZW8uc2hvcGVlbW9i/aWxlLmNvbS9zaG9w/ZWUvc2hvcGVlLWNz/LWxpdmUtYnIvc3Rh/dGljL2hlbHBjZW50/ZXJmZS9zaG9wZWVf/bG9nby5wbmc"
+           alt="Banner Shopee"
+           class="w-15 h-auto object-cover">
     </div>
   </div>
 </div>
 
-<!-- Amazon Categories -->
+<!-- Amazon Style Categories -->
 <div class="bg-gray-800 py-4 px-4">
   <div class="max-w-4xl mx-auto grid grid-cols-5 sm:grid-cols-10 gap-3 text-center">
     {% for category in [
@@ -52,40 +52,58 @@ Ofertas Amazon 🛒 | {{ super() }}
       {'name': 'Mais', 'icon': '🛍️'}
     ] %}
     <a href="#" class="flex flex-col items-center hover:text-[#FF9900]">
-      <div class="w-12 h-12 rounded-full bg-white shadow flex items-center justify-center text-2xl">{{ category.icon }}</div>
+      <div class="w-12 h-12 rounded-full bg-white shadow flex items-center justify-center text-2xl">
+        {{ category.icon }}
+      </div>
       <span class="text-[11px] mt-1">{{ category.name }}</span>
     </a>
     {% endfor %}
   </div>
 </div>
 
-<!-- Destaques Amazon -->
+<!-- Ofertas Relâmpago -->
 <section class="bg-gray-800 py-5 px-4">
   <div class="max-w-4xl mx-auto">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-lg font-semibold text-white">Ofertas Relâmpago</h2>
-      <a href="#" class="text-sm text-[#FF9900] hover:underline">Ver tudo</a>
-    </div>
-    <div class="flex overflow-x-auto gap-3">
-      {% for i in range(8) %}
-      <div class="flex-shrink-0 w-32 bg-white rounded-md border shadow-sm">
-        <div class="relative pt-[100%] bg-gray-100">
-          <img src="https://m.media-amazon.com/images/G/32/Cohorts/2025/CustomerMostLoved/19313_mostloved_visualnav_beleza_306x176._CB546816678_UC432,290_.jpg"
+    <h2 class="text-lg font-semibold text-white mb-3">Ofertas Relâmpago</h2>
 
-               alt="Produto Amazon"
+    {% if produtos and produtos|length > 0 %}
+    <div class="flex overflow-x-auto gap-3">
+      {% for p in produtos[:12] %}
+      <div class="flex-shrink-0 w-36 bg-white rounded-md border shadow-sm">
+        <div class="relative pt-[100%] bg-gray-100">
+          <img src="{{ p.imageUrl }}" alt="{{ p.productName }}"
                class="absolute top-0 left-0 w-full h-full object-contain p-2">
         </div>
         <div class="p-2">
-          <div class="text-xs font-bold text-[#FF9900]">R$ {{ [89, 129, 149, 79, 109, 59, 99, 139][loop.index0] }},90</div>
-          <p class="text-[10px] text-gray-700 mt-1 line-clamp-2">Oferta destaque {{ loop.index }}</p>
+          <div class="text-xs font-bold text-[#FF9900]">
+            R$ {{ '%.2f' % p.price }}
+          </div>
+          <p class="text-[10px] text-gray-700 mt-1 line-clamp-2">
+            {{ p.productName }}
+          </p>
+          <div class="text-[11px] text-gray-500">
+            Loja: {{ p.shopName }}
+          </div>
+
+          {% if p.offerLink and p.offerLink != '#' %}
+          <a class="mt-2 block text-[11px] px-2 py-1 rounded bg-[#FF9900] text-white text-center"
+             href="{{ p.offerLink }}" target="_blank" rel="noopener">
+            Ir para oferta
+          </a>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
     </div>
+    {% else %}
+      <div class="text-center text-gray-300 py-6">
+        Nenhuma oferta encontrada no momento.
+      </div>
+    {% endif %}
   </div>
 </section>
 
-<!-- Lojas Oficiais Amazon -->
+<!-- Marcas Oficiais -->
 <section class="bg-gray-800 py-5 px-4">
   <div class="max-w-4xl mx-auto">
     <h2 class="text-lg font-semibold text-white mb-3">Marcas Oficiais</h2>
@@ -104,63 +122,45 @@ Ofertas Amazon 🛒 | {{ super() }}
 <section class="bg-gray-800 py-5 px-4">
   <div class="max-w-4xl mx-auto">
     <h2 class="text-lg font-semibold text-white mb-3">Recomendados para você</h2>
+
+    {% if produtos and produtos|length > 0 %}
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      {% for product in [
-        {'name': 'Echo Dot 5ª Geração', 'price': 'R$ 379,90', 'original': 'R$ 499,90', 'rating': 4.9},
-        {'name': 'Fire TV Stick', 'price': 'R$ 279,90', 'original': 'R$ 349,90', 'rating': 4.8},
-        {'name': 'Kindle 11ª Geração', 'price': 'R$ 499,90', 'original': 'R$ 599,90', 'rating': 4.7},
-        {'name': 'Alexa Echo Show', 'price': 'R$ 699,90', 'original': 'R$ 899,90', 'rating': 4.9}
-      ] %}
+      {% for p in produtos %}
       <div class="bg-gray-50 rounded-md overflow-hidden shadow-sm">
         <div class="relative pt-[100%] bg-white">
-          <img src="https://m.media-amazon.com/images/I/61{{ loop.index }}5uNn1zL._AC_SY355_.jpg"
-               alt="{{ product.name }}"
+          <img src="{{ p.imageUrl }}" alt="{{ p.productName }}"
                class="absolute top-0 left-0 w-full h-full object-contain p-3">
         </div>
         <div class="p-2">
-          <h3 class="text-sm text-gray-800 mb-1">{{ product.name }}</h3>
-          <div class="text-xs text-[#FF9900] font-bold">{{ product.price }}</div>
-          <div class="text-[10px] line-through text-gray-400">{{ product.original }}</div>
-          <div class="text-[11px] text-yellow-500 mt-1">⭐ {{ product.rating }}</div>
+          <h3 class="text-sm text-gray-800 mb-1">
+            {{ p.productName }}
+          </h3>
+          <div class="text-xs text-[#FF9900] font-bold">
+            R$ {{ '%.2f' % p.price }}
+          </div>
+          <div class="text-[10px] line-through text-gray-400">
+            R$ {{ '%.2f' % (p.price * 1.2) }}
+          </div>
+          <div class="text-[11px] text-yellow-500 mt-1">
+            ⭐ {{ p.ratingStar }} • {{ p.sales }} vendidos
+          </div>
+
+          {% if p.offerLink and p.offerLink != '#' %}
+          <a class="mt-2 inline-block px-2 py-1 rounded bg-[#FF9900] text-white text-xs"
+             href="{{ p.offerLink }}" target="_blank" rel="noopener">
+            Ir para oferta
+          </a>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
     </div>
+    {% else %}
+      <div class="text-center text-gray-300 py-6">
+        Nenhum produto recomendado no momento.
+      </div>
+    {% endif %}
   </div>
 </section>
-
-<!-- Navegação inferior (mobile) -->
-<div class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-  <div class="flex justify-around py-2">
-    <a href="#" class="flex flex-col items-center text-[#FF9900]">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-      </svg>
-      <span class="text-xs mt-0.5">Início</span>
-    </a>
-    <a href="#" class="flex flex-col items-center text-gray-600">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/>
-      </svg>
-      <span class="text-xs mt-0.5">Categorias</span>
-    </a>
-    <a href="#" class="flex flex-col items-center text-gray-600">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M5 8h14l1 12H4L5 8z"/>
-      </svg>
-      <span class="text-xs mt-0.5">Carrinho</span>
-    </a>
-    <a href="#" class="flex flex-col items-center text-gray-600">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-      </svg>
-      <span class="text-xs mt-0.5">Conta</span>
-    </a>
-  </div>
-</div>
 
 {% endblock %}
