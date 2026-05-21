@@ -116,10 +116,9 @@ def login():
             user = User.query.filter_by(email=email).first()
 
         except Exception as e:
-            print("Erro ao buscar usuário:")
-            print(e)
+            print(f"Erro ao buscar usuário:{e}")
 
-            flash("Erro interno no servidor.","danger")
+            flash(f"Erro interno no servidor. === {e}","danger")
             return redirect(url_for("main.login"))
 
         if not user:
