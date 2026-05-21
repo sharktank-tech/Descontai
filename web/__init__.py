@@ -35,7 +35,6 @@ def create_app():
         "CACHE_DEFAULT_TIMEOUT": 300
     })
 
-
     # ========== Inicializar extensões ==========
     login_manager.init_app(app)
     login_manager.login_view = "main.login"
@@ -48,7 +47,6 @@ def create_app():
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(admin_blueprint)
-
 
     # ======== Loader de usuário ==========
     from web.modules.models import User

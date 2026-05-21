@@ -11,7 +11,7 @@ class Config:
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
 
     # ============== Database =================
-    DATABASE_URL = os.getenv("DATABASE_URL") or '//postgres:NDsfA3kxD5guZOLa@db.zbhornbobznuzollgovo.supabase.co:5432/postgres'
+    DATABASE_URL = os.getenv("DATABASE_URL")
     DATABASE_KEY = os.getenv("DATABASE_KEY")
     DATABASE_SERVICE_ROLE_KEY = os.getenv("DATABASE_SERVICE_ROLE_KEY")
 

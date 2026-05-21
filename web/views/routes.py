@@ -104,90 +104,38 @@ def conta():
 
 @main_blueprint.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
-
-        email = (
-            request.form.get("email", "")
-            .strip()
-            .lower()
-        )
-
-        password = (
-            request.form.get("password", "")
-            .strip()
-        )
+        email = (request.form.get("email", "").strip().lower())
+        password = (request.form.get("password", "").strip())
 
         if not email or not password:
-            flash(
-                "Preencha todos os campos.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("main.login")
-            )
+            flash("Preencha todos os campos.","danger")
+            return redirect(url_for("main.login"))
 
         try:
-
-            user = User.query.filter_by(
-                email=email
-            ).first()
+            user = User.query.filter_by(email=email).first()
 
         except Exception as e:
-
             print("Erro ao buscar usuário:")
             print(e)
 
-            flash(
-                "Erro interno no servidor.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("main.login")
-            )
+            flash("Erro interno no servidor.","danger")
+            return redirect(url_for("main.login"))
 
         if not user:
-
-            flash(
-                "Credenciais inválidas.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("main.login")
-            )
+            flash("Credenciais inválidas.","danger")
+            return redirect(url_for("main.login"))
 
         if not user.check_password(password):
+            flash("Credenciais inválidas.","danger")
 
-            flash(
-                "Credenciais inválidas.",
-                "danger"
-            )
+            return redirect(url_for("main.login"))
 
-            return redirect(
-                url_for("main.login")
-            )
+        login_user(user,remember="remember" in request.form)
+        flash("Login realizado com sucesso!","success")
+        return redirect(url_for("main.conta"))
 
-        login_user(
-            user,
-            remember="remember" in request.form
-        )
-
-        flash(
-            "Login realizado com sucesso!",
-            "success"
-        )
-
-        return redirect(
-            url_for("main.conta")
-        )
-
-    return render_template(
-        "conta/login.html"
-    )
-
+    return render_template("conta/login.html")
 
 # ================== Registro ==================
 
