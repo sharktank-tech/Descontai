@@ -118,7 +118,7 @@ def login():
         except Exception as e:
             print(f"Erro ao buscar usuário:{e}")
 
-            flash(f"Erro interno no servidor. === {e}","danger")
+            flash("Erro interno no servidor.","danger")
             return redirect(url_for("main.login"))
 
         if not user:
