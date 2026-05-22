@@ -53,9 +53,8 @@ def manage_categories():
 
         return redirect(url_for("admin.admin_dashboard"))
 
-# ==========================================
-# ADICIONAR CATEGORIA
-# ==========================================
+# =============== ADICIONAR CATEGORIA ==============
+
 @admin_blueprint.route("/admin/categorias/add",methods=["GET", "POST"])
 @login_required
 @admin_required
@@ -79,9 +78,7 @@ def add_category():
     return redirect(
         url_for("admin.manage_categories"))
 
-# ==========================================
-# TOGGLE CATEGORIA
-# ==========================================
+# ================= TOGGLE CATEGORIA =============
 @admin_blueprint.route("/admin/categorias/toggle/<int:id>", methods=["POST"])
 @login_required
 @admin_required
@@ -98,6 +95,7 @@ def toggle_category(id):
         flash("Erro ao atualizar categoria.","danger")
 
     return redirect(url_for("admin.manage_categories"))
+
 
 # ==========================================
 # USUÁRIOS
@@ -116,9 +114,25 @@ def admin_user():
 
         return redirect(url_for("admin.admin_dashboard"))
 
-# ==========================================
-# DELETAR USUÁRIO
-# ==========================================
+# ============ ADD USUARIO ==============
+@admin_blueprint.route("/admin/users/add/<int:id>",methods=["POST"])
+@login_required
+@admin_required
+def add_user(id):
+    try:
+        user = User.query.get_or_404(id)
+        db.session.add(user)
+        db.session.commit()
+        flash("Usuário adicionado ""com sucesso!","success")
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        logger.exception("Erro ao adicionar usuário.")
+        flash("Erro ao adicionar usuário.","danger")
+
+    return redirect(url_for("admin.admin_dashboard"))
+
+# =========== DELETAR USUÁRIO ===============
 @admin_blueprint.route("/admin/users/delete/<int:id>",methods=["POST"])
 @login_required
 @admin_required
